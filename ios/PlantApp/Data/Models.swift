@@ -1,0 +1,528 @@
+import Foundation
+import Supabase
+
+// MARK: - Accounts
+
+enum Role: String {
+    case customer, seller
+    static func from(_ value: String?) -> Role { Role(rawValue: value ?? "") ?? .customer }
+}
+
+struct Profile: Codable, Identifiable, Equatable {
+    let id: String
+    var role: String
+    var firstName: String
+    var lastName: String
+    var phone: String
+    var city: String
+    var address: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, role, phone, city, address
+        case firstName = "first_name"
+        case lastName = "last_name"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        role = try c.decodeIfPresent(String.self, forKey: .role) ?? "customer"
+        firstName = try c.decodeIfPresent(String.self, forKey: .firstName) ?? ""
+        lastName = try c.decodeIfPresent(String.self, forKey: .lastName) ?? ""
+        phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
+        city = try c.decodeIfPresent(String.self, forKey: .city) ?? ""
+        address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
+    }
+
+    var roleEnum: Role { Role.from(role) }
+    var fullName: String { "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces) }
+}
+
+struct SignUpForm {
+    var email = ""
+    var password = ""
+    var firstName = ""
+    var lastName = ""
+    var phone = ""
+    var city = ""
+    var address = ""
+    var shopName = ""
+}
+
+// MARK: - Shops and plants
+
+struct SellerInfo: Codable, Equatable {
+    let id: String
+    let name: String
+    let city: String
+    var deliveryScope: String
+    var deliversTo: [String]?
+    var rating: Double
+    var phone: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, city, rating, phone
+        case deliveryScope = "delivery_scope"
+        case deliversTo = "delivers_to"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        city = try c.decode(String.self, forKey: .city)
+        deliveryScope = try c.decodeIfPresent(String.self, forKey: .deliveryScope) ?? "local"
+        deliversTo = try c.decodeIfPresent([String].self, forKey: .deliversTo)
+        rating = try c.decodeIfPresent(Double.self, forKey: .rating) ?? 0
+        phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
+    }
+
+    var isNationwide: Bool { deliveryScope == "nationwide" }
+}
+
+/// The signed-in seller's own shop row.
+struct Shop: Codable, Equatable {
+    let id: String
+    var name: String
+    var city: String
+    var deliveryScope: String
+    var deliversTo: [String]?
+    var rating: Double
+    var phone: String
+    var bio: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, city, rating, phone, bio
+        case deliveryScope = "delivery_scope"
+        case deliversTo = "delivers_to"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        city = try c.decode(String.self, forKey: .city)
+        deliveryScope = try c.decodeIfPresent(String.self, forKey: .deliveryScope) ?? "local"
+        deliversTo = try c.decodeIfPresent([String].self, forKey: .deliversTo)
+        rating = try c.decodeIfPresent(Double.self, forKey: .rating) ?? 0
+        phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
+        bio = try c.decodeIfPresent(String.self, forKey: .bio) ?? ""
+    }
+
+    var isNationwide: Bool { deliveryScope == "nationwide" }
+}
+
+struct ShopUpdate: Encodable {
+    let name: String
+    let phone: String
+    let bio: String
+    let deliveryScope: String
+    let deliversTo: [String]?
+
+    enum CodingKeys: String, CodingKey {
+        case name, phone, bio
+        case deliveryScope = "delivery_scope"
+        case deliversTo = "delivers_to"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(name, forKey: .name)
+        try c.encode(phone, forKey: .phone)
+        try c.encode(bio, forKey: .bio)
+        try c.encode(deliveryScope, forKey: .deliveryScope)
+        try c.encode(deliversTo, forKey: .deliversTo) // nil is sent as null
+    }
+}
+
+/// Row inserted into `sellers` when a seller creates an account.
+struct NewSeller: Encodable {
+    let ownerId: String
+    let name: String
+    let city: String
+    let deliveryScope: String
+    let deliversTo: [String]
+    let phone: String
+    let bio: String
+    let plantsOffered: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case name, city, phone, bio
+        case ownerId = "owner_id"
+        case deliveryScope = "delivery_scope"
+        case deliversTo = "delivers_to"
+        case plantsOffered = "plants_offered"
+    }
+}
+
+/// One plant offered by one shop. Text fields are maps keyed by language code (en / ar / ckb).
+struct Listing: Codable, Identifiable, Equatable {
+    let id: String
+    let sellerId: String
+    var plantKey: String?
+    var name: [String: String]
+    var scientificName: String?
+    var description: [String: String]
+    var care: [String: [String: String]]
+    var heightCm: Int?
+    var priceIqd: Int
+    var inStock: Bool
+    var imagePath: String?
+    var aiGenerated: Bool
+    var sellers: SellerInfo?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, description, care, sellers
+        case sellerId = "seller_id"
+        case plantKey = "plant_key"
+        case scientificName = "scientific_name"
+        case heightCm = "height_cm"
+        case priceIqd = "price_iqd"
+        case inStock = "in_stock"
+        case imagePath = "image_path"
+        case aiGenerated = "ai_generated"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        sellerId = try c.decode(String.self, forKey: .sellerId)
+        plantKey = try c.decodeIfPresent(String.self, forKey: .plantKey)
+        name = try c.decodeIfPresent([String: String].self, forKey: .name) ?? [:]
+        scientificName = try c.decodeIfPresent(String.self, forKey: .scientificName)
+        description = try c.decodeIfPresent([String: String].self, forKey: .description) ?? [:]
+        care = try c.decodeIfPresent([String: [String: String]].self, forKey: .care) ?? [:]
+        heightCm = try c.decodeIfPresent(Int.self, forKey: .heightCm)
+        priceIqd = try c.decode(Int.self, forKey: .priceIqd)
+        inStock = try c.decodeIfPresent(Bool.self, forKey: .inStock) ?? true
+        imagePath = try c.decodeIfPresent(String.self, forKey: .imagePath)
+        aiGenerated = try c.decodeIfPresent(Bool.self, forKey: .aiGenerated) ?? false
+        sellers = try c.decodeIfPresent(SellerInfo.self, forKey: .sellers)
+    }
+
+    /// Public link to the shop's photo, or nil while the listing has none.
+    var imageURL: URL? {
+        guard let path = imagePath, !path.isEmpty else { return nil }
+        return try? supabase.storage.from("plant-photos").getPublicURL(path: path)
+    }
+
+    /// Whether this listing's shop delivers to `city`.
+    func delivers(to city: String) -> Bool {
+        guard let shop = sellers else { return false }
+        return shop.city == city || shop.isNationwide || (shop.deliversTo?.contains(city) ?? false)
+    }
+}
+
+struct NewListing: Encodable {
+    let sellerId: String
+    let plantKey: String?
+    let name: [String: String]
+    let scientificName: String?
+    let description: [String: String]
+    let care: [String: [String: String]]
+    let heightCm: Int?
+    let priceIqd: Int
+    let imagePath: String?
+    let inStock: Bool
+    let aiGenerated: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case name, description, care
+        case sellerId = "seller_id"
+        case plantKey = "plant_key"
+        case scientificName = "scientific_name"
+        case heightCm = "height_cm"
+        case priceIqd = "price_iqd"
+        case imagePath = "image_path"
+        case inStock = "in_stock"
+        case aiGenerated = "ai_generated"
+    }
+}
+
+struct ListingUpdate: Encodable {
+    let plantKey: String?
+    let name: [String: String]
+    let scientificName: String?
+    let description: [String: String]
+    let care: [String: [String: String]]
+    let heightCm: Int?
+    let priceIqd: Int
+    let imagePath: String?
+    let inStock: Bool
+    let aiGenerated: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case name, description, care
+        case plantKey = "plant_key"
+        case scientificName = "scientific_name"
+        case heightCm = "height_cm"
+        case priceIqd = "price_iqd"
+        case imagePath = "image_path"
+        case inStock = "in_stock"
+        case aiGenerated = "ai_generated"
+    }
+
+    // Updates must send nil as an explicit null so a cleared field is really cleared.
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(plantKey, forKey: .plantKey)
+        try c.encode(name, forKey: .name)
+        try c.encode(scientificName, forKey: .scientificName)
+        try c.encode(description, forKey: .description)
+        try c.encode(care, forKey: .care)
+        try c.encode(heightCm, forKey: .heightCm)
+        try c.encode(priceIqd, forKey: .priceIqd)
+        try c.encode(imagePath, forKey: .imagePath)
+        try c.encode(inStock, forKey: .inStock)
+        try c.encode(aiGenerated, forKey: .aiGenerated)
+    }
+}
+
+// MARK: - Orders
+
+/// One line of an order. Defaults keep older prototype rows (different shape) decodable.
+struct OrderItem: Codable, Equatable {
+    var listingId: String
+    var name: [String: String]
+    var qty: Int
+    var unitPriceIqd: Int
+
+    enum CodingKeys: String, CodingKey {
+        case name, qty
+        case listingId = "listing_id"
+        case unitPriceIqd = "unit_price_iqd"
+    }
+
+    init(listingId: String, name: [String: String], qty: Int, unitPriceIqd: Int) {
+        self.listingId = listingId
+        self.name = name
+        self.qty = qty
+        self.unitPriceIqd = unitPriceIqd
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        listingId = try c.decodeIfPresent(String.self, forKey: .listingId) ?? ""
+        name = (try? c.decodeIfPresent([String: String].self, forKey: .name)) ?? [:]
+        qty = try c.decodeIfPresent(Int.self, forKey: .qty) ?? 1
+        unitPriceIqd = try c.decodeIfPresent(Int.self, forKey: .unitPriceIqd) ?? 0
+    }
+}
+
+/// Order progress, in the order a customer sees it.
+enum OrderStatus: String, CaseIterable {
+    case placed
+    case preparing
+    case photoSent = "photo_sent"
+    case approved
+    case outForDelivery = "out_for_delivery"
+    case delivered
+    case cancelled
+
+    static func from(_ value: String?) -> OrderStatus { OrderStatus(rawValue: value ?? "") ?? .placed }
+
+    /// Steps shown on the timeline (cancelled is shown on its own).
+    static let timeline: [OrderStatus] = [.placed, .preparing, .photoSent, .approved, .outForDelivery, .delivered]
+
+    var labelKey: String {
+        switch self {
+        case .placed: return "status_placed"
+        case .preparing: return "status_preparing"
+        case .photoSent: return "status_photo_sent"
+        case .approved: return "status_approved"
+        case .outForDelivery: return "status_out_for_delivery"
+        case .delivered: return "status_delivered"
+        case .cancelled: return "status_cancelled"
+        }
+    }
+}
+
+struct Order: Codable, Identifiable, Equatable {
+    let id: String
+    let sellerId: String
+    var sellerName: String
+    var items: [OrderItem]
+    var status: String
+    var city: String
+    var address: String
+    var createdAt: String
+    var totalIqd: Int
+    var isGift: Bool
+    var recipientName: String?
+    var recipientPhone: String?
+    var giftNote: String?
+    var deliveryDate: String?
+    var deliveryWindow: String
+    var preparationPhotoPath: String?
+    var changeRequest: String?
+    var buyerName: String
+    var buyerPhone: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, items, status, city, address
+        case sellerId = "seller_id"
+        case sellerName = "seller_name"
+        case createdAt = "created_at"
+        case totalIqd = "total_iqd"
+        case isGift = "is_gift"
+        case recipientName = "recipient_name"
+        case recipientPhone = "recipient_phone"
+        case giftNote = "gift_note"
+        case deliveryDate = "delivery_date"
+        case deliveryWindow = "delivery_window"
+        case preparationPhotoPath = "preparation_photo_path"
+        case changeRequest = "change_request"
+        case buyerName = "buyer_name"
+        case buyerPhone = "buyer_phone"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        sellerId = try c.decode(String.self, forKey: .sellerId)
+        sellerName = try c.decodeIfPresent(String.self, forKey: .sellerName) ?? ""
+        items = (try? c.decodeIfPresent([OrderItem].self, forKey: .items)) ?? []
+        status = try c.decodeIfPresent(String.self, forKey: .status) ?? "placed"
+        city = try c.decodeIfPresent(String.self, forKey: .city) ?? ""
+        address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
+        createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt) ?? ""
+        totalIqd = try c.decodeIfPresent(Int.self, forKey: .totalIqd) ?? 0
+        isGift = try c.decodeIfPresent(Bool.self, forKey: .isGift) ?? false
+        recipientName = try c.decodeIfPresent(String.self, forKey: .recipientName)
+        recipientPhone = try c.decodeIfPresent(String.self, forKey: .recipientPhone)
+        giftNote = try c.decodeIfPresent(String.self, forKey: .giftNote)
+        deliveryDate = try c.decodeIfPresent(String.self, forKey: .deliveryDate)
+        deliveryWindow = try c.decodeIfPresent(String.self, forKey: .deliveryWindow) ?? "any"
+        preparationPhotoPath = try c.decodeIfPresent(String.self, forKey: .preparationPhotoPath)
+        changeRequest = try c.decodeIfPresent(String.self, forKey: .changeRequest)
+        buyerName = try c.decodeIfPresent(String.self, forKey: .buyerName) ?? ""
+        buyerPhone = try c.decodeIfPresent(String.self, forKey: .buyerPhone) ?? ""
+    }
+
+    var statusEnum: OrderStatus { OrderStatus.from(status) }
+    var shortId: String { String(id.prefix(6)).uppercased() }
+    var itemCount: Int { items.reduce(0) { $0 + $1.qty } }
+}
+
+struct NewOrder: Encodable {
+    let buyerId: String
+    let sellerId: String
+    let sellerName: String
+    let items: [OrderItem]
+    let paymentMethod = "cod"
+    let city: String
+    let address: String
+    let totalIqd: Int
+    let buyerName: String
+    let buyerPhone: String
+    let isGift: Bool
+    let recipientName: String?
+    let recipientPhone: String?
+    let giftNote: String?
+    let deliveryDate: String
+    let deliveryWindow: String
+
+    enum CodingKeys: String, CodingKey {
+        case items, city, address
+        case buyerId = "buyer_id"
+        case sellerId = "seller_id"
+        case sellerName = "seller_name"
+        case paymentMethod = "payment_method"
+        case totalIqd = "total_iqd"
+        case buyerName = "buyer_name"
+        case buyerPhone = "buyer_phone"
+        case isGift = "is_gift"
+        case recipientName = "recipient_name"
+        case recipientPhone = "recipient_phone"
+        case giftNote = "gift_note"
+        case deliveryDate = "delivery_date"
+        case deliveryWindow = "delivery_window"
+    }
+}
+
+/// What the cart-to-order step collects.
+struct CheckoutForm {
+    var isGift = false
+    var recipientName = ""
+    var recipientPhone = ""
+    var city = ""
+    var address = ""
+    var giftNote = ""
+    /// ISO date, yyyy-MM-dd
+    var deliveryDate = ""
+    /// any / morning / afternoon / evening
+    var window = "any"
+}
+
+// MARK: - AI suggestions
+
+struct Tri: Codable, Equatable {
+    var en = ""
+    var ar = ""
+    var ckb = ""
+
+    init() {}
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        en = try c.decodeIfPresent(String.self, forKey: .en) ?? ""
+        ar = try c.decodeIfPresent(String.self, forKey: .ar) ?? ""
+        ckb = try c.decodeIfPresent(String.self, forKey: .ckb) ?? ""
+    }
+    enum CodingKeys: String, CodingKey { case en, ar, ckb }
+
+    /// Language -> text, skipping empty ones.
+    var map: [String: String] {
+        var result: [String: String] = [:]
+        if !en.isEmpty { result["en"] = en }
+        if !ar.isEmpty { result["ar"] = ar }
+        if !ckb.isEmpty { result["ckb"] = ckb }
+        return result
+    }
+}
+
+struct AiCare: Codable {
+    var water = Tri()
+    var light = Tri()
+    var fertilizer = Tri()
+
+    init() {}
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        water = try c.decodeIfPresent(Tri.self, forKey: .water) ?? Tri()
+        light = try c.decodeIfPresent(Tri.self, forKey: .light) ?? Tri()
+        fertilizer = try c.decodeIfPresent(Tri.self, forKey: .fertilizer) ?? Tri()
+    }
+    enum CodingKeys: String, CodingKey { case water, light, fertilizer }
+}
+
+/// What the identify-plant function returns for one photo.
+struct PlantSuggestion: Codable {
+    var identified = false
+    var confidence = "low"
+    var plantKey = "Other"
+    var scientificName = ""
+    var name = Tri()
+    var description = Tri()
+    var care = AiCare()
+    var heightCm = 0
+
+    enum CodingKeys: String, CodingKey {
+        case identified, confidence, name, description, care
+        case plantKey = "plant_key"
+        case scientificName = "scientific_name"
+        case heightCm = "height_cm"
+    }
+
+    init() {}
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        identified = try c.decodeIfPresent(Bool.self, forKey: .identified) ?? false
+        confidence = try c.decodeIfPresent(String.self, forKey: .confidence) ?? "low"
+        plantKey = try c.decodeIfPresent(String.self, forKey: .plantKey) ?? "Other"
+        scientificName = try c.decodeIfPresent(String.self, forKey: .scientificName) ?? ""
+        name = try c.decodeIfPresent(Tri.self, forKey: .name) ?? Tri()
+        description = try c.decodeIfPresent(Tri.self, forKey: .description) ?? Tri()
+        care = try c.decodeIfPresent(AiCare.self, forKey: .care) ?? AiCare()
+        heightCm = try c.decodeIfPresent(Int.self, forKey: .heightCm) ?? 0
+    }
+}

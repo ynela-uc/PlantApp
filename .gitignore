@@ -1,0 +1,25 @@
+# --- iOS / Xcode ---
+ios/**/*.xcodeproj/xcuserdata/
+ios/**/xcuserdata/
+ios/**/*.xcworkspace/xcuserdata/
+ios/**/DerivedData/
+ios/**/.build/
+ios/**/*.swiftpm/
+ios/**/Pods/
+ios/**/*.ipa
+ios/**/*.dSYM.zip
+ios/**/*.dSYM
+
+# --- Android / Gradle ---
+android/**/build/
+android/**/.gradle/
+android/**/local.properties
+android/**/*.iml
+android/**/.idea/
+android/**/captures/
+android/**/*.apk
+android/**/*.aab
+
+# --- Common ---
+.DS_Store
+*.log

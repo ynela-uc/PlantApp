@@ -1,0 +1,395 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01EA8FD9A2C67F5F77DF5EDA /* PlantAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9F694767606DD534B7A3AE /* PlantAppApp.swift */; };
+		0C162A0E037D2B6DA504EF25 /* SellerOrdersViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85853C760C72085BD026DDA1 /* SellerOrdersViews.swift */; };
+		145FA3DF7B75ACBD449F58C5 /* ProfileTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA45DB01CB082F410E09D4A2 /* ProfileTab.swift */; };
+		178456E358493A250CC9577B /* Strings.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910D3FFD97B64163581E099A /* Strings.generated.swift */; };
+		17F972D522AC8F6BCFB5860B /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 642C6AD6B6874D0D9AFF19F8 /* CheckoutView.swift */; };
+		23F2195202CAA95FA3B9812A /* ShopViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87128761288D986C91CB6B0 /* ShopViews.swift */; };
+		254E60BD99FAC534E82A7884 /* CustomerRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 251254BDFCC0726A53D9FF0C /* CustomerRoot.swift */; };
+		2E67B2E39E704567EF4A07EE /* ResetPasswordViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726ECCFE23421D3B418E8F18 /* ResetPasswordViews.swift */; };
+		30327FB2BB24574439459817 /* Photos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1427573BB9F4ADC3A66699 /* Photos.swift */; };
+		335E837E0B2A5163ABE5D891 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765637424EC8B7BF25137E1A /* Components.swift */; };
+		43E5512C959E059163163BD3 /* CommonViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6211237ECBE89C8981333D80 /* CommonViews.swift */; };
+		4FD2A10065BF76A8F5C10AD4 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCD7F2F868EE3C29490A9BE /* BrowseView.swift */; };
+		6ABD9E01E25C2A0388C15349 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9382AAA0036AEC331B9F38D4 /* WelcomeView.swift */; };
+		6ABF58B13BA71E9DFC337DA2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D40739E8A05DE0065D8B10 /* Models.swift */; };
+		6D1F428E9873C38EDC3EB085 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0393070BEAFACA7E509983AF /* AuthView.swift */; };
+		7252B53410C873CE0A8C01AA /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C1C005E475B25D0C4B06B5 /* AppModel.swift */; };
+		7AAED677EB83BCC00DED120F /* SellerRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28DE9B183BEB6C1DBF3DA6D /* SellerRoot.swift */; };
+		83FC59A9590FF12294A98795 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9EE34AEF3DBC7BE9D7C598 /* Language.swift */; };
+		89874FE2A036739B638C8FAA /* ListingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7E35120E883E339AAA0345 /* ListingDetailView.swift */; };
+		9487BFB5D7E1BB8BF941CC52 /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C955E0BCF4C48E0D531C6376 /* CartView.swift */; };
+		A32AF90B3B66EBA6E4F1724B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FEA1846D6FAE1D3896B35C30 /* Assets.xcassets */; };
+		A695B578A190968D1FB32E8E /* SellerPlantsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCD0664E80388321314A /* SellerPlantsViews.swift */; };
+		B1A158D901BA06F81B383632 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 770C398A99BDBF505EE3E304 /* Services.swift */; };
+		C385F9A2B2D70D2CE25025C5 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE44F522D25A49D0E09099B /* Config.swift */; };
+		C708710E137E2B22E46BCC59 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14BBD6A27038F70F157593 /* Theme.swift */; };
+		CE3B257E0ACDB1FC2D1435EB /* CustomerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649D4A6E9B894432AD8B803B /* CustomerModel.swift */; };
+		D23D084A78FEBD9865101250 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959F02357D09261653F529D2 /* RootView.swift */; };
+		DC221B2418E7379197F97156 /* SellerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6CF8AE6201B336CD15E4D7 /* SellerModel.swift */; };
+		EBB245657F913BF15A7AB740 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 8B700D9445E19FAC56E075DF /* Supabase */; };
+		EDE328D4FE84AA16635EF5B8 /* OrdersViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49561A1B7970771F88AB8807 /* OrdersViews.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0393070BEAFACA7E509983AF /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		12C1C005E475B25D0C4B06B5 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		1A6CF8AE6201B336CD15E4D7 /* SellerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerModel.swift; sourceTree = "<group>"; };
+		251254BDFCC0726A53D9FF0C /* CustomerRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerRoot.swift; sourceTree = "<group>"; };
+		2D1427573BB9F4ADC3A66699 /* Photos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photos.swift; sourceTree = "<group>"; };
+		49561A1B7970771F88AB8807 /* OrdersViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersViews.swift; sourceTree = "<group>"; };
+		4F14BBD6A27038F70F157593 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		55E7D803A43F9BEAA1E5DCBD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		6211237ECBE89C8981333D80 /* CommonViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonViews.swift; sourceTree = "<group>"; };
+		642C6AD6B6874D0D9AFF19F8 /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
+		649D4A6E9B894432AD8B803B /* CustomerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerModel.swift; sourceTree = "<group>"; };
+		64D40739E8A05DE0065D8B10 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		6CCD7F2F868EE3C29490A9BE /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
+		726ECCFE23421D3B418E8F18 /* ResetPasswordViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViews.swift; sourceTree = "<group>"; };
+		765637424EC8B7BF25137E1A /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		770C398A99BDBF505EE3E304 /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
+		7A9F694767606DD534B7A3AE /* PlantAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantAppApp.swift; sourceTree = "<group>"; };
+		85853C760C72085BD026DDA1 /* SellerOrdersViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerOrdersViews.swift; sourceTree = "<group>"; };
+		910D3FFD97B64163581E099A /* Strings.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.generated.swift; sourceTree = "<group>"; };
+		9382AAA0036AEC331B9F38D4 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		959F02357D09261653F529D2 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		9C9C5D346EB8C8A03A52EEED /* SupabaseShim */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SupabaseShim; path = LocalPackages/SupabaseShim; sourceTree = SOURCE_ROOT; };
+		9CE44F522D25A49D0E09099B /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		B87128761288D986C91CB6B0 /* ShopViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViews.swift; sourceTree = "<group>"; };
+		BE5DFCD0664E80388321314A /* SellerPlantsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerPlantsViews.swift; sourceTree = "<group>"; };
+		C955E0BCF4C48E0D531C6376 /* CartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartView.swift; sourceTree = "<group>"; };
+		CA45DB01CB082F410E09D4A2 /* ProfileTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTab.swift; sourceTree = "<group>"; };
+		EC7E35120E883E339AAA0345 /* ListingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingDetailView.swift; sourceTree = "<group>"; };
+		EE9EE34AEF3DBC7BE9D7C598 /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
+		F28DE9B183BEB6C1DBF3DA6D /* SellerRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerRoot.swift; sourceTree = "<group>"; };
+		F6D257597B04F419E8AE79EF /* PlantApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PlantApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEA1846D6FAE1D3896B35C30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9DEAA8D000951C5D243D3EF7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EBB245657F913BF15A7AB740 /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		158B60D57AEEFE4A8067A99A /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				9C9C5D346EB8C8A03A52EEED /* SupabaseShim */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		3C255DA1F4E5D773EABE5703 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				0393070BEAFACA7E509983AF /* AuthView.swift */,
+				726ECCFE23421D3B418E8F18 /* ResetPasswordViews.swift */,
+				9382AAA0036AEC331B9F38D4 /* WelcomeView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		40CFDD34E7AE9000E9D58B35 /* PlantApp */ = {
+			isa = PBXGroup;
+			children = (
+				FEA1846D6FAE1D3896B35C30 /* Assets.xcassets */,
+				55E7D803A43F9BEAA1E5DCBD /* Info.plist */,
+				8F98ABFB14FB15351D3C29F5 /* App */,
+				3C255DA1F4E5D773EABE5703 /* Auth */,
+				BBDE476B053E7193EEBCF6E6 /* Core */,
+				A2D9BEF452AD7CE7BAA0061E /* Customer */,
+				A1F1F930DF6F3C24D33C4E18 /* Data */,
+				5E9D40513270084761255BC0 /* Seller */,
+			);
+			path = PlantApp;
+			sourceTree = "<group>";
+		};
+		5E9D40513270084761255BC0 /* Seller */ = {
+			isa = PBXGroup;
+			children = (
+				1A6CF8AE6201B336CD15E4D7 /* SellerModel.swift */,
+				85853C760C72085BD026DDA1 /* SellerOrdersViews.swift */,
+				BE5DFCD0664E80388321314A /* SellerPlantsViews.swift */,
+				F28DE9B183BEB6C1DBF3DA6D /* SellerRoot.swift */,
+				B87128761288D986C91CB6B0 /* ShopViews.swift */,
+			);
+			path = Seller;
+			sourceTree = "<group>";
+		};
+		695A7C531DA906F7BD1D771F = {
+			isa = PBXGroup;
+			children = (
+				158B60D57AEEFE4A8067A99A /* Packages */,
+				40CFDD34E7AE9000E9D58B35 /* PlantApp */,
+				80BB073C9B838BDBADE4DD15 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		80BB073C9B838BDBADE4DD15 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F6D257597B04F419E8AE79EF /* PlantApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8F98ABFB14FB15351D3C29F5 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				12C1C005E475B25D0C4B06B5 /* AppModel.swift */,
+				7A9F694767606DD534B7A3AE /* PlantAppApp.swift */,
+				959F02357D09261653F529D2 /* RootView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A1F1F930DF6F3C24D33C4E18 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				64D40739E8A05DE0065D8B10 /* Models.swift */,
+				770C398A99BDBF505EE3E304 /* Services.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		A2D9BEF452AD7CE7BAA0061E /* Customer */ = {
+			isa = PBXGroup;
+			children = (
+				6CCD7F2F868EE3C29490A9BE /* BrowseView.swift */,
+				C955E0BCF4C48E0D531C6376 /* CartView.swift */,
+				642C6AD6B6874D0D9AFF19F8 /* CheckoutView.swift */,
+				6211237ECBE89C8981333D80 /* CommonViews.swift */,
+				649D4A6E9B894432AD8B803B /* CustomerModel.swift */,
+				251254BDFCC0726A53D9FF0C /* CustomerRoot.swift */,
+				EC7E35120E883E339AAA0345 /* ListingDetailView.swift */,
+				49561A1B7970771F88AB8807 /* OrdersViews.swift */,
+				CA45DB01CB082F410E09D4A2 /* ProfileTab.swift */,
+			);
+			path = Customer;
+			sourceTree = "<group>";
+		};
+		BBDE476B053E7193EEBCF6E6 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				765637424EC8B7BF25137E1A /* Components.swift */,
+				9CE44F522D25A49D0E09099B /* Config.swift */,
+				EE9EE34AEF3DBC7BE9D7C598 /* Language.swift */,
+				2D1427573BB9F4ADC3A66699 /* Photos.swift */,
+				910D3FFD97B64163581E099A /* Strings.generated.swift */,
+				4F14BBD6A27038F70F157593 /* Theme.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C4B5FC24DB6BD9E323B1BA9D /* PlantApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9EAE289B0BD2709D84E067C3 /* Build configuration list for PBXNativeTarget "PlantApp" */;
+			buildPhases = (
+				1185263A523A696DBF2A1A68 /* Sources */,
+				0B82D93C82CEFF10BA083BC9 /* Resources */,
+				9DEAA8D000951C5D243D3EF7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PlantApp;
+			packageProductDependencies = (
+				8B700D9445E19FAC56E075DF /* Supabase */,
+			);
+			productName = PlantApp;
+			productReference = F6D257597B04F419E8AE79EF /* PlantApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		81F7E46584FB19D20256C52D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					C4B5FC24DB6BD9E323B1BA9D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A55014030D51416BDFD40B3C /* Build configuration list for PBXProject "PlantApp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 695A7C531DA906F7BD1D771F;
+			packageReferences = (
+				E4307E364C39B750FD3C1D0C /* XCLocalSwiftPackageReference "LocalPackages/SupabaseShim" */,
+			);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C4B5FC24DB6BD9E323B1BA9D /* PlantApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0B82D93C82CEFF10BA083BC9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A32AF90B3B66EBA6E4F1724B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1185263A523A696DBF2A1A68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7252B53410C873CE0A8C01AA /* AppModel.swift in Sources */,
+				6D1F428E9873C38EDC3EB085 /* AuthView.swift in Sources */,
+				4FD2A10065BF76A8F5C10AD4 /* BrowseView.swift in Sources */,
+				9487BFB5D7E1BB8BF941CC52 /* CartView.swift in Sources */,
+				17F972D522AC8F6BCFB5860B /* CheckoutView.swift in Sources */,
+				43E5512C959E059163163BD3 /* CommonViews.swift in Sources */,
+				335E837E0B2A5163ABE5D891 /* Components.swift in Sources */,
+				C385F9A2B2D70D2CE25025C5 /* Config.swift in Sources */,
+				CE3B257E0ACDB1FC2D1435EB /* CustomerModel.swift in Sources */,
+				254E60BD99FAC534E82A7884 /* CustomerRoot.swift in Sources */,
+				83FC59A9590FF12294A98795 /* Language.swift in Sources */,
+				89874FE2A036739B638C8FAA /* ListingDetailView.swift in Sources */,
+				6ABF58B13BA71E9DFC337DA2 /* Models.swift in Sources */,
+				EDE328D4FE84AA16635EF5B8 /* OrdersViews.swift in Sources */,
+				30327FB2BB24574439459817 /* Photos.swift in Sources */,
+				01EA8FD9A2C67F5F77DF5EDA /* PlantAppApp.swift in Sources */,
+				145FA3DF7B75ACBD449F58C5 /* ProfileTab.swift in Sources */,
+				2E67B2E39E704567EF4A07EE /* ResetPasswordViews.swift in Sources */,
+				D23D084A78FEBD9865101250 /* RootView.swift in Sources */,
+				DC221B2418E7379197F97156 /* SellerModel.swift in Sources */,
+				0C162A0E037D2B6DA504EF25 /* SellerOrdersViews.swift in Sources */,
+				A695B578A190968D1FB32E8E /* SellerPlantsViews.swift in Sources */,
+				7AAED677EB83BCC00DED120F /* SellerRoot.swift in Sources */,
+				B1A158D901BA06F81B383632 /* Services.swift in Sources */,
+				23F2195202CAA95FA3B9812A /* ShopViews.swift in Sources */,
+				178456E358493A250CC9577B /* Strings.generated.swift in Sources */,
+				C708710E137E2B22E46BCC59 /* Theme.swift in Sources */,
+				6ABD9E01E25C2A0388C15349 /* WelcomeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		20B094C872213C724D72CA4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = PlantApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.plantapp.iraq.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		54EFD6F4B6F5B22F095E3864 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 0.3.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		64C1B90694D2E13F92372D81 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = PlantApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.plantapp.iraq.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		739948BC471A2EE505FAB02F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 0.3.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9EAE289B0BD2709D84E067C3 /* Build configuration list for PBXNativeTarget "PlantApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64C1B90694D2E13F92372D81 /* Debug */,
+				20B094C872213C724D72CA4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A55014030D51416BDFD40B3C /* Build configuration list for PBXProject "PlantApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				739948BC471A2EE505FAB02F /* Debug */,
+				54EFD6F4B6F5B22F095E3864 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E4307E364C39B750FD3C1D0C /* XCLocalSwiftPackageReference "LocalPackages/SupabaseShim" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = LocalPackages/SupabaseShim;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8B700D9445E19FAC56E075DF /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 81F7E46584FB19D20256C52D /* Project object */;
+}

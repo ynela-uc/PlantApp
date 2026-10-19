@@ -1,0 +1,62 @@
+# XcodeGen project definition. On the Mac:  brew install xcodegen && cd ios && xcodegen generate && open PlantApp.xcodeproj
+name: PlantApp
+# deploymentTarget iOS lowered from 17.0 to 16.0 so it can install on this
+# Mac's simulators: Xcode 14.2 (macOS 12 Monterey's ceiling) only ships the
+# iOS 16.2 SDK. Restore to 17.0 on a Mac with Xcode 16+.
+options:
+  bundleIdPrefix: com.plantapp
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.3.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # Avoids an Xcode 14.2 CreateUniversalBinary bug (produces a malformed
+    # "Multiple commands produce '.../.app'" error) when the arm64+x86_64
+    # simulator slices are merged. Xcode's own project template sets this for
+    # Debug by default; XcodeGen does not, so it is made explicit here.
+    ONLY_ACTIVE_ARCH: "YES"
+packages:
+  # LOCAL STAND-IN while building on this Mac: Xcode 14.2 (the max macOS 12
+  # Monterey supports) has Swift 5.7, but every supabase-swift release in the
+  # required range (2.55.4..<3.0.0) needs swift-tools-version 6.1, which Swift
+  # 5.7 cannot even parse. See LocalPackages/SupabaseShim/Sources/Supabase/Supabase.swift.
+  # On a Mac with Xcode 16+, delete the `path:` line below and restore:
+  #   url: https://github.com/supabase/supabase-swift
+  #   from: 2.55.4
+  Supabase:
+    path: LocalPackages/SupabaseShim
+targets:
+  PlantApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: PlantApp
+    dependencies:
+      - package: Supabase
+    info:
+      path: PlantApp/Info.plist
+      properties:
+        CFBundleDisplayName: PlantApp
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSCameraUsageDescription: PlantApp uses the camera so sellers can photograph plants and prepared orders.
+        NSPhotoLibraryUsageDescription: PlantApp lets sellers choose plant and order photos from the photo library.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.plantapp.iraq
+            CFBundleURLSchemes:
+              - plantapp
+    settings:
+      base:
+        PRODUCT_NAME: "$(TARGET_NAME)"
+        PRODUCT_BUNDLE_IDENTIFIER: com.plantapp.iraq.ios
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+        # Set your team once in Xcode (Signing & Capabilities), or here:
+        DEVELOPMENT_TEAM: ""
