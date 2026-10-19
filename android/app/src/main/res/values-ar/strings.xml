@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PlantApp</string>
+
+    <string name="welcome_title">أهلاً بك في PlantApp</string>
+    <string name="welcome_tagline">كل ما تحتاجه نباتاتك، في مكان واحد</string>
+    <string name="role_prompt">كيف تريد المتابعة؟</string>
+
+    <string name="role_customer_title">المتابعة كزبون</string>
+    <string name="role_customer_desc">اعثر على النباتات ونصائح العناية والبائعين القريبين منك</string>
+    <string name="role_seller_title">المتابعة كبائع</string>
+    <string name="role_seller_desc">اعرض نباتاتك وأدر طلباتك</string>
+
+    <string name="back">رجوع</string>
+    <string name="language_label">اللغة</string>
+
+    <string name="auth_title_customer">زبون</string>
+    <string name="auth_title_seller">بائع</string>
+    <string name="auth_tab_signin">تسجيل الدخول</string>
+    <string name="auth_tab_signup">إنشاء حساب</string>
+
+    <string name="field_email">البريد الإلكتروني</string>
+    <string name="field_password">كلمة المرور</string>
+    <string name="field_first_name">الاسم الأول</string>
+    <string name="field_last_name">اسم العائلة</string>
+    <string name="field_phone">رقم الهاتف</string>
+    <string name="field_address">العنوان</string>
+    <string name="field_shop_name">اسم المتجر</string>
+    <string name="field_city">المدينة</string>
+
+    <string name="action_signin">تسجيل الدخول</string>
+    <string name="action_signup">إنشاء حساب</string>
+    <string name="action_signout">تسجيل الخروج</string>
+
+    <string name="err_required">يرجى تعبئة جميع الحقول.</string>
+    <string name="err_password_short">يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.</string>
+    <string name="err_invalid_credentials">البريد الإلكتروني أو كلمة المرور غير صحيحة.</string>
+    <string name="err_email_taken">هذا البريد الإلكتروني مسجّل مسبقًا. جرّب تسجيل الدخول.</string>
+    <string name="err_network">لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى.</string>
+    <string name="err_generic">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
+    <string name="err_wrong_role_customer">هذا البريد الإلكتروني يخص حساب زبون. ارجع وتابع كزبون.</string>
+    <string name="err_wrong_role_seller">هذا البريد الإلكتروني يخص حساب بائع. ارجع وتابع كبائع.</string>
+
+    <string name="home_greeting">أهلاً، %1$s</string>
+    <string name="home_customer_body">سوقك قادم قريبًا: تصفّح النباتات وأضفها إلى السلة واطلبها.</string>
+    <string name="home_seller_body">لوحة متجرك قادمة قريبًا: أضف النباتات بالكاميرا وأدر الطلبات.</string>
+
+    <string name="nav_browse">تصفّح</string>
+    <string name="nav_cart">السلة</string>
+    <string name="nav_profile">حسابي</string>
+
+    <string name="browse_search_hint">ابحث عن نبتة</string>
+    <string name="browse_delivering_to">التوصيل إلى</string>
+    <string name="browse_all">الكل</string>
+    <string name="browse_empty">لا توجد نباتات متاحة للتوصيل إلى %1$s حاليًا.</string>
+    <string name="browse_load_failed">تعذّر تحميل النباتات. تحقق من اتصالك.</string>
+    <string name="retry">إعادة المحاولة</string>
+
+    <string name="price_format">%1$s د.ع</string>
+    <string name="delivers_nationwide">يوصل لجميع المحافظات</string>
+    <string name="delivers_local">توصيل محلي</string>
+    <string name="delivers_to">يوصل إلى: %1$s</string>
+    <string name="sold_by">البائع: %1$s</string>
+
+    <string name="detail_care">دليل العناية</string>
+    <string name="care_water">الري</string>
+    <string name="care_light">الإضاءة</string>
+    <string name="care_fertilizer">السماد</string>
+    <string name="detail_size">الحجم</string>
+    <string name="size_height">الارتفاع %1$d سم</string>
+    <string name="add_to_cart">أضف إلى السلة</string>
+    <string name="in_cart">%1$d في السلة</string>
+
+    <string name="cart_title">سلتك</string>
+    <string name="cart_empty">سلتك فارغة.</string>
+    <string name="cart_empty_hint">تصفّح النباتات وأضف ما يعجبك.</string>
+    <string name="cart_total">المجموع</string>
+    <string name="cart_checkout_soon">إتمام الطلب قادم قريبًا</string>
+
+    <string name="cart_checkout">إتمام الطلب</string>
+    <string name="nav_orders">الطلبات</string>
+
+    <string name="checkout_title">إتمام الطلب</string>
+    <string name="checkout_who">لمن هذا الطلب؟</string>
+    <string name="checkout_for_me">لي</string>
+    <string name="checkout_gift">هدية</string>
+    <string name="recipient_name">اسم المستلم</string>
+    <string name="recipient_phone">هاتف المستلم</string>
+    <string name="gift_note">رسالة الهدية (اختياري)</string>
+    <string name="checkout_delivery">التوصيل</string>
+    <string name="delivery_date">تاريخ التوصيل</string>
+    <string name="delivery_today">اليوم</string>
+    <string name="delivery_tomorrow">غدًا</string>
+    <string name="delivery_window">وقت اليوم</string>
+    <string name="window_any">أي وقت</string>
+    <string name="window_morning">صباحًا</string>
+    <string name="window_afternoon">ظهرًا</string>
+    <string name="window_evening">مساءً</string>
+    <string name="checkout_payment">الدفع</string>
+    <string name="pay_cod">الدفع عند الاستلام</string>
+    <string name="pay_card_soon">بطاقة (قريبًا)</string>
+    <string name="checkout_summary">ملخص الطلب</string>
+    <string name="place_order">تأكيد الطلب</string>
+    <string name="err_checkout_fields">يرجى إدخال عنوان التوصيل وبيانات المستلم.</string>
+    <string name="err_not_deliverable">%1$s لا يوصل إلى %2$s. احذف هذه النباتات أو اختر مدينة أخرى.</string>
+
+    <string name="placed_title">تم تقديم الطلب!</string>
+    <string name="placed_body">سيجهّز المتجر نبتتك ويرسل لك صورة لتوافق عليها قبل خروجها للتوصيل. تدفع نقدًا عند الاستلام.</string>
+    <string name="placed_view_orders">عرض طلباتي</string>
+    <string name="placed_keep_shopping">متابعة التسوق</string>
+
+    <string name="orders_title">طلباتي</string>
+    <string name="orders_empty">لا توجد طلبات بعد.</string>
+    <string name="orders_empty_hint">ستظهر طلباتك هنا.</string>
+    <string name="orders_load_failed">تعذّر تحميل طلباتك. تحقق من اتصالك.</string>
+    <string name="order_number">الطلب رقم %1$s</string>
+    <string name="order_items">المنتجات</string>
+    <string name="order_gift_for">هدية إلى %1$s</string>
+
+    <string name="status_placed">تم تقديم الطلب</string>
+    <string name="status_preparing">قيد التجهيز</string>
+    <string name="status_photo_sent">الصورة جاهزة لموافقتك</string>
+    <string name="status_approved">تمت الموافقة</string>
+    <string name="status_out_for_delivery">في الطريق إليك</string>
+    <string name="status_delivered">تم التوصيل</string>
+    <string name="status_cancelled">ملغى</string>
+
+    <string name="forgot_password">نسيت كلمة المرور؟</string>
+    <string name="reset_title">إعادة تعيين كلمة المرور</string>
+    <string name="reset_intro">أدخل البريد الإلكتروني لحسابك وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.</string>
+    <string name="reset_send_link">إرسال رابط الاستعادة</string>
+    <string name="reset_link_sent">أرسلنا رابطًا إلى %1$s. افتح الرسالة على هذا الهاتف واضغط على الرابط لاختيار كلمة مرور جديدة.</string>
+    <string name="reset_resend">إرسال الرابط مرة أخرى</string>
+    <string name="field_new_password">كلمة المرور الجديدة</string>
+    <string name="set_password_title">اختر كلمة مرور جديدة</string>
+    <string name="set_password_intro">أدخل كلمة مرور جديدة لحسابك.</string>
+    <string name="set_password_action">حفظ كلمة المرور</string>
+    <string name="err_code_invalid">الرمز غير صحيح أو منتهي الصلاحية.</string>
+    <string name="err_link_expired">انتهت صلاحية هذا الرابط أو سبق استخدامه. يرجى طلب رابط جديد.</string>
+
+    <string name="nav_seller_orders">الطلبات</string>
+    <string name="nav_my_plants">نباتاتي</string>
+    <string name="nav_shop">متجري</string>
+    <string name="seller_load_failed">تعذّر تحميل متجرك. تحقق من اتصالك.</string>
+
+    <string name="seller_orders_title">الطلبات</string>
+    <string name="seller_new_orders">%1$d جديد</string>
+    <string name="seller_orders_empty">لا توجد طلبات بعد.</string>
+    <string name="seller_orders_empty_hint">ستظهر هنا الطلبات الجديدة من الزبائن.</string>
+    <string name="seller_customer">الزبون</string>
+    <string name="seller_collect">استلم %1$s نقدًا عند التسليم</string>
+    <string name="seller_call">اتصال</string>
+    <string name="seller_photo_sent">الصورة المرسلة إلى الزبون</string>
+    <string name="seller_change_requested">طلب الزبون تعديلًا:</string>
+    <string name="seller_waiting_approval">بانتظار موافقة الزبون على الصورة.</string>
+    <string name="seller_action_failed">تعذّر تحديث الطلب. يرجى المحاولة مرة أخرى.</string>
+    <string name="act_accept">قبول الطلب</string>
+    <string name="act_decline">رفض</string>
+    <string name="act_cancel_order">إلغاء الطلب</string>
+    <string name="act_out_for_delivery">في الطريق للتوصيل</string>
+    <string name="act_mark_delivered">تم التسليم</string>
+    <string name="photo_prompt_title">صورة الطلب بعد التجهيز</string>
+    <string name="photo_prompt_body">أرِ الزبون بالضبط ما سيصله. يوافق عليه قبل أن يخرج للتوصيل.</string>
+    <string name="photo_take">التقاط صورة</string>
+    <string name="photo_pick">اختيار من المعرض</string>
+    <string name="photo_uploading">جارٍ رفع الصورة…</string>
+
+    <string name="action_save">حفظ</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_delete">حذف</string>
+
+    <string name="plants_title">نباتاتي</string>
+    <string name="plants_add">إضافة نبتة</string>
+    <string name="plants_empty">لا توجد نباتات معروضة بعد.</string>
+    <string name="plants_empty_hint">أضف أول نبتة: التقط صورة ويملأ الذكاء الاصطناعي التفاصيل.</string>
+    <string name="plant_in_stock">متوفر</string>
+    <string name="plant_out_of_stock">غير متوفر</string>
+    <string name="plant_delete_title">حذف هذه النبتة؟</string>
+    <string name="plant_delete_text">ستختفي من السوق. لا يمكن التراجع عن ذلك.</string>
+
+    <string name="editor_title_new">إضافة نبتة</string>
+    <string name="editor_title_edit">تعديل النبتة</string>
+    <string name="editor_photo_hint">التقط صورة لنبتتك وسيملأ الذكاء الاصطناعي التفاصيل لك.</string>
+    <string name="editor_ai_button">املأ بالذكاء الاصطناعي</string>
+    <string name="editor_ai_busy">جارٍ فحص صورتك…</string>
+    <string name="editor_ai_done">تم! راجع التفاصيل أدناه وحدّد سعرك.</string>
+    <string name="editor_ai_low">لست متأكدًا جدًا من هذه النبتة. يرجى مراجعة الاسم والتفاصيل.</string>
+    <string name="editor_ai_not_plant">لم أستطع رؤية نبتة في هذه الصورة. جرّب صورة أوضح أو املأ التفاصيل بنفسك.</string>
+    <string name="editor_ai_not_configured">الذكاء الاصطناعي غير مفعّل بعد. يمكنك ملء التفاصيل بنفسك.</string>
+    <string name="editor_ai_limit">وصلت إلى حد الذكاء الاصطناعي لهذا اليوم. يمكنك ملء التفاصيل بنفسك.</string>
+    <string name="editor_ai_failed">تعذّر على الذكاء الاصطناعي قراءة الصورة. حاول مرة أخرى أو املأ التفاصيل بنفسك.</string>
+    <string name="editor_ai_note">تفاصيل الذكاء الاصطناعي نقطة بداية. يمكنك تغيير أي شيء.</string>
+    <string name="editor_error_required">يرجى إدخال اسم النبتة والسعر.</string>
+    <string name="editor_error_save">تعذّر الحفظ. يرجى المحاولة مرة أخرى.</string>
+    <string name="field_plant_name">اسم النبتة</string>
+    <string name="field_scientific">الاسم العلمي (اختياري)</string>
+    <string name="field_description">الوصف</string>
+    <string name="field_water">الري</string>
+    <string name="field_light">الإضاءة</string>
+    <string name="field_fertilizer">السماد</string>
+    <string name="field_height">الارتفاع (سم)</string>
+    <string name="field_price">السعر (د.ع)</string>
+    <string name="field_bio">نبذة عن متجرك</string>
+
+    <string name="shop_delivery">التوصيل</string>
+    <string name="shop_owner">المالك: %1$s</string>
+    <string name="shop_edit">تعديل بيانات المتجر</string>
+    <string name="shop_scope_local">محلي فقط</string>
+    <string name="shop_scope_nationwide">جميع المحافظات</string>
+    <string name="shop_delivers_to">المدن التي توصل إليها</string>
+
+    <string name="review_title">نبتتك جاهزة. يرجى مراجعة الصورة.</string>
+    <string name="review_body">هذا بالضبط ما سيرسله لك المتجر.</string>
+    <string name="review_approve">موافقة</string>
+    <string name="review_change">طلب تعديل</string>
+    <string name="review_you_asked">طلبت تعديلًا:</string>
+    <string name="review_change_hint">ماذا يجب أن يغيّر المتجر؟</string>
+    <string name="review_change_send">إرسال</string>
+
+    <string name="city_baghdad">بغداد</string>
+    <string name="city_erbil">أربيل</string>
+    <string name="city_basra">البصرة</string>
+    <string name="city_mosul">الموصل</string>
+    <string name="city_najaf">النجف</string>
+    <string name="city_sulaymaniyah">السليمانية</string>
+    <string name="city_karbala">كربلاء</string>
+    <string name="city_duhok">دهوك</string>
+</resources>

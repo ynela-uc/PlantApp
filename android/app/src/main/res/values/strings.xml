@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PlantApp</string>
+
+    <string name="welcome_title">Welcome to PlantApp</string>
+    <string name="welcome_tagline">Everything your plants need, in one place</string>
+    <string name="role_prompt">How would you like to continue?</string>
+
+    <string name="role_customer_title">Continue as Customer</string>
+    <string name="role_customer_desc">Find plants, care tips and sellers near you</string>
+    <string name="role_seller_title">Continue as Seller</string>
+    <string name="role_seller_desc">List your plants and manage your orders</string>
+
+    <string name="back">Back</string>
+    <string name="language_label">Language</string>
+
+    <string name="auth_title_customer">Customer</string>
+    <string name="auth_title_seller">Seller</string>
+    <string name="auth_tab_signin">Sign in</string>
+    <string name="auth_tab_signup">Create account</string>
+
+    <string name="field_email">Email</string>
+    <string name="field_password">Password</string>
+    <string name="field_first_name">First name</string>
+    <string name="field_last_name">Last name</string>
+    <string name="field_phone">Phone number</string>
+    <string name="field_address">Address</string>
+    <string name="field_shop_name">Shop name</string>
+    <string name="field_city">City</string>
+
+    <string name="action_signin">Sign in</string>
+    <string name="action_signup">Create account</string>
+    <string name="action_signout">Sign out</string>
+
+    <string name="err_required">Please fill in all fields.</string>
+    <string name="err_password_short">Password must be at least 6 characters.</string>
+    <string name="err_invalid_credentials">Wrong email or password.</string>
+    <string name="err_email_taken">This email is already registered. Try signing in.</string>
+    <string name="err_network">No internet connection. Check your network and try again.</string>
+    <string name="err_generic">Something went wrong. Please try again.</string>
+    <string name="err_wrong_role_customer">This email belongs to a customer account. Go back and continue as Customer.</string>
+    <string name="err_wrong_role_seller">This email belongs to a seller account. Go back and continue as Seller.</string>
+
+    <string name="home_greeting">Hello, %1$s</string>
+    <string name="home_customer_body">Your marketplace is coming next: browse plants, add to cart and order.</string>
+    <string name="home_seller_body">Your shop dashboard is coming next: add plants with the camera and manage orders.</string>
+
+    <string name="nav_browse">Browse</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_profile">Profile</string>
+
+    <string name="browse_search_hint">Search plants</string>
+    <string name="browse_delivering_to">Delivering to</string>
+    <string name="browse_all">All</string>
+    <string name="browse_empty">No plants available for delivery to %1$s yet.</string>
+    <string name="browse_load_failed">Could not load plants. Check your connection.</string>
+    <string name="retry">Try again</string>
+
+    <string name="price_format">%1$s IQD</string>
+    <string name="delivers_nationwide">Delivers nationwide</string>
+    <string name="delivers_local">Local delivery</string>
+    <string name="delivers_to">Delivers to: %1$s</string>
+    <string name="sold_by">Sold by %1$s</string>
+
+    <string name="detail_care">Care guide</string>
+    <string name="care_water">Water</string>
+    <string name="care_light">Light</string>
+    <string name="care_fertilizer">Fertilizer</string>
+    <string name="detail_size">Size</string>
+    <string name="size_height">Height %1$d cm</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="in_cart">%1$d in cart</string>
+
+    <string name="cart_title">Your cart</string>
+    <string name="cart_empty">Your cart is empty.</string>
+    <string name="cart_empty_hint">Browse plants and add the ones you like.</string>
+    <string name="cart_total">Total</string>
+    <string name="cart_checkout_soon">Checkout is coming next</string>
+
+    <string name="cart_checkout">Checkout</string>
+    <string name="nav_orders">Orders</string>
+
+    <string name="checkout_title">Checkout</string>
+    <string name="checkout_who">Who is it for?</string>
+    <string name="checkout_for_me">For me</string>
+    <string name="checkout_gift">A gift</string>
+    <string name="recipient_name">Recipient name</string>
+    <string name="recipient_phone">Recipient phone</string>
+    <string name="gift_note">Gift note (optional)</string>
+    <string name="checkout_delivery">Delivery</string>
+    <string name="delivery_date">Delivery date</string>
+    <string name="delivery_today">Today</string>
+    <string name="delivery_tomorrow">Tomorrow</string>
+    <string name="delivery_window">Time of day</string>
+    <string name="window_any">Any time</string>
+    <string name="window_morning">Morning</string>
+    <string name="window_afternoon">Afternoon</string>
+    <string name="window_evening">Evening</string>
+    <string name="checkout_payment">Payment</string>
+    <string name="pay_cod">Cash on delivery</string>
+    <string name="pay_card_soon">Card (coming soon)</string>
+    <string name="checkout_summary">Order summary</string>
+    <string name="place_order">Place order</string>
+    <string name="err_checkout_fields">Please fill in the delivery address and the recipient details.</string>
+    <string name="err_not_deliverable">%1$s does not deliver to %2$s. Remove those plants or choose another city.</string>
+
+    <string name="placed_title">Order placed!</string>
+    <string name="placed_body">The shop will prepare your plant and send you a photo to approve before it goes out for delivery. You pay cash when it arrives.</string>
+    <string name="placed_view_orders">View my orders</string>
+    <string name="placed_keep_shopping">Keep shopping</string>
+
+    <string name="orders_title">My orders</string>
+    <string name="orders_empty">No orders yet.</string>
+    <string name="orders_empty_hint">Your orders will appear here.</string>
+    <string name="orders_load_failed">Could not load your orders. Check your connection.</string>
+    <string name="order_number">Order #%1$s</string>
+    <string name="order_items">Items</string>
+    <string name="order_gift_for">Gift for %1$s</string>
+
+    <string name="status_placed">Order placed</string>
+    <string name="status_preparing">Being prepared</string>
+    <string name="status_photo_sent">Photo ready for your approval</string>
+    <string name="status_approved">Approved</string>
+    <string name="status_out_for_delivery">Out for delivery</string>
+    <string name="status_delivered">Delivered</string>
+    <string name="status_cancelled">Cancelled</string>
+
+    <string name="forgot_password">Forgot password?</string>
+    <string name="reset_title">Reset password</string>
+    <string name="reset_intro">Enter the email of your account and we will send you a link to reset your password.</string>
+    <string name="reset_send_link">Send reset link</string>
+    <string name="reset_link_sent">We sent a link to %1$s. Open the email on this phone and tap the link to choose a new password.</string>
+    <string name="reset_resend">Send the link again</string>
+    <string name="field_new_password">New password</string>
+    <string name="set_password_title">Choose a new password</string>
+    <string name="set_password_intro">Enter a new password for your account.</string>
+    <string name="set_password_action">Save password</string>
+    <string name="err_code_invalid">That code is wrong or has expired.</string>
+    <string name="err_link_expired">That link has expired or was already used. Please request a new reset link.</string>
+
+    <string name="nav_seller_orders">Orders</string>
+    <string name="nav_my_plants">My plants</string>
+    <string name="nav_shop">My shop</string>
+    <string name="seller_load_failed">Could not load your shop. Check your connection.</string>
+
+    <string name="seller_orders_title">Orders</string>
+    <string name="seller_new_orders">%1$d new</string>
+    <string name="seller_orders_empty">No orders yet.</string>
+    <string name="seller_orders_empty_hint">New orders from customers will appear here.</string>
+    <string name="seller_customer">Customer</string>
+    <string name="seller_collect">Collect %1$s in cash on delivery</string>
+    <string name="seller_call">Call</string>
+    <string name="seller_photo_sent">Photo sent to the customer</string>
+    <string name="seller_change_requested">The customer asked for a change:</string>
+    <string name="seller_waiting_approval">Waiting for the customer to approve the photo.</string>
+    <string name="seller_action_failed">Could not update the order. Please try again.</string>
+    <string name="act_accept">Accept order</string>
+    <string name="act_decline">Decline</string>
+    <string name="act_cancel_order">Cancel order</string>
+    <string name="act_out_for_delivery">Out for delivery</string>
+    <string name="act_mark_delivered">Mark as delivered</string>
+    <string name="photo_prompt_title">Photo of the prepared order</string>
+    <string name="photo_prompt_body">Show the customer exactly what will be delivered. They approve it before it goes out.</string>
+    <string name="photo_take">Take photo</string>
+    <string name="photo_pick">Choose from gallery</string>
+    <string name="photo_uploading">Uploading photo…</string>
+
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+
+    <string name="plants_title">My plants</string>
+    <string name="plants_add">Add a plant</string>
+    <string name="plants_empty">You have no plants listed yet.</string>
+    <string name="plants_empty_hint">Add your first plant: take a photo and the AI fills in the details.</string>
+    <string name="plant_in_stock">In stock</string>
+    <string name="plant_out_of_stock">Out of stock</string>
+    <string name="plant_delete_title">Delete this plant?</string>
+    <string name="plant_delete_text">It will disappear from the marketplace. This cannot be undone.</string>
+
+    <string name="editor_title_new">Add a plant</string>
+    <string name="editor_title_edit">Edit plant</string>
+    <string name="editor_photo_hint">Take a photo of your plant and the AI will fill in the details for you.</string>
+    <string name="editor_ai_button">Fill in with AI</string>
+    <string name="editor_ai_busy">Looking at your photo…</string>
+    <string name="editor_ai_done">Done! Please check the details below and set your price.</string>
+    <string name="editor_ai_low">I am not very sure about this one. Please check the name and details.</string>
+    <string name="editor_ai_not_plant">I could not see a plant in this photo. Try a clearer photo, or fill in the details yourself.</string>
+    <string name="editor_ai_not_configured">The AI is not switched on yet. You can fill in the details yourself.</string>
+    <string name="editor_ai_limit">You have reached today\'s AI limit. You can fill in the details yourself.</string>
+    <string name="editor_ai_failed">The AI could not read the photo. Try again, or fill in the details yourself.</string>
+    <string name="editor_ai_note">The AI details are a starting point. You can change anything.</string>
+    <string name="editor_error_required">Please enter the plant name and a price.</string>
+    <string name="editor_error_save">Could not save. Please try again.</string>
+    <string name="field_plant_name">Plant name</string>
+    <string name="field_scientific">Scientific name (optional)</string>
+    <string name="field_description">Description</string>
+    <string name="field_water">Watering</string>
+    <string name="field_light">Light</string>
+    <string name="field_fertilizer">Fertilizer</string>
+    <string name="field_height">Height (cm)</string>
+    <string name="field_price">Price (IQD)</string>
+    <string name="field_bio">About your shop</string>
+
+    <string name="shop_delivery">Delivery</string>
+    <string name="shop_owner">Owner: %1$s</string>
+    <string name="shop_edit">Edit shop details</string>
+    <string name="shop_scope_local">Local only</string>
+    <string name="shop_scope_nationwide">Nationwide</string>
+    <string name="shop_delivers_to">Cities you deliver to</string>
+
+    <string name="review_title">Your plant is ready. Please check the photo.</string>
+    <string name="review_body">This is exactly what the shop will send you.</string>
+    <string name="review_approve">Approve</string>
+    <string name="review_change">Ask for a change</string>
+    <string name="review_you_asked">You asked for a change:</string>
+    <string name="review_change_hint">What should the shop change?</string>
+    <string name="review_change_send">Send</string>
+
+    <string name="city_baghdad">Baghdad</string>
+    <string name="city_erbil">Erbil</string>
+    <string name="city_basra">Basra</string>
+    <string name="city_mosul">Mosul</string>
+    <string name="city_najaf">Najaf</string>
+    <string name="city_sulaymaniyah">Sulaymaniyah</string>
+    <string name="city_karbala">Karbala</string>
+    <string name="city_duhok">Duhok</string>
+</resources>

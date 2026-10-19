@@ -14,6 +14,7 @@ ios/**/*.dSYM
 android/**/build/
 android/**/.gradle/
 android/**/local.properties
+android/env.ps1
 android/**/*.iml
 android/**/.idea/
 android/**/captures/

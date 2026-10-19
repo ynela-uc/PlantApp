@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Central Kurdish (Sorani). Needs review by a native speaker before release. -->
+<resources>
+    <string name="app_name">PlantApp</string>
+
+    <string name="welcome_title">بەخێربێیت بۆ PlantApp</string>
+    <string name="welcome_tagline">هەموو ئەو شتانەی ڕووەکەکانت پێویستیانە، لە یەک شوێندا</string>
+    <string name="role_prompt">چۆن دەتەوێت بەردەوام بیت؟</string>
+
+    <string name="role_customer_title">بەردەوامبوون وەک کڕیار</string>
+    <string name="role_customer_desc">ڕووەک، ئامۆژگاری چاودێری و فرۆشیارە نزیکەکان بدۆزەرەوە</string>
+    <string name="role_seller_title">بەردەوامبوون وەک فرۆشیار</string>
+    <string name="role_seller_desc">ڕووەکەکانت بخەرە ڕوو و داواکارییەکانت بەڕێوەببە</string>
+
+    <string name="back">گەڕانەوە</string>
+    <string name="language_label">زمان</string>
+
+    <string name="auth_title_customer">کڕیار</string>
+    <string name="auth_title_seller">فرۆشیار</string>
+    <string name="auth_tab_signin">چوونەژوورەوە</string>
+    <string name="auth_tab_signup">دروستکردنی هەژمار</string>
+
+    <string name="field_email">ئیمەیڵ</string>
+    <string name="field_password">وشەی نهێنی</string>
+    <string name="field_first_name">ناوی یەکەم</string>
+    <string name="field_last_name">پاشناو</string>
+    <string name="field_phone">ژمارەی تەلەفۆن</string>
+    <string name="field_address">ناونیشان</string>
+    <string name="field_shop_name">ناوی دوکان</string>
+    <string name="field_city">شار</string>
+
+    <string name="action_signin">چوونەژوورەوە</string>
+    <string name="action_signup">دروستکردنی هەژمار</string>
+    <string name="action_signout">چوونەدەرەوە</string>
+
+    <string name="err_required">تکایە هەموو خانەکان پڕبکەرەوە.</string>
+    <string name="err_password_short">وشەی نهێنی دەبێت لانیکەم 6 پیت بێت.</string>
+    <string name="err_invalid_credentials">ئیمەیڵ یان وشەی نهێنی هەڵەیە.</string>
+    <string name="err_email_taken">ئەم ئیمەیڵە پێشتر تۆمارکراوە. تکایە بچۆ ژوورەوە.</string>
+    <string name="err_network">هیچ ئینتەرنێتێک نییە. تۆڕەکەت بپشکنە و دووبارە هەوڵبدەرەوە.</string>
+    <string name="err_generic">هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵبدەرەوە.</string>
+    <string name="err_wrong_role_customer">ئەم ئیمەیڵە هەژماری کڕیارە. بگەڕێوە و وەک کڕیار بەردەوام بە.</string>
+    <string name="err_wrong_role_seller">ئەم ئیمەیڵە هەژماری فرۆشیارە. بگەڕێوە و وەک فرۆشیار بەردەوام بە.</string>
+
+    <string name="home_greeting">سڵاو، %1$s</string>
+    <string name="home_customer_body">بازاڕەکەت بەم زووانە دێت: ڕووەک بگەڕێ، بیخە سەبەتەوە و داوای بکە.</string>
+    <string name="home_seller_body">داشبۆردی دوکانەکەت بەم زووانە دێت: ڕووەک بە کامێرا زیاد بکە و داواکاری بەڕێوەببە.</string>
+
+    <string name="nav_browse">گەڕان</string>
+    <string name="nav_cart">سەبەتە</string>
+    <string name="nav_profile">هەژمار</string>
+
+    <string name="browse_search_hint">بەدوای ڕووەکدا بگەڕێ</string>
+    <string name="browse_delivering_to">گەیاندن بۆ</string>
+    <string name="browse_all">هەمووی</string>
+    <string name="browse_empty">هیچ ڕووەکێک بۆ گەیاندن بۆ %1$s بەردەست نییە.</string>
+    <string name="browse_load_failed">نەتوانرا ڕووەکەکان باربکرێن. پەیوەندییەکەت بپشکنە.</string>
+    <string name="retry">دووبارە هەوڵبدەرەوە</string>
+
+    <string name="price_format">%1$s دینار</string>
+    <string name="delivers_nationwide">گەیاندن بۆ هەموو شارەکان</string>
+    <string name="delivers_local">گەیاندنی ناوخۆیی</string>
+    <string name="delivers_to">گەیاندن بۆ: %1$s</string>
+    <string name="sold_by">فرۆشیار: %1$s</string>
+
+    <string name="detail_care">ڕێنمایی چاودێری</string>
+    <string name="care_water">ئاو</string>
+    <string name="care_light">ڕووناکی</string>
+    <string name="care_fertilizer">پەین</string>
+    <string name="detail_size">قەبارە</string>
+    <string name="size_height">بەرزی %1$d سم</string>
+    <string name="add_to_cart">زیادبکە بۆ سەبەتە</string>
+    <string name="in_cart">%1$d لە سەبەتەدایە</string>
+
+    <string name="cart_title">سەبەتەکەت</string>
+    <string name="cart_empty">سەبەتەکەت بەتاڵە.</string>
+    <string name="cart_empty_hint">ڕووەک بگەڕێ و ئەوانەی حەزت لێیە زیادبکە.</string>
+    <string name="cart_total">کۆی گشتی</string>
+    <string name="cart_checkout_soon">تەواوکردنی داواکاری بەم زووانە دێت</string>
+
+    <string name="cart_checkout">تەواوکردنی داواکاری</string>
+    <string name="nav_orders">داواکارییەکان</string>
+
+    <string name="checkout_title">تەواوکردنی داواکاری</string>
+    <string name="checkout_who">بۆ کێیە؟</string>
+    <string name="checkout_for_me">بۆ خۆم</string>
+    <string name="checkout_gift">دیاری</string>
+    <string name="recipient_name">ناوی وەرگر</string>
+    <string name="recipient_phone">تەلەفۆنی وەرگر</string>
+    <string name="gift_note">نامەی دیاری (ئارەزوومەندانە)</string>
+    <string name="checkout_delivery">گەیاندن</string>
+    <string name="delivery_date">بەرواری گەیاندن</string>
+    <string name="delivery_today">ئەمڕۆ</string>
+    <string name="delivery_tomorrow">سبەینێ</string>
+    <string name="delivery_window">کاتی ڕۆژ</string>
+    <string name="window_any">هەر کاتێک</string>
+    <string name="window_morning">بەیانی</string>
+    <string name="window_afternoon">نیوەڕۆ</string>
+    <string name="window_evening">ئێوارە</string>
+    <string name="checkout_payment">پارەدان</string>
+    <string name="pay_cod">پارەدان لە کاتی وەرگرتن</string>
+    <string name="pay_card_soon">کارت (بەم زووانە)</string>
+    <string name="checkout_summary">پوختەی داواکاری</string>
+    <string name="place_order">داواکردن</string>
+    <string name="err_checkout_fields">تکایە ناونیشانی گەیاندن و زانیاری وەرگر پڕبکەرەوە.</string>
+    <string name="err_not_deliverable">%1$s ناگەیەنێت بۆ %2$s. ئەو ڕووەکانە لاببە یان شارێکی تر هەڵبژێرە.</string>
+
+    <string name="placed_title">داواکارییەکە تۆمارکرا!</string>
+    <string name="placed_body">دوکانەکە ڕووەکەکەت ئامادە دەکات و وێنەیەکت بۆ دەنێرێت بۆ پەسەندکردن پێش ئەوەی بنێردرێت. پارەکە لە کاتی وەرگرتن دەدەیت.</string>
+    <string name="placed_view_orders">داواکارییەکانم ببینە</string>
+    <string name="placed_keep_shopping">بەردەوامبە لە کڕین</string>
+
+    <string name="orders_title">داواکارییەکانم</string>
+    <string name="orders_empty">هێشتا هیچ داواکارییەک نییە.</string>
+    <string name="orders_empty_hint">داواکارییەکانت لێرە دەردەکەون.</string>
+    <string name="orders_load_failed">نەتوانرا داواکارییەکانت باربکرێن. پەیوەندییەکەت بپشکنە.</string>
+    <string name="order_number">داواکاری ژمارە %1$s</string>
+    <string name="order_items">کاڵاکان</string>
+    <string name="order_gift_for">دیاری بۆ %1$s</string>
+
+    <string name="status_placed">داواکارییەکە تۆمارکرا</string>
+    <string name="status_preparing">ئامادەدەکرێت</string>
+    <string name="status_photo_sent">وێنە ئامادەیە بۆ پەسەندکردنت</string>
+    <string name="status_approved">پەسەندکرا</string>
+    <string name="status_out_for_delivery">لە ڕێگادایە</string>
+    <string name="status_delivered">گەیەندرا</string>
+    <string name="status_cancelled">هەڵوەشێنرایەوە</string>
+
+    <string name="forgot_password">وشەی نهێنیت لەبیرچووە؟</string>
+    <string name="reset_title">گۆڕینی وشەی نهێنی</string>
+    <string name="reset_intro">ئیمەیڵی هەژمارەکەت بنووسە و بەستەرێکت بۆ دەنێرین بۆ گۆڕینی وشەی نهێنی.</string>
+    <string name="reset_send_link">ناردنی بەستەری گۆڕین</string>
+    <string name="reset_link_sent">بەستەرێکمان نارد بۆ %1$s. ئیمەیڵەکە لەسەر ئەم مۆبایلە بکەرەوە و کلیک لە بەستەرەکە بکە بۆ هەڵبژاردنی وشەی نهێنی نوێ.</string>
+    <string name="reset_resend">دووبارە ناردنی بەستەرەکە</string>
+    <string name="field_new_password">وشەی نهێنی نوێ</string>
+    <string name="set_password_title">وشەی نهێنی نوێ هەڵبژێرە</string>
+    <string name="set_password_intro">وشەی نهێنییەکی نوێ بنووسە بۆ هەژمارەکەت.</string>
+    <string name="set_password_action">پاشەکەوتکردنی وشەی نهێنی</string>
+    <string name="err_code_invalid">کۆدەکە هەڵەیە یان بەسەرچووە.</string>
+    <string name="err_link_expired">ئەم بەستەرە بەسەرچووە یان پێشتر بەکارهاتووە. تکایە بەستەرێکی نوێ داوا بکە.</string>
+
+    <string name="nav_seller_orders">داواکارییەکان</string>
+    <string name="nav_my_plants">ڕووەکەکانم</string>
+    <string name="nav_shop">دوکانەکەم</string>
+    <string name="seller_load_failed">نەتوانرا دوکانەکەت باربکرێت. پەیوەندییەکەت بپشکنە.</string>
+
+    <string name="seller_orders_title">داواکارییەکان</string>
+    <string name="seller_new_orders">%1$d نوێ</string>
+    <string name="seller_orders_empty">هێشتا هیچ داواکارییەک نییە.</string>
+    <string name="seller_orders_empty_hint">داواکارییە نوێیەکانی کڕیاران لێرە دەردەکەون.</string>
+    <string name="seller_customer">کڕیار</string>
+    <string name="seller_collect">%1$s بە نەقد وەربگرە لە کاتی گەیاندن</string>
+    <string name="seller_call">پەیوەندی</string>
+    <string name="seller_photo_sent">وێنەی نێردراو بۆ کڕیار</string>
+    <string name="seller_change_requested">کڕیار گۆڕانکارییەکی داوا کرد:</string>
+    <string name="seller_waiting_approval">چاوەڕێی پەسەندکردنی وێنەکەیە لەلایەن کڕیارەوە.</string>
+    <string name="seller_action_failed">نەتوانرا داواکارییەکە نوێ بکرێتەوە. تکایە دووبارە هەوڵبدەرەوە.</string>
+    <string name="act_accept">قبوڵکردنی داواکاری</string>
+    <string name="act_decline">ڕەتکردنەوە</string>
+    <string name="act_cancel_order">هەڵوەشاندنەوەی داواکاری</string>
+    <string name="act_out_for_delivery">لە ڕێگادایە بۆ گەیاندن</string>
+    <string name="act_mark_delivered">گەیەندرا</string>
+    <string name="photo_prompt_title">وێنەی داواکاری ئامادەکراو</string>
+    <string name="photo_prompt_body">بە کڕیار نیشان بدە دەقیقەن چی دەگات. پێش ناردن پەسەندی دەکات.</string>
+    <string name="photo_take">وێنە بگرە</string>
+    <string name="photo_pick">لە گەلەری هەڵبژێرە</string>
+    <string name="photo_uploading">وێنەکە بار دەکرێت…</string>
+
+    <string name="action_save">پاشەکەوتکردن</string>
+    <string name="action_cancel">هەڵوەشاندنەوە</string>
+    <string name="action_delete">سڕینەوە</string>
+
+    <string name="plants_title">ڕووەکەکانم</string>
+    <string name="plants_add">زیادکردنی ڕووەک</string>
+    <string name="plants_empty">هێشتا هیچ ڕووەکێکت نەخستووەتە ڕوو.</string>
+    <string name="plants_empty_hint">یەکەم ڕووەکت زیاد بکە: وێنە بگرە و ژیری دەستکرد وردەکارییەکان پڕ دەکاتەوە.</string>
+    <string name="plant_in_stock">بەردەستە</string>
+    <string name="plant_out_of_stock">بەردەست نییە</string>
+    <string name="plant_delete_title">ئەم ڕووەکە بسڕدرێتەوە؟</string>
+    <string name="plant_delete_text">لە بازاڕ نامێنێت. ناتوانرێت پاشگەز ببیتەوە.</string>
+
+    <string name="editor_title_new">زیادکردنی ڕووەک</string>
+    <string name="editor_title_edit">دەستکاریکردنی ڕووەک</string>
+    <string name="editor_photo_hint">وێنەی ڕووەکەکەت بگرە و ژیری دەستکرد وردەکارییەکان بۆت پڕ دەکاتەوە.</string>
+    <string name="editor_ai_button">پڕکردنەوە بە ژیری دەستکرد</string>
+    <string name="editor_ai_busy">سەیری وێنەکەت دەکرێت…</string>
+    <string name="editor_ai_done">تەواو! تکایە وردەکارییەکانی خوارەوە بپشکنە و نرخەکەت دیاری بکە.</string>
+    <string name="editor_ai_low">لەم ڕووەکە زۆر دڵنیا نیم. تکایە ناو و وردەکارییەکان بپشکنە.</string>
+    <string name="editor_ai_not_plant">نەمتوانی ڕووەکێک ببینم لەم وێنەیەدا. وێنەیەکی ڕوونتر تاقی بکەرەوە یان خۆت وردەکارییەکان بنووسە.</string>
+    <string name="editor_ai_not_configured">ژیری دەستکرد هێشتا چالاک نەکراوە. دەتوانیت خۆت وردەکارییەکان بنووسیت.</string>
+    <string name="editor_ai_limit">گەیشتیتە سنووری ئەمڕۆی ژیری دەستکرد. دەتوانیت خۆت وردەکارییەکان بنووسیت.</string>
+    <string name="editor_ai_failed">ژیری دەستکرد نەیتوانی وێنەکە بخوێنێتەوە. دووبارە هەوڵبدەرەوە یان خۆت بینووسە.</string>
+    <string name="editor_ai_note">وردەکارییەکانی ژیری دەستکرد دەستپێکێکن. دەتوانیت هەموو شتێک بگۆڕیت.</string>
+    <string name="editor_error_required">تکایە ناوی ڕووەک و نرخ بنووسە.</string>
+    <string name="editor_error_save">نەتوانرا پاشەکەوت بکرێت. تکایە دووبارە هەوڵبدەرەوە.</string>
+    <string name="field_plant_name">ناوی ڕووەک</string>
+    <string name="field_scientific">ناوی زانستی (ئارەزوومەندانە)</string>
+    <string name="field_description">وەسف</string>
+    <string name="field_water">ئاودان</string>
+    <string name="field_light">ڕووناکی</string>
+    <string name="field_fertilizer">پەین</string>
+    <string name="field_height">بەرزی (سم)</string>
+    <string name="field_price">نرخ (دینار)</string>
+    <string name="field_bio">دەربارەی دوکانەکەت</string>
+
+    <string name="shop_delivery">گەیاندن</string>
+    <string name="shop_owner">خاوەن: %1$s</string>
+    <string name="shop_edit">دەستکاریکردنی زانیاری دوکان</string>
+    <string name="shop_scope_local">ناوخۆیی</string>
+    <string name="shop_scope_nationwide">هەموو شارەکان</string>
+    <string name="shop_delivers_to">ئەو شارانەی دەیانگەیەنیت</string>
+
+    <string name="review_title">ڕووەکەکەت ئامادەیە. تکایە وێنەکە بپشکنە.</string>
+    <string name="review_body">ئەمە ئەوەیە کە دوکانەکە بۆتی دەنێرێت.</string>
+    <string name="review_approve">پەسەندکردن</string>
+    <string name="review_change">داوای گۆڕانکاری</string>
+    <string name="review_you_asked">داوای گۆڕانکارییت کرد:</string>
+    <string name="review_change_hint">دوکانەکە چی بگۆڕێت؟</string>
+    <string name="review_change_send">ناردن</string>
+
+    <string name="city_baghdad">بەغدا</string>
+    <string name="city_erbil">هەولێر</string>
+    <string name="city_basra">بەسرە</string>
+    <string name="city_mosul">مووسڵ</string>
+    <string name="city_najaf">نەجەف</string>
+    <string name="city_sulaymaniyah">سلێمانی</string>
+    <string name="city_karbala">کەربەلا</string>
+    <string name="city_duhok">دهۆک</string>
+</resources>
