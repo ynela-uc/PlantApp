@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum CustomerTab: Hashable { case browse, cart, orders, profile }
+enum CustomerTab: Hashable { case browse, assistant, cart, orders, profile }
 
 /// Full-screen pages shown on top of the tabs.
 enum Overlay: Equatable {

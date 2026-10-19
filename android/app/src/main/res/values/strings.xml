@@ -225,4 +225,25 @@
     <string name="city_sulaymaniyah">Sulaymaniyah</string>
     <string name="city_karbala">Karbala</string>
     <string name="city_duhok">Duhok</string>
+
+    <string name="nav_ai">Plant help</string>
+    <string name="ai_title">Plant helper</string>
+    <string name="ai_intro">Take a photo of any plant. I will tell you what it is, how to care for it, what is wrong with it, and where to buy it.</string>
+    <string name="ai_input_hint">Ask about your plant…</string>
+    <string name="ai_send">Send</string>
+    <string name="ai_new_chat">New chat</string>
+    <string name="ai_thinking">Looking at your plant…</string>
+    <string name="ai_health_healthy">Looks healthy</string>
+    <string name="ai_health_attention">Needs attention</string>
+    <string name="ai_health_unhealthy">Unhealthy</string>
+    <string name="ai_where_to_buy">Where to buy</string>
+    <string name="ai_group_city">In %1$s</string>
+    <string name="ai_group_delivers">Delivers to %1$s</string>
+    <string name="ai_group_other">Other cities (no delivery to %1$s)</string>
+    <string name="ai_similar">Similar</string>
+    <string name="ai_no_shops">No shop in the app sells this plant yet.</string>
+    <string name="ai_limit">You have reached today\'s limit for the plant helper. Please try again tomorrow.</string>
+    <string name="ai_photo_limit">You have reached today\'s photo limit. You can still type questions, or try again tomorrow.</string>
+    <string name="ai_unavailable">The plant helper is not switched on yet.</string>
+    <string name="ai_disclaimer">AI answers can be wrong. For serious problems, ask a local nursery.</string>
 </resources>

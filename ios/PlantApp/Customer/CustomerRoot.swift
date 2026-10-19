@@ -4,6 +4,7 @@ import SwiftUI
 struct CustomerRoot: View {
     @EnvironmentObject var lang: LanguageStore
     @StateObject private var model: CustomerModel
+    @StateObject private var assistant = AssistantModel()
     let profile: Profile
 
     init(profile: Profile) {
@@ -17,6 +18,9 @@ struct CustomerRoot: View {
                 BrowseView(profile: profile)
                     .tabItem { Label(lang.t("nav_browse"), systemImage: "leaf") }
                     .tag(CustomerTab.browse)
+                AssistantView()
+                    .tabItem { Label(lang.t("nav_ai"), systemImage: "sparkles") }
+                    .tag(CustomerTab.assistant)
                 CartView()
                     .tabItem { Label(lang.t("nav_cart"), systemImage: "cart") }
                     .badge(model.cartCount)
@@ -36,6 +40,7 @@ struct CustomerRoot: View {
             }
         }
         .environmentObject(model)
+        .environmentObject(assistant)
     }
 
     @ViewBuilder

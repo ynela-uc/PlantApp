@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-enum class CustomerTab { Browse, Cart, Orders, Profile }
+enum class CustomerTab { Browse, Assistant, Cart, Orders, Profile }
 
 /** Full-screen pages shown on top of the tabs. */
 sealed interface Overlay {

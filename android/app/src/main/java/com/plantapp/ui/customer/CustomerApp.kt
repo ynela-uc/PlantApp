@@ -32,6 +32,9 @@ fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
         factory = viewModelFactory { initializer { CustomerViewModel(profile) } }
     )
     val state by vm.state.collectAsStateWithLifecycle()
+    val assistant: AssistantViewModel = viewModel()
+    val assistantState by assistant.state.collectAsStateWithLifecycle()
+    val language = rememberLang()
 
     when (val overlay = state.overlay) {
         is Overlay.Detail -> {
@@ -89,6 +92,9 @@ fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
                 NavItem(state.tab == CustomerTab.Browse, "🌿", stringResource(R.string.nav_browse)) {
                     vm.setTab(CustomerTab.Browse)
                 }
+                NavItem(state.tab == CustomerTab.Assistant, "✨", stringResource(R.string.nav_ai)) {
+                    vm.setTab(CustomerTab.Assistant)
+                }
                 NavigationBarItem(
                     selected = state.tab == CustomerTab.Cart,
                     onClick = { vm.setTab(CustomerTab.Cart) },
@@ -119,6 +125,15 @@ fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
                 onPlantFilter = vm::setPlantFilter,
                 onOpen = vm::openListing,
                 onRetry = vm::load,
+                modifier = content,
+            )
+            CustomerTab.Assistant -> AssistantScreen(
+                state = assistantState,
+                customer = state,
+                onSendText = { assistant.sendText(it, language) },
+                onSendPhoto = { assistant.sendPhoto(it, language) },
+                onNewChat = assistant::newChat,
+                onOpenListing = vm::openListing,
                 modifier = content,
             )
             CustomerTab.Cart -> CartScreen(
