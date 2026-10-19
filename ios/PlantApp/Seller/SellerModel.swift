@@ -120,9 +120,9 @@ final class SellerModel: ObservableObject {
         if next == .orders { refreshOrders() }
     }
 
-    func openOrder(_ id: String) { actionFailed = false; overlay = .orderDetail(id) }
-    func openShopEditor() { overlay = .shopEditor }
-    func closeOverlay() { overlay = nil }
+    func openOrder(_ id: String) { actionFailed = false; withAnimation(Theme.slide) { overlay = .orderDetail(id) } }
+    func openShopEditor() { withAnimation(Theme.slide) { overlay = .shopEditor } }
+    func closeOverlay() { withAnimation(Theme.slide) { overlay = nil } }
 
     // MARK: Orders
 
@@ -179,7 +179,7 @@ final class SellerModel: ObservableObject {
         }
     }
 
-    func newPlant() { editor = EditorState() }
+    func newPlant() { withAnimation(Theme.slide) { editor = EditorState() } }
 
     func editPlant(_ listing: Listing) {
         var state = EditorState()
@@ -196,10 +196,10 @@ final class SellerModel: ObservableObject {
         state.priceText = String(listing.priceIqd)
         state.inStock = listing.inStock
         state.aiGenerated = listing.aiGenerated
-        editor = state
+        withAnimation(Theme.slide) { editor = state }
     }
 
-    func closeEditor() { editor = nil }
+    func closeEditor() { withAnimation(Theme.slide) { editor = nil } }
 
     func text(_ field: EditorField, _ lang: String) -> String {
         guard let e = editor else { return "" }
@@ -330,7 +330,7 @@ final class SellerModel: ObservableObject {
                     )
                 }
                 await reloadListings()
-                editor = nil
+                withAnimation(Theme.slide) { editor = nil }
             } catch {
                 editor?.saving = false
                 editor?.error = .saveFailed

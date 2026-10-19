@@ -48,7 +48,7 @@ struct SellerOrdersTab: View {
                 .refreshable { model.refreshOrders() }
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background(AppBackground())
     }
 }
 

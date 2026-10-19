@@ -107,7 +107,9 @@ struct PlantPicture: View {
                     AsyncImage(url: url) { phase in
                         switch phase {
                         case .success(let image):
-                            image.resizable().scaledToFill()
+                            // The photo is drawn larger than its frame and clipped; it must not catch taps
+                            // meant for the controls around it (it used to swallow the back button).
+                            image.resizable().scaledToFill().allowsHitTesting(false)
                         default:
                             Text(plantEmoji(plantKey)).font(.system(size: emojiSize))
                         }

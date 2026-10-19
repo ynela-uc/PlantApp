@@ -6,7 +6,7 @@ struct RootView: View {
 
     var body: some View {
         ZStack {
-            Theme.background.ignoresSafeArea()
+            AppBackground()
             switch app.screen {
             case .loading:
                 ProgressView().tint(Theme.green)

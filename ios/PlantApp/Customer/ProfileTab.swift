@@ -26,7 +26,7 @@ struct ProfileTab: View {
             }
             .padding(20)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background(AppBackground())
     }
 }
 

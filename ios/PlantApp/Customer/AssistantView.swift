@@ -49,7 +49,7 @@ struct AssistantView: View {
 
             inputBar
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background(AppBackground())
         .photoSheets(camera: $showCamera, library: $showLibrary) { data in
             assistant.sendPhoto(data, language: code)
         }
@@ -163,7 +163,7 @@ struct AssistantView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(Color.white.shadow(color: .black.opacity(0.08), radius: 6, y: -2))
+        .glassBar()
     }
 
     private var canSend: Bool {

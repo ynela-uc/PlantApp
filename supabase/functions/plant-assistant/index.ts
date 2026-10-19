@@ -168,13 +168,14 @@ Deno.serve(async (req) => {
     const client = new Anthropic({ apiKey });
     const response = await client.messages.create({
       model: MODEL,
-      max_tokens: 1500,
+      max_tokens: 8000, // thinking tokens count against this; a too-small cap truncated the JSON reply
       system: SYSTEM,
       output_config: { effort: hasImage ? "medium" : "low", format: { type: "json_schema", schema: SCHEMA } },
       messages: apiMessages,
     });
 
     if (response.stop_reason === "refusal") return json({ error: "refused" }, 422);
+    if (response.stop_reason === "max_tokens") return json({ error: "too_long" }, 502);
     const textBlock = response.content.find((b) => b.type === "text");
     if (!textBlock || textBlock.type !== "text") return json({ error: "no_result" }, 502);
     const result = JSON.parse(textBlock.text);

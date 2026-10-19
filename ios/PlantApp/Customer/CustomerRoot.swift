@@ -32,11 +32,14 @@ struct CustomerRoot: View {
                     .tabItem { Label(lang.t("nav_profile"), systemImage: "person") }
                     .tag(CustomerTab.profile)
             }
+            .glassTabBar()
 
             if let overlay = model.overlay {
                 overlayView(overlay)
-                    .background(Theme.background.ignoresSafeArea())
-                    .transition(.opacity)
+                    .background(AppBackground())
+                    .edgeSwipeBack { model.closeOverlay() }
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+                    .zIndex(1)
             }
         }
         .environmentObject(model)

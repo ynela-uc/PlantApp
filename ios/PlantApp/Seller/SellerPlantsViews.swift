@@ -39,7 +39,7 @@ struct SellerPlantsTab: View {
                 }
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background(AppBackground())
         .alert(
             lang.t("plant_delete_title"),
             isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } })
@@ -193,7 +193,7 @@ struct PlantEditorView: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(Color.white.shadow(color: .black.opacity(0.08), radius: 6, y: -2))
+            .glassBar()
         }
         .photoSheets(camera: $showCamera, library: $showLibrary) { data in
             model.onPlantPhoto(data, runAiNow: editor.listingId == nil)

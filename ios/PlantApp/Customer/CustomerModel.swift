@@ -147,13 +147,13 @@ final class CustomerModel: ObservableObject {
         if next == .orders { loadOrders() }
     }
 
-    func openListing(_ id: String) { overlay = .detail(id) }
-    func openCheckout() { checkoutError = nil; overlay = .checkout }
-    func openOrder(_ id: String) { overlay = .orderDetail(id) }
-    func closeOverlay() { overlay = nil }
+    func openListing(_ id: String) { withAnimation(Theme.slide) { overlay = .detail(id) } }
+    func openCheckout() { checkoutError = nil; withAnimation(Theme.slide) { overlay = .checkout } }
+    func openOrder(_ id: String) { withAnimation(Theme.slide) { overlay = .orderDetail(id) } }
+    func closeOverlay() { withAnimation(Theme.slide) { overlay = nil } }
 
     /// Leaves the "order placed" page and shows the orders tab.
-    func finishPlaced() { overlay = nil; tab = .orders }
+    func finishPlaced() { withAnimation(Theme.slide) { overlay = nil; tab = .orders } }
 
     func changeQuantity(_ listingId: String, _ delta: Int) {
         let next = (cart[listingId] ?? 0) + delta
@@ -220,7 +220,7 @@ final class CustomerModel: ObservableObject {
             if created > 0 { loadOrders() }
             placing = false
             checkoutError = failure
-            if failure == nil { overlay = .placed(created) }
+            if failure == nil { withAnimation(Theme.slide) { overlay = .placed(created) } }
         }
     }
 }

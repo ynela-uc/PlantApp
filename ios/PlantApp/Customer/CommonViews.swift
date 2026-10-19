@@ -10,9 +10,15 @@ struct BackButton: View {
     var body: some View {
         Button(action: action) {
             Label(lang.t("back"), systemImage: direction == .rightToLeft ? "arrow.right" : "arrow.left")
-                .font(.system(size: 16, weight: .medium))
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(accent)
+                .padding(.horizontal, 14)
+                .frame(minHeight: 44)
+                .modifier(GlassSurface(radius: 22, interactive: true, fallbackFill: Color.clear, fallbackStroke: nil))
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .zIndex(1)
     }
 }
 

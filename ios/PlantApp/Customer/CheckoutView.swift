@@ -116,7 +116,7 @@ struct CheckoutView: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(Color.white.shadow(color: .black.opacity(0.08), radius: 6, y: -2))
+            .glassBar()
         }
         .onAppear {
             if city.isEmpty { city = model.city }

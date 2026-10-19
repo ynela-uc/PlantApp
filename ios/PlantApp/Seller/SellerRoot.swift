@@ -50,15 +50,20 @@ struct SellerRoot: View {
                     .tabItem { Label(lang.t("nav_shop"), systemImage: "storefront") }
                     .tag(SellerTab.shop)
             }
+            .glassTabBar()
 
             if let editor = model.editor {
                 PlantEditorView(editor: editor)
-                    .background(Theme.background.ignoresSafeArea())
-                    .transition(.opacity)
+                    .background(AppBackground())
+                    .edgeSwipeBack { model.closeEditor() }
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+                    .zIndex(1)
             } else if let overlay = model.overlay {
                 overlayView(overlay, shop: shop)
-                    .background(Theme.background.ignoresSafeArea())
-                    .transition(.opacity)
+                    .background(AppBackground())
+                    .edgeSwipeBack { model.closeOverlay() }
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+                    .zIndex(1)
             }
         }
     }

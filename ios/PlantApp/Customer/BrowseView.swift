@@ -72,7 +72,7 @@ struct BrowseView: View {
                 .scrollDismissesKeyboard(.interactively)
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background(AppBackground())
     }
 }
 

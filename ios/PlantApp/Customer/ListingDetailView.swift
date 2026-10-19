@@ -4,6 +4,7 @@ struct ListingDetailView: View {
     @EnvironmentObject var lang: LanguageStore
     @EnvironmentObject var model: CustomerModel
     let listing: Listing
+    @State private var justAdded = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -87,12 +88,22 @@ struct ListingDetailView: View {
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Theme.muted)
                 }
-                Button(lang.t("add_to_cart")) { model.changeQuantity(listing.id, 1) }
-                    .buttonStyle(PrimaryButtonStyle())
+                Button {
+                    model.changeQuantity(listing.id, 1)
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    withAnimation(.easeOut(duration: 0.15)) { justAdded = true }
+                    Task {
+                        try? await Task.sleep(nanoseconds: 1_300_000_000)
+                        withAnimation(.easeOut(duration: 0.2)) { justAdded = false }
+                    }
+                } label: {
+                    Text(justAdded ? "✓  " + lang.t("in_cart", model.cart[listing.id] ?? 1) : lang.t("add_to_cart"))
+                }
+                .buttonStyle(PrimaryButtonStyle())
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(Color.white.shadow(color: .black.opacity(0.08), radius: 6, y: -2))
+            .glassBar()
         }
     }
 

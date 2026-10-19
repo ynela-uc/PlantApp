@@ -40,14 +40,11 @@ func plantEmoji(_ key: String?) -> String {
     }
 }
 
-/// White rounded card with a thin border, used across the app.
+/// Rounded card used across the app: Liquid Glass on iOS 26+, a white card with a thin border before that.
 struct CardStyle: ViewModifier {
     var radius: CGFloat = 16
     func body(content: Content) -> some View {
-        content
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: radius))
-            .overlay(RoundedRectangle(cornerRadius: radius).stroke(Theme.border, lineWidth: 1))
+        content.modifier(GlassSurface(radius: radius))
     }
 }
 
@@ -55,7 +52,7 @@ extension View {
     func card(radius: CGFloat = 16) -> some View { modifier(CardStyle(radius: radius)) }
 }
 
-/// Big rounded call-to-action button.
+/// Big rounded call-to-action button: tinted Liquid Glass on iOS 26+, a solid or outlined button before that.
 struct PrimaryButtonStyle: ButtonStyle {
     var color: Color = Theme.green
     var filled: Bool = true
@@ -66,10 +63,18 @@ struct PrimaryButtonStyle: ButtonStyle {
             .font(.system(size: 16, weight: .bold))
             .frame(maxWidth: .infinity, minHeight: 50)
             .foregroundStyle(filled ? Color.white : color)
-            .background(filled ? color : Color.clear)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(filled ? Color.clear : color, lineWidth: 1))
-            .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : 0.45)
+            .modifier(
+                GlassSurface(
+                    radius: 16,
+                    tint: filled ? color : nil,
+                    interactive: true,
+                    fallbackFill: filled ? color : Color.clear,
+                    fallbackStroke: filled ? nil : color
+                )
+            )
+            .opacity(isEnabled ? (configuration.isPressed ? 0.9 : 1) : 0.45)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -87,11 +92,18 @@ struct Pill: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 9)
                 .foregroundStyle(selected ? Color.white : Color(hex: 0x333333))
-                .background(selected ? accent : Color.white)
-                .clipShape(Capsule())
-                .overlay(Capsule().stroke(selected ? accent : Theme.border, lineWidth: 1))
+                .modifier(
+                    GlassSurface(
+                        radius: 22,
+                        tint: selected ? accent : nil,
+                        interactive: true,
+                        fallbackFill: selected ? accent : Color.white,
+                        fallbackStroke: selected ? accent : Theme.border
+                    )
+                )
         }
         .buttonStyle(.plain)
+        .animation(.easeOut(duration: 0.18), value: selected)
     }
 }
 

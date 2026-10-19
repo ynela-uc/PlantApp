@@ -38,10 +38,10 @@ struct CartView: View {
                         .buttonStyle(PrimaryButtonStyle())
                 }
                 .padding(16)
-                .background(Color.white.shadow(color: .black.opacity(0.08), radius: 6, y: -2))
+                .glassBar()
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background(AppBackground())
     }
 
     private func shopNames(_ lines: [CartEntry]) -> [String] {
