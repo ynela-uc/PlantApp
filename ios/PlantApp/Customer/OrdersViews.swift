@@ -110,8 +110,6 @@ struct OrderDetailView: View {
                                 .foregroundStyle(Theme.muted)
                             if let path = order.preparationPhotoPath {
                                 SignedImage(path: path)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 240)
                                     .clipShape(RoundedRectangle(cornerRadius: 14))
                             }
                             Button {

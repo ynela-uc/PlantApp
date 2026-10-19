@@ -173,8 +173,6 @@ struct SellerOrderDetailView: View {
                     if let path = order.preparationPhotoPath, !path.isEmpty {
                         SectionHeading(text: lang.t("seller_photo_sent"))
                         SignedImage(path: path)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 220)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
 

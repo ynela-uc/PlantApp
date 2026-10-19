@@ -12,6 +12,9 @@ struct PlantAppApp: App {
                 .environmentObject(app)
                 .environment(\.layoutDirection, lang.language.layoutDirection)
                 .tint(Theme.green)
+                // The app's colours are designed for a light background; without this, dark mode
+                // turns the text white on white cards.
+                .preferredColorScheme(.light)
                 .onOpenURL { app.handleAuthLink($0) }
         }
     }

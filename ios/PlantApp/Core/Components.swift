@@ -98,23 +98,25 @@ struct PlantPicture: View {
     let plantKey: String?
     var emojiSize: CGFloat = 54
 
+    // The photo sits in an overlay so it can never make the view bigger than the frame
+    // it is given (a big photo used to spill over the back button and the text below).
     var body: some View {
-        ZStack {
-            Theme.picture
-            if let url {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image.resizable().scaledToFill()
-                    default:
-                        Text(plantEmoji(plantKey)).font(.system(size: emojiSize))
+        Theme.picture
+            .overlay {
+                if let url {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFill()
+                        default:
+                            Text(plantEmoji(plantKey)).font(.system(size: emojiSize))
+                        }
                     }
+                } else {
+                    Text(plantEmoji(plantKey)).font(.system(size: emojiSize))
                 }
-            } else {
-                Text(plantEmoji(plantKey)).font(.system(size: emojiSize))
             }
-        }
-        .clipped()
+            .clipped()
     }
 }
 
@@ -124,24 +126,29 @@ struct SignedImage: View {
     @State private var url: URL?
     @State private var failed = false
 
+    // Shows the WHOLE photo (fit, not crop) at its own proportions, so the customer
+    // sees exactly what the shop prepared.
     var body: some View {
-        ZStack {
-            Theme.picture
+        Group {
             if let url {
                 AsyncImage(url: url) { phase in
                     switch phase {
-                    case .success(let image): image.resizable().scaledToFill()
-                    case .failure: Text("🪴").font(.system(size: 48))
-                    default: ProgressView()
+                    case .success(let image):
+                        image.resizable().scaledToFit()
+                    case .failure:
+                        Text("🪴").font(.system(size: 48)).frame(height: 160)
+                    default:
+                        ProgressView().frame(height: 160)
                     }
                 }
             } else if failed {
-                Text("🪴").font(.system(size: 48))
+                Text("🪴").font(.system(size: 48)).frame(height: 160)
             } else {
-                ProgressView()
+                ProgressView().frame(height: 160)
             }
         }
-        .clipped()
+        .frame(maxWidth: .infinity)
+        .background(Theme.picture)
         .task(id: path) {
             do { url = try await OrdersService.signedPhotoURL(path: path) } catch { failed = true }
         }
