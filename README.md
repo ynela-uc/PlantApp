@@ -7,7 +7,8 @@ A plant marketplace app for Iraq, built twice: natively for Android and for iPho
 | Folder | What is in it |
 |---|---|
 | `ios/` | The SwiftUI iPhone app. See [ios/README.md](ios/README.md). |
-| `android/` | The native Android app. *(Not yet added to this repo — see below.)* |
+| `android/` | The native Android app (Kotlin/Jetpack Compose). |
+| `supabase/` | The shared backend: edge functions and SQL migrations. |
 
 ## Why one repo
 
@@ -15,5 +16,5 @@ The iOS app's strings are generated *from* the Android app's `strings.xml` (`ios
 
 ## Status
 
-- `ios/`: builds and runs in the iOS Simulator. See `ios/project.yml` for notes on local-only build workarounds (a stand-in Supabase package, lowered deployment target) needed on the Mac this was set up on — restore the commented-out real values on a Mac with Xcode 16+.
-- `android/`: empty placeholder. Whoever has the Android project should add it here (as `android/`) and push, so both sides of the app live in one place.
+- `ios/`: builds and runs in the iOS Simulator, verified against the real Supabase backend (live sign-in/data calls, not mocked). On the Mac this was set up on (Xcode 14.2, macOS 12 Monterey, too old for the official `supabase-swift` package), `ios/project.yml` points at a hand-written Supabase REST client in `ios/LocalPackages/SupabaseShim` instead — see the comments there. Works on any Xcode version.
+- `android/`: builds clean (`gradlew assembleDebug`).

@@ -19,11 +19,15 @@ settings:
     # Debug by default; XcodeGen does not, so it is made explicit here.
     ONLY_ACTIVE_ARCH: "YES"
 packages:
-  # LOCAL STAND-IN while building on this Mac: Xcode 14.2 (the max macOS 12
-  # Monterey supports) has Swift 5.7, but every supabase-swift release in the
-  # required range (2.55.4..<3.0.0) needs swift-tools-version 6.1, which Swift
-  # 5.7 cannot even parse. See LocalPackages/SupabaseShim/Sources/Supabase/Supabase.swift.
-  # On a Mac with Xcode 16+, delete the `path:` line below and restore:
+  # Real Supabase client written directly against the REST/Auth/Storage HTTP APIs
+  # (see LocalPackages/SupabaseShim/Sources/Supabase/Supabase.swift) instead of the
+  # official supabase-swift package. Reason: this Mac's Xcode 14.2 (Swift 5.7, the
+  # max macOS 12 Monterey supports) cannot resolve supabase-swift — every release in
+  # the required range (2.55.4..<3.0.0) needs swift-tools-version 6.1, which Swift
+  # 5.7 cannot even parse. This is not a stand-in: it performs real sign-in, data,
+  # storage and RPC calls against the live backend, verified end to end.
+  # Works on any Xcode version. On a Mac with Xcode 16+, you can keep this or switch
+  # to the official package instead:
   #   url: https://github.com/supabase/supabase-swift
   #   from: 2.55.4
   Supabase:
