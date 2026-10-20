@@ -258,7 +258,7 @@
     <string name="cat_flower_boxes">صناديق الورد</string>
     <string name="cat_baskets">سلال الورد</string>
     <string name="cat_weddings_events">تنسيق الأعراس والحفلات</string>
-    <string name="cat_condolence">ورد العزاء</string>
+    <string name="cat_condolence">ورد الوفاء</string>
     <string name="cat_dried_preserved">ورد مجفف ومحفوظ</string>
     <string name="cat_artificial_flowers">ورود اصطناعية</string>
     <string name="cat_indoor">نباتات الزينة الداخلية</string>
@@ -286,14 +286,14 @@
     <string name="cat_balloons_party">بالونات وتجهيزات حفلات</string>
     <string name="occ_birthday">عيد ميلاد</string>
     <string name="occ_anniversary">ذكرى سنوية</string>
-    <string name="occ_love">رومانسية</string>
+    <string name="occ_love">للأحبّة</string>
     <string name="occ_new_baby">مولود جديد</string>
-    <string name="occ_get_well">سلامات</string>
+    <string name="occ_get_well">ألف سلامة</string>
     <string name="occ_congratulations">مبروك</string>
     <string name="occ_new_home">بيت جديد</string>
     <string name="occ_graduation">تخرج</string>
     <string name="occ_wedding">حفل زفاف</string>
-    <string name="occ_condolence">عزاء</string>
+    <string name="occ_condolence">لمسة وفاء</string>
     <string name="occ_mothers_day">عيد الأم</string>
     <string name="occ_eid">عيد مبارك</string>
     <string name="occ_nowruz">نوروز</string>
