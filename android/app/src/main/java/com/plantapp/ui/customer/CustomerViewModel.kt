@@ -137,10 +137,15 @@ data class CustomerState(
 
 }
 
-class CustomerViewModel(private val profile: Profile) : ViewModel() {
+class CustomerViewModel(initialProfile: Profile) : ViewModel() {
+    /** The signed-in customer; replaced when they edit their profile. */
+    private var profile: Profile = initialProfile
+
+    fun setProfile(updated: Profile) { profile = updated }
+
     private val listingsRepo = ListingsRepository()
     private val ordersRepo = OrdersRepository()
-    private val _state = MutableStateFlow(CustomerState(city = profile.city.ifBlank { "Baghdad" }))
+    private val _state = MutableStateFlow(CustomerState(city = initialProfile.city.ifBlank { "Baghdad" }))
     val state: StateFlow<CustomerState> = _state.asStateFlow()
 
     init {

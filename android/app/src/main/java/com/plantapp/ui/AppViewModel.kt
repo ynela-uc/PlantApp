@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.plantapp.data.AuthRepository
 import com.plantapp.data.Profile
+import com.plantapp.data.ProfileUpdate
 import com.plantapp.data.Role
 import com.plantapp.data.SignUpForm
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -139,6 +140,19 @@ class AppViewModel : ViewModel() {
                 val profile = repo.profile() ?: throw IllegalStateException("Profile missing")
                 recoveryPending = false
                 _state.value = UiState(Screen.Home(profile))
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(busy = false, error = classify(e))
+            }
+        }
+    }
+
+    /** Customer edits their own profile: save, then show the app again with the fresh profile. */
+    fun updateProfile(update: ProfileUpdate) {
+        _state.value = _state.value.copy(busy = true, error = null)
+        viewModelScope.launch {
+            try {
+                val fresh = repo.updateProfile(update)
+                _state.value = UiState(Screen.Home(fresh))
             } catch (e: Exception) {
                 _state.value = _state.value.copy(busy = false, error = classify(e))
             }

@@ -21,17 +21,25 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.plantapp.R
 import com.plantapp.data.Profile
+import com.plantapp.data.ProfileUpdate
 import com.plantapp.ui.theme.PlantGreen
 import com.plantapp.ui.theme.PlantGreenSoft
 import com.plantapp.ui.theme.ScreenBackground
 
 /** The signed-in customer experience: browse, cart, orders and profile tabs, plus full-screen pages on top. */
 @Composable
-fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
+fun CustomerApp(
+    profile: Profile,
+    saving: Boolean,
+    saveFailed: Boolean,
+    onSaveProfile: (ProfileUpdate) -> Unit,
+    onSignOut: () -> Unit,
+) {
     val vm: CustomerViewModel = viewModel(
         factory = viewModelFactory { initializer { CustomerViewModel(profile) } }
     )
     val state by vm.state.collectAsStateWithLifecycle()
+    androidx.compose.runtime.LaunchedEffect(profile) { vm.setProfile(profile) }
     val assistant: AssistantViewModel = viewModel()
     val assistantState by assistant.state.collectAsStateWithLifecycle()
     val language = rememberLang()
@@ -173,7 +181,14 @@ fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
                 onRetry = vm::loadOrders,
                 modifier = content,
             )
-            CustomerTab.Profile -> ProfileTab(profile = profile, onSignOut = onSignOut, modifier = content)
+            CustomerTab.Profile -> ProfileTab(
+                profile = profile,
+                saving = saving,
+                saveFailed = saveFailed,
+                onSave = onSaveProfile,
+                onSignOut = onSignOut,
+                modifier = content,
+            )
         }
     }
 }

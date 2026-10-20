@@ -21,6 +21,13 @@ class AuthRepository {
             .decodeSingleOrNull<Profile>()
     }
 
+    /** Saves the signed-in customer's profile and returns the fresh row. */
+    suspend fun updateProfile(update: ProfileUpdate): Profile {
+        val uid = auth.currentUserOrNull()?.id ?: error("No session")
+        Backend.client.from("profiles").update(update) { filter { eq("id", uid) } }
+        return profile() ?: error("Profile missing")
+    }
+
     suspend fun signIn(email: String, password: String) {
         auth.signInWith(Email) {
             this.email = email

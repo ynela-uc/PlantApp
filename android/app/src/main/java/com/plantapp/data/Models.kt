@@ -26,6 +26,16 @@ data class Profile(
     val roleEnum: Role get() = Role.fromDb(role)
 }
 
+/** The fields a customer can change on their own profile. */
+@Serializable
+data class ProfileUpdate(
+    @SerialName("first_name") val firstName: String,
+    @SerialName("last_name") val lastName: String,
+    val phone: String,
+    val city: String,
+    val address: String,
+)
+
 /** Row inserted into `sellers` when a seller creates an account. */
 @Serializable
 data class NewSeller(

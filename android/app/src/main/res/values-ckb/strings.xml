@@ -351,4 +351,7 @@
     <string name="ai_example_care">هەموو چەند ڕۆژ ئاو بە کاکتوس بدەم؟</string>
     <string name="ai_example_flowers">گوڵ بۆ ئاهەنگی هاوسەرگیری</string>
     <string name="ai_browse">🛍  ببینە: %1$s</string>
+
+    <string name="city_halabja">هەڵەبجە</string>
+    <string name="profile_edit">دەستکاریکردنی زانیارییەکانم</string>
 </resources>

@@ -8,7 +8,7 @@ import androidx.compose.ui.res.stringResource
 /** City codes as stored in the database (English names), in display order. */
 val CityCodes = listOf(
     "Baghdad", "Erbil", "Basra", "Mosul", "Najaf", "Sulaymaniyah", "Karbala", "Duhok",
-    "Kirkuk", "Anbar", "Babil", "Diyala", "Wasit", "Maysan", "DhiQar", "Muthanna", "Qadisiyah", "SalahAlDin",
+    "Kirkuk", "Anbar", "Babil", "Diyala", "Wasit", "Maysan", "DhiQar", "Muthanna", "Qadisiyah", "SalahAlDin", "Halabja",
 )
 
 /** Localised display name for a stored city code (string city_<code in lowercase>). Unknown codes are shown as-is. */

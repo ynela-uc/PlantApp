@@ -350,4 +350,7 @@
     <string name="ai_example_care">كم مرة أسقي الصبار؟</string>
     <string name="ai_example_flowers">أي ورد يناسب حفل الزفاف؟</string>
     <string name="ai_browse">🛍  شاهد: %1$s</string>
+
+    <string name="city_halabja">حلبجة</string>
+    <string name="profile_edit">تعديل بياناتي</string>
 </resources>

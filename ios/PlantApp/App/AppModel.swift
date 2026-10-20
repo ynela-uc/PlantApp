@@ -191,6 +191,22 @@ final class AppModel: ObservableObject {
         }
     }
 
+    /// Customer edits their own profile: save, then show the app again with the fresh profile.
+    func updateProfile(_ update: ProfileUpdate) {
+        busy = true
+        error = nil
+        Task {
+            do {
+                let fresh = try await AuthService.updateProfile(update)
+                busy = false
+                screen = .home(fresh)
+            } catch {
+                busy = false
+                self.error = classify(error)
+            }
+        }
+    }
+
     func signOut() {
         Task {
             try? await AuthService.signOut()

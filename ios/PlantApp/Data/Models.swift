@@ -38,6 +38,21 @@ struct Profile: Codable, Identifiable, Equatable {
     var fullName: String { "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces) }
 }
 
+/// The fields a customer can change on their own profile.
+struct ProfileUpdate: Encodable {
+    let firstName: String
+    let lastName: String
+    let phone: String
+    let city: String
+    let address: String
+
+    enum CodingKeys: String, CodingKey {
+        case phone, city, address
+        case firstName = "first_name"
+        case lastName = "last_name"
+    }
+}
+
 struct SignUpForm {
     var email = ""
     var password = ""

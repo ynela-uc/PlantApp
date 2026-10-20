@@ -53,6 +53,7 @@ struct CustomerRoot: View {
         }
         .environmentObject(model)
         .environmentObject(assistant)
+        .onChange(of: profile) { updated in model.profile = updated }
     }
 
     @ViewBuilder

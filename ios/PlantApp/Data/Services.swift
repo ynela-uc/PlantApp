@@ -39,6 +39,14 @@ enum AuthService {
         return rows.first
     }
 
+    /// Saves the signed-in customer's profile and returns the fresh row.
+    static func updateProfile(_ update: ProfileUpdate) async throws -> Profile {
+        guard let uid = currentUserId else { throw AppError.noSession }
+        try await supabase.from("profiles").update(update).eq("id", value: uid).execute()
+        guard let fresh = try await profile() else { throw AppError.failed }
+        return fresh
+    }
+
     static func signIn(email: String, password: String) async throws {
         try await supabase.auth.signIn(email: email, password: password)
     }

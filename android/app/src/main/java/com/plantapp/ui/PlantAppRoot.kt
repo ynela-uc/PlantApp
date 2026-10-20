@@ -59,7 +59,13 @@ fun PlantAppRoot(viewModel: AppViewModel = viewModel()) {
         )
         is Screen.Home ->
             if (screen.profile.roleEnum == Role.Customer) {
-                CustomerApp(profile = screen.profile, onSignOut = viewModel::signOut)
+                CustomerApp(
+                    profile = screen.profile,
+                    saving = state.busy,
+                    saveFailed = state.error != null,
+                    onSaveProfile = viewModel::updateProfile,
+                    onSignOut = viewModel::signOut,
+                )
             } else {
                 SellerApp(profile = screen.profile, onSignOut = viewModel::signOut)
             }

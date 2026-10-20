@@ -350,4 +350,7 @@
     <string name="ai_example_care">How often should I water a cactus?</string>
     <string name="ai_example_flowers">Flowers for a wedding</string>
     <string name="ai_browse">🛍  Browse: %1$s</string>
+
+    <string name="city_halabja">Halabja</string>
+    <string name="profile_edit">Edit my details</string>
 </resources>

@@ -52,7 +52,8 @@ struct ShopGroup: Identifiable {
 
 @MainActor
 final class CustomerModel: ObservableObject {
-    let profile: Profile
+    /// The signed-in customer; replaced when they edit their profile.
+    var profile: Profile
 
     @Published var loading = true
     @Published var failed = false
