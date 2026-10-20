@@ -236,7 +236,7 @@
     <string name="city_qadisiyah">Al-Qadisiyah</string>
     <string name="city_salahaldin">Salah al-Din</string>
 
-    <string name="nav_ai">Assistant</string>
+    <string name="nav_ai">Ask</string>
     <string name="ai_title">Smart Assistant</string>
     <string name="ai_intro">Ask me anything about flowers, plants and gifts. Here is what I can do:</string>
     <string name="ai_input_hint">Ask about plants, flowers or gifts…</string>

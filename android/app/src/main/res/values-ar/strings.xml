@@ -236,7 +236,7 @@
     <string name="city_qadisiyah">القادسية</string>
     <string name="city_salahaldin">صلاح الدين</string>
 
-    <string name="nav_ai">المساعد</string>
+    <string name="nav_ai">اسأل</string>
     <string name="ai_title">المساعد الذكي</string>
     <string name="ai_intro">اسألني عن الورود والنباتات والهدايا، وهذا ما يمكنني مساعدتك فيه:</string>
     <string name="ai_input_hint">اسأل عن نبتة أو وردة أو هدية…</string>

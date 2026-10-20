@@ -237,7 +237,7 @@
     <string name="city_qadisiyah">قادسیە</string>
     <string name="city_salahaldin">سەلاحەدین</string>
 
-    <string name="nav_ai">یاریدەدەر</string>
+    <string name="nav_ai">بپرسە</string>
     <string name="ai_title">یاریدەدەری زیرەک</string>
     <string name="ai_intro">هەر شتێک دەربارەی گوڵ، ڕووەک و دیاری بپرسە. ئەمانە دەتوانم بیکەم:</string>
     <string name="ai_input_hint">پرسیار بکە دەربارەی ڕووەک، گوڵ یان دیاری…</string>

@@ -197,7 +197,7 @@ enum GeneratedStrings {
         "in_cart": ["en": "%1$ld in cart", "ar": "%1$ld في السلة", "ckb": "%1$ld لە سەبەتەدایە"],
         "items_label": ["en": "Items", "ar": "المنتجات", "ckb": "بەرهەمەکان"],
         "language_label": ["en": "Language", "ar": "اللغة", "ckb": "زمان"],
-        "nav_ai": ["en": "Assistant", "ar": "المساعد", "ckb": "یاریدەدەر"],
+        "nav_ai": ["en": "Ask", "ar": "اسأل", "ckb": "بپرسە"],
         "nav_browse": ["en": "Browse", "ar": "الرئيسية", "ckb": "گەڕان"],
         "nav_cart": ["en": "Cart", "ar": "السلة", "ckb": "سەبەتە"],
         "nav_my_plants": ["en": "My products", "ar": "منتجاتي", "ckb": "بەرهەمەکانم"],
