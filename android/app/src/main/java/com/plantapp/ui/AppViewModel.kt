@@ -2,6 +2,7 @@ package com.plantapp.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plantapp.Push
 import com.plantapp.data.AuthRepository
 import com.plantapp.data.Profile
 import com.plantapp.data.ProfileUpdate
@@ -161,6 +162,7 @@ class AppViewModel : ViewModel() {
 
     fun signOut() {
         viewModelScope.launch {
+            try { Push.unregister() } catch (_: Exception) { }
             try { repo.signOut() } catch (_: Exception) { }
             _state.value = UiState(Screen.Welcome)
         }

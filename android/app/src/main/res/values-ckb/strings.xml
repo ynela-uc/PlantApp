@@ -41,6 +41,8 @@
     <string name="err_generic">هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵبدەرەوە.</string>
     <string name="err_price_changed">نرخی یەکێک لە بەرهەمەکان یان کرێی گەیاندن گۆڕاوە. نرخەکانمان نوێکردەوە، تکایە سەبەتەکەت بپشکنە و دووبارە هەوڵبدەرەوە.</string>
     <string name="err_unavailable">یەکێک لە بەرهەمەکان ئیتر بەردەست نییە یان هەڵبژاردنەکانی گۆڕاون. لیستەکەمان نوێکردەوە، تکایە سەبەتەکەت بپشکنە.</string>
+    <string name="channel_new_orders">داواکارییە نوێکان</string>
+    <string name="channel_order_updates">نوێکارییەکانی داواکاری</string>
     <string name="photo_approval_title">وێنە پێش گەیاندن</string>
     <string name="photo_approval_off">پێویست نییە</string>
     <string name="photo_approval_optional">ئەگەر کڕیار داوای بکات</string>

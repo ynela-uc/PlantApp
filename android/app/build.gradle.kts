@@ -4,6 +4,12 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+// Push notifications need app/google-services.json from the Firebase console (see docs/push-setup.md).
+// Without it the app still builds and runs, it just receives no pushes.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 android {
     namespace = "com.plantapp"
     compileSdk = 37
@@ -52,6 +58,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.exifinterface)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.kotlinx.serialization.json)
 

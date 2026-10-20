@@ -40,6 +40,8 @@
     <string name="err_generic">حدث خطأ غير متوقع، حاول مرة أخرى.</string>
     <string name="err_price_changed">تغيّر سعر أحد المنتجات أو رسوم التوصيل. حدّثنا الأسعار، راجع السلة ثم أعد المحاولة.</string>
     <string name="err_unavailable">أحد المنتجات لم يعد متوفرًا أو تغيّرت خياراته. حدّثنا القائمة، راجع السلة.</string>
+    <string name="channel_new_orders">طلبات جديدة</string>
+    <string name="channel_order_updates">تحديثات الطلبات</string>
     <string name="photo_approval_title">صورة قبل التوصيل</string>
     <string name="photo_approval_off">غير مطلوبة</string>
     <string name="photo_approval_optional">إذا طلبها الزبون</string>

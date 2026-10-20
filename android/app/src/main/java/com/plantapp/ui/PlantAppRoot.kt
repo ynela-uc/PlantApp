@@ -57,7 +57,8 @@ fun PlantAppRoot(viewModel: AppViewModel = viewModel()) {
             onSubmit = viewModel::setNewPassword,
             onEdit = viewModel::clearError,
         )
-        is Screen.Home ->
+        is Screen.Home -> {
+            PushSetup(screen.profile.id)
             if (screen.profile.roleEnum == Role.Customer) {
                 CustomerApp(
                     profile = screen.profile,
@@ -69,5 +70,6 @@ fun PlantAppRoot(viewModel: AppViewModel = viewModel()) {
             } else {
                 SellerApp(profile = screen.profile, onSignOut = viewModel::signOut)
             }
+        }
     }
 }

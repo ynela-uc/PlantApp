@@ -94,6 +94,8 @@ enum GeneratedStrings {
         "cat_trees_palms": ["en": "Trees & palms", "ar": "أشجار ونخيل", "ckb": "دار و دارخورما"],
         "cat_weddings_events": ["en": "Bridal bouquets & wedding decor", "ar": "مسكات وتزيين الأعراس", "ckb": "گوڵی زەماوەند و ئاهەنگ"],
         "cat_wreaths": ["en": "Wreaths & stands", "ar": "أكاليل وستاندات", "ckb": "تاجە گوڵ و ستاند"],
+        "channel_new_orders": ["en": "New orders", "ar": "طلبات جديدة", "ckb": "داواکارییە نوێکان"],
+        "channel_order_updates": ["en": "Order updates", "ar": "تحديثات الطلبات", "ckb": "نوێکارییەکانی داواکاری"],
         "checkout_delivery": ["en": "Delivery", "ar": "التوصيل", "ckb": "گەیاندن"],
         "checkout_for_me": ["en": "For me", "ar": "لنفسي", "ckb": "بۆ خۆم"],
         "checkout_gift": ["en": "A gift", "ar": "هدية", "ckb": "دیاری"],
