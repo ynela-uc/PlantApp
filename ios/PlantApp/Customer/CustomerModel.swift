@@ -13,6 +13,8 @@ enum Overlay: Equatable {
 
 enum CheckoutError: Equatable {
     case notDeliverable([String])
+    case priceChanged
+    case unavailable
     case network
     case generic
 }
@@ -336,11 +338,22 @@ final class CustomerModel: ObservableObject {
                     }
                     created += 1
                 } catch {
-                    failure = (error is URLError) ? .network : .generic
+                    let reason = error.localizedDescription
+                    if error is URLError {
+                        failure = .network
+                    } else if reason.contains("price_changed") {
+                        failure = .priceChanged
+                    } else if reason.contains("unavailable") {
+                        failure = .unavailable
+                    } else {
+                        failure = .generic
+                    }
                     break
                 }
             }
             if created > 0 { loadOrders() }
+            // Prices or stock changed: reload the products so the cart shows what the shop charges now.
+            if failure == .priceChanged || failure == .unavailable { load() }
             placing = false
             checkoutError = failure
             if failure == nil { withAnimation(Theme.slide) { overlay = .placed(created) } }

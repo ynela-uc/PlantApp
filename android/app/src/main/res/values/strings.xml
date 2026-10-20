@@ -38,6 +38,8 @@
     <string name="err_email_taken">This email is already registered. Try signing in.</string>
     <string name="err_network">No internet connection. Check your network and try again.</string>
     <string name="err_generic">Something went wrong. Please try again.</string>
+    <string name="err_price_changed">Something changed: a price or a delivery fee is different now. We refreshed the prices, so please check your cart and try again.</string>
+    <string name="err_unavailable">One of the products is no longer available or its choices changed. We refreshed the list, so please check your cart.</string>
     <string name="err_wrong_role_customer">This email belongs to a customer account. Go back and continue as Customer.</string>
     <string name="err_wrong_role_seller">This email belongs to a seller account. Go back and continue as Seller.</string>
 

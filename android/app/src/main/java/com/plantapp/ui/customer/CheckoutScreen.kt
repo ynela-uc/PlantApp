@@ -200,6 +200,8 @@ fun CheckoutScreen(
                     is CheckoutError.NotDeliverable -> stringResource(
                         R.string.err_not_deliverable, e.shops.joinToString(", "), cityLabel(city),
                     )
+                    CheckoutError.PriceChanged -> stringResource(R.string.err_price_changed)
+                    CheckoutError.Unavailable -> stringResource(R.string.err_unavailable)
                     CheckoutError.Network -> stringResource(R.string.err_network)
                     CheckoutError.Generic -> stringResource(R.string.err_generic)
                     null -> if (fieldsError) stringResource(R.string.err_checkout_fields) else null

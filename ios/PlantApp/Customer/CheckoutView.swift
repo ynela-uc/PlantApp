@@ -142,6 +142,10 @@ struct CheckoutView: View {
         switch model.checkoutError {
         case .notDeliverable(let shops):
             return lang.t("err_not_deliverable", shops.joined(separator: ", "), lang.cityName(city))
+        case .priceChanged:
+            return lang.t("err_price_changed")
+        case .unavailable:
+            return lang.t("err_unavailable")
         case .network:
             return lang.t("err_network")
         case .generic:

@@ -38,6 +38,8 @@
     <string name="err_email_taken">هذا البريد مسجّل لدينا من قبل، جرّب تسجيل الدخول.</string>
     <string name="err_network">لا يوجد اتصال بالإنترنت، تأكد من الشبكة وحاول مجددًا.</string>
     <string name="err_generic">حدث خطأ غير متوقع، حاول مرة أخرى.</string>
+    <string name="err_price_changed">تغيّر سعر أحد المنتجات أو رسوم التوصيل. حدّثنا الأسعار، راجع السلة ثم أعد المحاولة.</string>
+    <string name="err_unavailable">أحد المنتجات لم يعد متوفرًا أو تغيّرت خياراته. حدّثنا القائمة، راجع السلة.</string>
     <string name="err_wrong_role_customer">هذا البريد مسجّل كحساب زبون. ارجع واختر «أنا زبون».</string>
     <string name="err_wrong_role_seller">هذا البريد مسجّل كحساب بائع. ارجع واختر «أنا بائع».</string>
 

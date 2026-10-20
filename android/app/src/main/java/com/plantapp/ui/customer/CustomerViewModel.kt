@@ -33,6 +33,10 @@ sealed interface Overlay {
 
 sealed interface CheckoutError {
     data class NotDeliverable(val shops: List<String>) : CheckoutError
+    /** The shop changed a price or delivery fee since the cart was filled (or the app sent wrong numbers). */
+    data object PriceChanged : CheckoutError
+    /** A product is gone, out of stock or its choices changed. */
+    data object Unavailable : CheckoutError
     data object Network : CheckoutError
     data object Generic : CheckoutError
 }
@@ -290,11 +294,19 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
                     _state.update { it.copy(cart = it.cart - keys) }
                     created++
                 } catch (e: Exception) {
-                    error = if (e is IOException) CheckoutError.Network else CheckoutError.Generic
+                    val reason = e.message.orEmpty()
+                    error = when {
+                        e is IOException -> CheckoutError.Network
+                        "price_changed" in reason -> CheckoutError.PriceChanged
+                        "unavailable" in reason -> CheckoutError.Unavailable
+                        else -> CheckoutError.Generic
+                    }
                     break
                 }
             }
             if (created > 0) loadOrders()
+            // Prices or stock changed: reload the products so the cart shows what the shop charges now.
+            if (error == CheckoutError.PriceChanged || error == CheckoutError.Unavailable) load()
             _state.update {
                 it.copy(
                     placing = false,
