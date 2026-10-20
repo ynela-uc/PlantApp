@@ -267,7 +267,7 @@
     <string name="cat_roses">Roses</string>
     <string name="cat_flower_boxes">Flower boxes</string>
     <string name="cat_baskets">Flower baskets</string>
-    <string name="cat_weddings_events">Wedding &amp; party flowers</string>
+    <string name="cat_weddings_events">Bridal bouquets &amp; wedding decor</string>
     <string name="cat_condolence">Sympathy flowers</string>
     <string name="cat_dried_preserved">Dried flowers</string>
     <string name="cat_artificial_flowers">Artificial flowers</string>
@@ -302,8 +302,8 @@
     <string name="occ_congratulations">Congratulations</string>
     <string name="occ_new_home">New home</string>
     <string name="occ_graduation">Graduation</string>
-    <string name="occ_wedding">Wedding</string>
-    <string name="occ_condolence">Condolence</string>
+    <string name="occ_wedding">Engagement &amp; wedding</string>
+    <string name="occ_condolence">Sympathy</string>
     <string name="occ_mothers_day">Mother\'s Day</string>
     <string name="occ_eid">Eid</string>
     <string name="occ_thank_you">Thank you</string>
