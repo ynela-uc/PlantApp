@@ -237,8 +237,8 @@
     <string name="city_qadisiyah">قادسیە</string>
     <string name="city_salahaldin">سەلاحەدین</string>
 
-    <string name="nav_ai">ڕێنیشاندەر</string>
-    <string name="ai_title">ڕێنیشاندەری زیرەک</string>
+    <string name="nav_ai">یاریدەدەر</string>
+    <string name="ai_title">یاریدەدەری زیرەک</string>
     <string name="ai_intro">هەر شتێک دەربارەی گوڵ، ڕووەک و دیاری بپرسە. ئەمانە دەتوانم بیکەم:</string>
     <string name="ai_input_hint">پرسیار بکە دەربارەی ڕووەک، گوڵ یان دیاری…</string>
     <string name="ai_send">ناردن</string>
@@ -253,9 +253,9 @@
     <string name="ai_group_other">شارەکانی تر (گەیاندن نییە بۆ %1$s)</string>
     <string name="ai_similar">هاوشێوە</string>
     <string name="ai_no_shops">هیچ فرۆشگایەک لە ئەپەکەدا ئەمە نافرۆشێت هێشتا.</string>
-    <string name="ai_limit">گەیشتیتە سنووری ئەمڕۆ بۆ ڕێنیشاندەری زیرەک. تکایە سبەینێ دووبارە هەوڵبدەرەوە.</string>
+    <string name="ai_limit">گەیشتیتە سنووری ئەمڕۆ بۆ یاریدەدەری زیرەک. تکایە سبەینێ دووبارە هەوڵبدەرەوە.</string>
     <string name="ai_photo_limit">گەیشتیتە سنووری وێنەی ئەمڕۆ. هێشتا دەتوانیت پرسیار بنووسیت، یان سبەینێ هەوڵبدەرەوە.</string>
-    <string name="ai_unavailable">ڕێنیشاندەری زیرەک هێشتا چالاک نەکراوە.</string>
+    <string name="ai_unavailable">یاریدەدەری زیرەک هێشتا چالاک نەکراوە.</string>
     <string name="ai_disclaimer">وەڵامەکانی ژیری دەستکرد لەوانەیە هەڵە بن. بۆ کێشە گرنگەکان، لە نەمامگەیەکی ناوچەیی بپرسە.</string>
 
     <string name="sec_flowers">گوڵ</string>
@@ -339,7 +339,7 @@
     <string name="shop_visit">سەردانی فرۆشگا</string>
     <string name="shop_products">بەرهەمەکان</string>
 
-    <string name="ai_intro_title">من ڕێنیشاندەری زیرەکتم</string>
+    <string name="ai_intro_title">من یاریدەدەری زیرەکتم</string>
     <string name="ai_can_identify">🌿  لە وێنەوە هەر ڕووەک یان گوڵێک دەناسمەوە</string>
     <string name="ai_can_care">💧  ئامۆژگاری چاودێری دەدەم و کێشەی ڕووەکی نەخۆش دەدۆزمەوە</string>
     <string name="ai_can_gift">🎁  بیرۆکەی دیاری پێشنیار دەکەم بۆ هەموو بۆنەیەک و بودجەیەک</string>

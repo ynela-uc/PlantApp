@@ -236,8 +236,8 @@
     <string name="city_qadisiyah">القادسية</string>
     <string name="city_salahaldin">صلاح الدين</string>
 
-    <string name="nav_ai">المرشد</string>
-    <string name="ai_title">المرشد الذكي</string>
+    <string name="nav_ai">المساعد</string>
+    <string name="ai_title">المساعد الذكي</string>
     <string name="ai_intro">اسألني عن الورود والنباتات والهدايا، وهذا ما يمكنني مساعدتك فيه:</string>
     <string name="ai_input_hint">اسأل عن نبتة أو وردة أو هدية…</string>
     <string name="ai_send">إرسال</string>
@@ -252,9 +252,9 @@
     <string name="ai_group_other">متاجر في محافظات أخرى (لا توصل إلى %1$s)</string>
     <string name="ai_similar">مشابه</string>
     <string name="ai_no_shops">لا يوجد في التطبيق متجر يبيع هذا حاليًا.</string>
-    <string name="ai_limit">وصلت إلى الحد اليومي للمرشد الذكي، جرّب غدًا.</string>
+    <string name="ai_limit">وصلت إلى الحد اليومي للمساعد الذكي، جرّب غدًا.</string>
     <string name="ai_photo_limit">وصلت إلى حد الصور اليومي. يمكنك متابعة الأسئلة النصية أو المحاولة غدًا.</string>
-    <string name="ai_unavailable">المرشد الذكي غير متاح حاليًا.</string>
+    <string name="ai_unavailable">المساعد الذكي غير متاح حاليًا.</string>
     <string name="ai_disclaimer">قد تحتمل إجابات الذكاء الاصطناعي الخطأ. للمشاكل الكبيرة استشر مشتلًا قريبًا.</string>
 
     <string name="sec_flowers">الورود</string>
@@ -338,7 +338,7 @@
     <string name="shop_visit">زيارة المتجر</string>
     <string name="shop_products">المنتجات</string>
 
-    <string name="ai_intro_title">أهلاً! أنا مرشدك الذكي</string>
+    <string name="ai_intro_title">أهلاً! أنا مساعدك الذكي</string>
     <string name="ai_can_identify">🌿  أتعرّف على أي نبتة أو وردة من صورتها</string>
     <string name="ai_can_care">💧  أرشدك للعناية بنباتك وأكشف سبب ذبولها أو مرضها</string>
     <string name="ai_can_gift">🎁  أقترح عليك هدية تناسب كل مناسبة وميزانية</string>

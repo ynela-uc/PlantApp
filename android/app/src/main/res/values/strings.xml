@@ -236,8 +236,8 @@
     <string name="city_qadisiyah">Al-Qadisiyah</string>
     <string name="city_salahaldin">Salah al-Din</string>
 
-    <string name="nav_ai">Guide</string>
-    <string name="ai_title">Smart Guide</string>
+    <string name="nav_ai">Assistant</string>
+    <string name="ai_title">Smart Assistant</string>
     <string name="ai_intro">Ask me anything about flowers, plants and gifts. Here is what I can do:</string>
     <string name="ai_input_hint">Ask about plants, flowers or gifts…</string>
     <string name="ai_send">Send</string>
@@ -252,9 +252,9 @@
     <string name="ai_group_other">Other cities (no delivery to %1$s)</string>
     <string name="ai_similar">Similar</string>
     <string name="ai_no_shops">No shop in the app sells this yet.</string>
-    <string name="ai_limit">You have reached today\'s limit for the Smart Guide. Please try again tomorrow.</string>
+    <string name="ai_limit">You have reached today\'s limit for the Smart Assistant. Please try again tomorrow.</string>
     <string name="ai_photo_limit">You have reached today\'s photo limit. You can still type questions, or try again tomorrow.</string>
-    <string name="ai_unavailable">The Smart Guide is not switched on yet.</string>
+    <string name="ai_unavailable">The Smart Assistant is not switched on yet.</string>
     <string name="ai_disclaimer">AI answers can be wrong. For serious problems, ask a local nursery.</string>
 
     <string name="sec_flowers">Flowers</string>
@@ -338,7 +338,7 @@
     <string name="shop_visit">Visit the shop</string>
     <string name="shop_products">Products</string>
 
-    <string name="ai_intro_title">I\'m your Smart Guide</string>
+    <string name="ai_intro_title">I\'m your Smart Assistant</string>
     <string name="ai_can_identify">🌿  Identify any plant or flower from a photo</string>
     <string name="ai_can_care">💧  Give care tips and find out what is wrong with a sick plant</string>
     <string name="ai_can_gift">🎁  Suggest gift ideas for any occasion and budget</string>

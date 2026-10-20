@@ -197,7 +197,7 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
         )
     }
 
-    /** Jump from the Smart Guide to the products it suggested: a section (and category) or an occasion. */
+    /** Jump from the Smart Assistant to the products it suggested: a section (and category) or an occasion. */
     fun browse(section: String?, category: String?, occasion: String?) = _state.update {
         val useSection = section?.takeIf { s -> Catalog.section(s) != null }
         it.copy(

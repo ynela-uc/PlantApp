@@ -1,4 +1,4 @@
-// Supabase Edge Function: plant-assistant (the "Smart Guide" inside the app)
+// Supabase Edge Function: plant-assistant (the "Smart Assistant" inside the app)
 //
 // A helper for everyone (customers and sellers) in a marketplace for flowers, plants and gifts: identify a plant
 // or flower from a photo, say whether it looks healthy, give care advice, suggest gift ideas for an occasion and
@@ -92,7 +92,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
 };
 
 const SYSTEM = [
-  "You are the Smart Guide inside a marketplace app for flowers, plants and gifts in Iraq (hot dry summers, strong sun, hard tap water, cool winters in the north).",
+  "You are the Smart Assistant inside a marketplace app for flowers, plants and gifts in Iraq (hot dry summers, strong sun, hard tap water, cool winters in the north).",
   "People use you to: identify a plant or flower from a photo, learn how to care for it or what is wrong with it, get gift ideas for an occasion, a person or a budget, and find what to buy.",
   "",
   "Rules:",

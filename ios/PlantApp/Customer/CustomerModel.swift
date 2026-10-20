@@ -192,7 +192,7 @@ final class CustomerModel: ObservableObject {
 
     func setCity(_ code: String) { city = code; category = nil }
 
-    /// Jump from the Smart Guide to the products it suggested: a section (and category) or an occasion.
+    /// Jump from the Smart Assistant to the products it suggested: a section (and category) or an occasion.
     func browse(section: String?, category: String?, occasion: String?) {
         let useSection = Catalog.section(section)?.key
         withAnimation(Theme.slide) {
