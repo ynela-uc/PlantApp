@@ -52,5 +52,6 @@ Notes and suggested shape (a starting point, to decide together before building)
   Google Play and Apple release (Apple Developer account is needed for iPhone push and TestFlight).
 
 ## Done recently
+- Photo approval is optional per product (off / optional / required), the customer can ask for it on optional products, and the shop can continue after 60 minutes without an answer (migration 014).
 - Server-side order checking (migration 013): the database recomputes prices, delivery fee and total.
 - Categories cleaned up (migration 012), Smart Assistant renamed, "Ask" tab, brand theme and logo.

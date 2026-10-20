@@ -53,6 +53,8 @@ data class Listing(
     /** A named group in the shop (Autumn 2026, Ramadan, ...). */
     val collection: String? = null,
     @SerialName("in_stock") val inStock: Boolean = true,
+    /** off / optional / required: whether the shop sends a photo for the customer to approve before delivery. */
+    @SerialName("photo_approval") val photoApproval: String = "off",
     @SerialName("image_path") val imagePath: String? = null,
     @SerialName("ai_generated") val aiGenerated: Boolean = false,
     val occasions: List<String> = emptyList(),

@@ -71,6 +71,8 @@ class EditorState(
     val piecesText: String = "",
     val collection: String = "",
     val options: List<OptionDraft> = emptyList(),
+    /** off / optional / required: photo for the customer to approve before delivery. */
+    val photoApproval: String = "off",
 ) {
     fun copy(
         photoBytes: ByteArray? = this.photoBytes,
@@ -96,10 +98,11 @@ class EditorState(
         piecesText: String = this.piecesText,
         collection: String = this.collection,
         options: List<OptionDraft> = this.options,
+        photoApproval: String = this.photoApproval,
     ) = EditorState(
         listingId, photoBytes, existingImagePath, plantKey, name, scientificName, description,
         water, light, fertilizer, heightText, priceText, inStock, aiGenerated, aiBusy, aiMessage, saving, error,
-        section, category, occasions, oldPriceText, piecesText, collection, options,
+        section, category, occasions, oldPriceText, piecesText, collection, options, photoApproval,
     )
 }
 
@@ -257,6 +260,7 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                 section = listing.section,
                 category = listing.category,
                 occasions = listing.occasions,
+                photoApproval = listing.photoApproval,
             )
         )
     }
@@ -390,6 +394,7 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                             description = description, care = care, heightCm = height, priceIqd = price,
                             oldPriceIqd = oldPrice, pieces = pieces, options = options, collection = collection,
                             imagePath = imagePath, inStock = e.inStock, aiGenerated = e.aiGenerated,
+                            photoApproval = e.photoApproval,
                         )
                     )
                 } else {
@@ -401,6 +406,7 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                             description = description, care = care, heightCm = height, priceIqd = price,
                             oldPriceIqd = oldPrice, pieces = pieces, options = options, collection = collection,
                             imagePath = imagePath, inStock = e.inStock, aiGenerated = e.aiGenerated,
+                            photoApproval = e.photoApproval,
                         )
                     )
                 }

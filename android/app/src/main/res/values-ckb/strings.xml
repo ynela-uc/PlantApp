@@ -41,6 +41,17 @@
     <string name="err_generic">هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵبدەرەوە.</string>
     <string name="err_price_changed">نرخی یەکێک لە بەرهەمەکان یان کرێی گەیاندن گۆڕاوە. نرخەکانمان نوێکردەوە، تکایە سەبەتەکەت بپشکنە و دووبارە هەوڵبدەرەوە.</string>
     <string name="err_unavailable">یەکێک لە بەرهەمەکان ئیتر بەردەست نییە یان هەڵبژاردنەکانی گۆڕاون. لیستەکەمان نوێکردەوە، تکایە سەبەتەکەت بپشکنە.</string>
+    <string name="photo_approval_title">وێنە پێش گەیاندن</string>
+    <string name="photo_approval_off">پێویست نییە</string>
+    <string name="photo_approval_optional">ئەگەر کڕیار داوای بکات</string>
+    <string name="photo_approval_required">هەمیشە</string>
+    <string name="photo_approval_hint">«هەمیشە» هەڵبژێرە بۆ بەرهەمی تایبەت یان بە داواکاری: وێنەیەک دەنێریت و کڕیار پێش گەیاندن پەسەندی دەکات. ئەگەر لە ٦٠ خولەکدا وەڵامی نەدایەوە دەتوانیت بەردەوام بیت.</string>
+    <string name="checkout_photo_title">پەسەندکردنی وێنە</string>
+    <string name="checkout_photo_required">فرۆشگاکە وێنەیەکت بۆ دەنێرێت بۆ پەسەندکردن پێش گەیاندن. ئەگەر لە ٦٠ خولەکدا وەڵام نەدەیتەوە، فرۆشگاکە بەردەوام دەبێت.</string>
+    <string name="checkout_photo_optional">دەمەوێت وێنەیەک ببینم پێش گەیاندن</string>
+    <string name="review_timeout_note">ئەگەر لە ٦٠ خولەکدا وەڵام نەدەیتەوە، فرۆشگاکە بەردەوام دەبێت.</string>
+    <string name="act_continue_no_answer">بەردەوامبوون (کڕیار لە ٦٠ خولەکدا وەڵامی نەدایەوە)</string>
+    <string name="seller_waiting_approval_timeout">کڕیار لە ٦٠ خولەکدا وەڵامی نەدایەوە. دەتوانیت بەردەوام بیت.</string>
     <string name="err_wrong_role_customer">ئەم ئیمەیڵە هەژماری کڕیارە. بگەڕێوە و وەک کڕیار بەردەوام بە.</string>
     <string name="err_wrong_role_seller">ئەم ئیمەیڵە هەژماری فرۆشیارە. بگەڕێوە و وەک فرۆشیار بەردەوام بە.</string>
 

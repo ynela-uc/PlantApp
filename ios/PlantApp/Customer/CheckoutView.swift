@@ -14,6 +14,7 @@ struct CheckoutView: View {
     @State private var dayOffset = 0
     @State private var window = "any"
     @State private var fieldsError = false
+    @State private var photoRequested = false
 
     private let windows = ["any", "morning", "afternoon", "evening"]
 
@@ -73,6 +74,8 @@ struct CheckoutView: View {
                             }
                         }
                         .padding(.top, 6)
+
+                        photoSection
 
                         SectionHeading(text: lang.t("checkout_payment"))
                         HStack(spacing: 10) {
@@ -138,6 +141,26 @@ struct CheckoutView: View {
         }
     }
 
+    /// Photo approval: shown only when something in the cart offers or needs it.
+    @ViewBuilder
+    private var photoSection: some View {
+        let optional = model.cartLines.contains { $0.listing.photoApproval == "optional" }
+        let required = model.cartLines.contains { $0.listing.photoApproval == "required" }
+        if optional || required {
+            SectionHeading(text: lang.t("checkout_photo_title"))
+            if required {
+                Text(lang.t("checkout_photo_required"))
+                    .font(.system(size: 14))
+                    .foregroundStyle(Theme.muted)
+            }
+            if optional {
+                Toggle(lang.t("checkout_photo_optional"), isOn: $photoRequested)
+                    .tint(Theme.green)
+                    .padding(.top, 8)
+            }
+        }
+    }
+
     private var errorMessage: String? {
         switch model.checkoutError {
         case .notDeliverable(let shops):
@@ -188,7 +211,8 @@ struct CheckoutView: View {
                 address: address.trimmingCharacters(in: .whitespacesAndNewlines),
                 giftNote: String(note.trimmingCharacters(in: .whitespacesAndNewlines).prefix(200)),
                 deliveryDate: iso.string(from: date(dayOffset)),
-                window: window
+                window: window,
+                photoRequested: photoRequested
             )
         )
     }

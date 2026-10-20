@@ -201,14 +201,14 @@ struct SellerOrderDetailView: View {
 
                     // Progress
                     if status != .cancelled {
-                        let reached = OrderStatus.timeline.firstIndex(of: status) ?? 0
+                        let reached = order.timeline.firstIndex(of: status) ?? 0
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(Array(OrderStatus.timeline.enumerated()), id: \.offset) { index, step in
+                            ForEach(Array(order.timeline.enumerated()), id: \.offset) { index, step in
                                 TimelineRow(
                                     label: lang.t(step.labelKey),
                                     done: index <= reached,
                                     current: index == reached,
-                                    last: index == OrderStatus.timeline.count - 1
+                                    last: index == order.timeline.count - 1
                                 )
                             }
                         }
@@ -239,6 +239,9 @@ struct SellerOrderDetailView: View {
         case .placed:
             actionButton("act_accept", busy: busy) { model.changeStatus(order.id, .preparing) }
             dangerButton("act_decline", busy: busy) { model.changeStatus(order.id, .cancelled) }
+        case .preparing where !order.photoRequired:
+            actionButton("act_out_for_delivery", busy: busy) { model.changeStatus(order.id, .outForDelivery) }
+            dangerButton("act_cancel_order", busy: busy) { model.changeStatus(order.id, .cancelled) }
         case .preparing:
             Text(lang.t("photo_prompt_title"))
                 .font(.system(size: 16, weight: .bold))
@@ -258,9 +261,16 @@ struct SellerOrderDetailView: View {
                 dangerButton("act_cancel_order", busy: false) { model.changeStatus(order.id, .cancelled) }
             }
         case .photoSent:
-            Text(lang.t("seller_waiting_approval"))
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Theme.muted)
+            if order.photoAnswerOverdue {
+                Text(lang.t("seller_waiting_approval_timeout"))
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Theme.muted)
+                actionButton("act_continue_no_answer", busy: busy) { model.changeStatus(order.id, .approved) }
+            } else {
+                Text(lang.t("seller_waiting_approval"))
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Theme.muted)
+            }
         case .approved:
             actionButton("act_out_for_delivery", busy: busy) { model.changeStatus(order.id, .outForDelivery) }
         case .outForDelivery:

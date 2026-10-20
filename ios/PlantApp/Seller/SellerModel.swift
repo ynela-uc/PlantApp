@@ -51,6 +51,8 @@ struct EditorState {
     var priceText = ""
     var inStock = true
     var aiGenerated = false
+    /// off / optional / required: photo for the customer to approve before delivery.
+    var photoApproval = "off"
     /// Catalog keys: which section and category this product is filed under, and its occasions.
     var section: String?
     var category: String?
@@ -210,6 +212,7 @@ final class SellerModel: ObservableObject {
         state.priceText = String(listing.priceIqd)
         state.inStock = listing.inStock
         state.aiGenerated = listing.aiGenerated
+        state.photoApproval = listing.photoApproval
         state.section = listing.section
         state.category = listing.category
         state.occasions = listing.occasions
@@ -248,6 +251,7 @@ final class SellerModel: ObservableObject {
     func setHeight(_ value: String) { editor?.heightText = String(value.filter(\.isNumber).prefix(3)) }
     func setPrice(_ value: String) { editor?.priceText = String(value.filter(\.isNumber).prefix(9)); editor?.error = nil }
     func setInStock(_ value: Bool) { editor?.inStock = value }
+    func setPhotoApproval(_ value: String) { editor?.photoApproval = value }
 
     /// Generic change used by the newer product fields (old price, pieces, collection, options).
     func updateEditor(_ change: (inout EditorState) -> Void) {
@@ -386,7 +390,8 @@ final class SellerModel: ObservableObject {
                             plantKey: e.plantKey, name: name, scientificName: scientificName,
                             description: description, care: care, heightCm: height, priceIqd: price ?? 0,
                             oldPriceIqd: oldPrice, pieces: pieces, options: options, collection: collection,
-                            imagePath: imagePath, inStock: e.inStock, aiGenerated: e.aiGenerated
+                            imagePath: imagePath, inStock: e.inStock, aiGenerated: e.aiGenerated,
+                            photoApproval: e.photoApproval
                         )
                     )
                 } else {
@@ -396,7 +401,8 @@ final class SellerModel: ObservableObject {
                             plantKey: e.plantKey, name: name, scientificName: scientificName,
                             description: description, care: care, heightCm: height, priceIqd: price ?? 0,
                             oldPriceIqd: oldPrice, pieces: pieces, options: options, collection: collection,
-                            imagePath: imagePath, inStock: e.inStock, aiGenerated: e.aiGenerated
+                            imagePath: imagePath, inStock: e.inStock, aiGenerated: e.aiGenerated,
+                            photoApproval: e.photoApproval
                         )
                     )
                 }

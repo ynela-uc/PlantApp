@@ -278,13 +278,13 @@ fun SellerOrderDetailScreen(
             // Progress
             if (status != OrderStatus.Cancelled) {
                 Spacer(Modifier.height(24.dp))
-                val reached = OrderStatus.timeline.indexOf(status)
-                OrderStatus.timeline.forEachIndexed { index, step ->
+                val reached = order.timeline.indexOf(status)
+                order.timeline.forEachIndexed { index, step ->
                     TimelineRow(
                         label = stringResource(statusLabel(step)),
                         done = index <= reached,
                         current = index == reached,
-                        last = index == OrderStatus.timeline.lastIndex,
+                        last = index == order.timeline.lastIndex,
                     )
                 }
             }
@@ -301,7 +301,11 @@ fun SellerOrderDetailScreen(
                     Spacer(Modifier.height(8.dp))
                     DangerButton(R.string.act_decline, busy) { onStatus(OrderStatus.Cancelled) }
                 }
-                OrderStatus.Preparing -> {
+                OrderStatus.Preparing -> if (!order.photoRequired) {
+                    ActionButton(R.string.act_out_for_delivery, busy) { onStatus(OrderStatus.OutForDelivery) }
+                    Spacer(Modifier.height(8.dp))
+                    DangerButton(R.string.act_cancel_order, busy) { onStatus(OrderStatus.Cancelled) }
+                } else {
                     Text(stringResource(R.string.photo_prompt_title), fontWeight = FontWeight.Bold, color = PlantGreenDark)
                     Text(stringResource(R.string.photo_prompt_body), color = TextMuted)
                     Spacer(Modifier.height(10.dp))
@@ -323,11 +327,21 @@ fun SellerOrderDetailScreen(
                         DangerButton(R.string.act_cancel_order, false) { onStatus(OrderStatus.Cancelled) }
                     }
                 }
-                OrderStatus.PhotoSent -> Text(
-                    stringResource(R.string.seller_waiting_approval),
-                    color = TextMuted,
-                    fontWeight = FontWeight.SemiBold,
-                )
+                OrderStatus.PhotoSent -> if (order.photoAnswerOverdue) {
+                    Text(
+                        stringResource(R.string.seller_waiting_approval_timeout),
+                        color = TextMuted,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    ActionButton(R.string.act_continue_no_answer, busy) { onStatus(OrderStatus.Approved) }
+                } else {
+                    Text(
+                        stringResource(R.string.seller_waiting_approval),
+                        color = TextMuted,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
                 OrderStatus.Approved -> ActionButton(R.string.act_out_for_delivery, busy) { onStatus(OrderStatus.OutForDelivery) }
                 OrderStatus.OutForDelivery -> ActionButton(R.string.act_mark_delivered, busy) { onStatus(OrderStatus.Delivered) }
                 OrderStatus.Delivered, OrderStatus.Cancelled -> Unit

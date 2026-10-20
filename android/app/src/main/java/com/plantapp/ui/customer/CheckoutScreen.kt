@@ -73,6 +73,7 @@ fun CheckoutScreen(
     var dayOffset by rememberSaveable { mutableIntStateOf(0) }
     var window by rememberSaveable { mutableStateOf("any") }
     var fieldsError by rememberSaveable { mutableStateOf(false) }
+    var photoRequested by rememberSaveable { mutableStateOf(false) }
 
     val today = LocalDate.now()
     val dateFormat = DateTimeFormatter.ofPattern("d MMM", Locale.getDefault())
@@ -135,6 +136,25 @@ fun CheckoutScreen(
                     "afternoon" to R.string.window_afternoon,
                     "evening" to R.string.window_evening,
                 ).forEach { (key, res) -> Pill(stringResource(res), window == key) { window = key } }
+            }
+
+            // Photo approval: shown only when something in the cart offers or needs it
+            val photoOptional = state.cartLines.any { it.listing.photoApproval == "optional" }
+            val photoRequired = state.cartLines.any { it.listing.photoApproval == "required" }
+            if (photoOptional || photoRequired) {
+                SectionTitle(R.string.checkout_photo_title)
+                if (photoRequired) {
+                    Text(stringResource(R.string.checkout_photo_required), color = TextMuted, style = MaterialTheme.typography.bodyMedium)
+                }
+                if (photoOptional) {
+                    Row(
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().clickable { photoRequested = !photoRequested },
+                    ) {
+                        androidx.compose.material3.Checkbox(checked = photoRequested, onCheckedChange = { photoRequested = it })
+                        Text(stringResource(R.string.checkout_photo_optional))
+                    }
+                }
             }
 
             // Payment
@@ -227,6 +247,7 @@ fun CheckoutScreen(
                                     giftNote = note.trim(),
                                     deliveryDate = today.plusDays(dayOffset.toLong()).toString(),
                                     window = window,
+                                    photoRequested = photoRequested,
                                 )
                             )
                         }

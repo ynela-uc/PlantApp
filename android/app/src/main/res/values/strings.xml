@@ -40,6 +40,17 @@
     <string name="err_generic">Something went wrong. Please try again.</string>
     <string name="err_price_changed">Something changed: a price or a delivery fee is different now. We refreshed the prices, so please check your cart and try again.</string>
     <string name="err_unavailable">One of the products is no longer available or its choices changed. We refreshed the list, so please check your cart.</string>
+    <string name="photo_approval_title">Photo before delivery</string>
+    <string name="photo_approval_off">Not needed</string>
+    <string name="photo_approval_optional">If the customer asks</string>
+    <string name="photo_approval_required">Always</string>
+    <string name="photo_approval_hint">Choose “Always” for made-to-order or customised items: you send a photo and the customer approves it before delivery. If they do not answer within 60 minutes, you can continue.</string>
+    <string name="checkout_photo_title">Photo approval</string>
+    <string name="checkout_photo_required">The shop will send you a photo to approve before delivery. If you do not answer within 60 minutes, the shop will continue.</string>
+    <string name="checkout_photo_optional">I want to see a photo before delivery</string>
+    <string name="review_timeout_note">If you do not answer within 60 minutes, the shop will continue.</string>
+    <string name="act_continue_no_answer">Continue (no answer after 60 minutes)</string>
+    <string name="seller_waiting_approval_timeout">The customer did not answer in 60 minutes. You can continue.</string>
     <string name="err_wrong_role_customer">This email belongs to a customer account. Go back and continue as Customer.</string>
     <string name="err_wrong_role_seller">This email belongs to a seller account. Go back and continue as Seller.</string>
 

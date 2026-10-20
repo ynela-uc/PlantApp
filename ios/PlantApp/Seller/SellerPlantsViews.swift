@@ -263,6 +263,20 @@ struct PlantEditorView: View {
                             .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
                         }
 
+                        // Photo for the customer to approve before delivery
+                        PickerTitle(lang.t("photo_approval_title"))
+                        FlowLayout(spacing: 8) {
+                            ForEach(["off", "optional", "required"], id: \.self) { key in
+                                Pill(label: lang.t("photo_approval_" + key), selected: editor.photoApproval == key, accent: Theme.amber) {
+                                    model.setPhotoApproval(key)
+                                }
+                            }
+                        }
+                        Text(lang.t("photo_approval_hint"))
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.muted)
+                            .padding(.top, 6)
+
                         Toggle(lang.t("plant_in_stock"), isOn: Binding(get: { editor.inStock }, set: { model.setInStock($0) }))
                             .font(.system(size: 16, weight: .semibold))
                             .tint(Theme.green)

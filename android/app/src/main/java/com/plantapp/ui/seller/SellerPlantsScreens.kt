@@ -368,6 +368,24 @@ fun PlantEditorScreen(
                 ) { Text("＋  " + stringResource(R.string.option_add), color = SellerAmber) }
             }
 
+            // Photo for the customer to approve before delivery
+            PickerTitle(R.string.photo_approval_title)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    "off" to R.string.photo_approval_off,
+                    "optional" to R.string.photo_approval_optional,
+                    "required" to R.string.photo_approval_required,
+                ).forEach { (key, res) ->
+                    PickChip(stringResource(res), editor.photoApproval == key) { onUpdate { it.copy(photoApproval = key) } }
+                }
+            }
+            Text(
+                stringResource(R.string.photo_approval_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = TextMuted,
+                modifier = Modifier.padding(top = 6.dp, bottom = 12.dp),
+            )
+
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 6.dp)) {
                 Switch(checked = editor.inStock, onCheckedChange = onStock)
                 Spacer(Modifier.size(10.dp))

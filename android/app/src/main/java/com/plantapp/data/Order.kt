@@ -21,6 +21,9 @@ data class OrderItem(
     val options: Map<String, String> = emptyMap(),
 )
 
+/** How long the customer has to answer a photo; after that the shop can continue (checked by the database too). */
+const val PHOTO_WAIT_MINUTES = 60L
+
 /** Order progress, in the order a customer sees it. */
 enum class OrderStatus(val db: String) {
     Placed("placed"),
@@ -36,6 +39,9 @@ enum class OrderStatus(val db: String) {
 
         /** The steps shown on the timeline (cancelled is shown on its own). */
         val timeline = listOf(Placed, Preparing, PhotoSent, Approved, OutForDelivery, Delivered)
+
+        /** Orders without a photo step go straight from preparing to out for delivery. */
+        val timelineWithoutPhoto = listOf(Placed, Preparing, OutForDelivery, Delivered)
     }
 }
 
@@ -62,8 +68,21 @@ data class Order(
     @SerialName("change_request") val changeRequest: String? = null,
     @SerialName("buyer_name") val buyerName: String = "",
     @SerialName("buyer_phone") val buyerPhone: String = "",
+    /** True when the shop must send a photo that the customer approves before delivery. */
+    @SerialName("photo_required") val photoRequired: Boolean = false,
+    @SerialName("photo_sent_at") val photoSentAt: String? = null,
 ) {
     val statusEnum: OrderStatus get() = OrderStatus.fromDb(status)
+
+    /** The steps this order goes through (with or without the photo approval). */
+    val timeline: List<OrderStatus> get() = if (photoRequired) OrderStatus.timeline else OrderStatus.timelineWithoutPhoto
+
+    /** The customer has not answered the photo within [PHOTO_WAIT_MINUTES]: the shop may continue. */
+    val photoAnswerOverdue: Boolean
+        get() = statusEnum == OrderStatus.PhotoSent && photoSentAt?.let {
+            runCatching { java.time.OffsetDateTime.parse(it).toInstant().plusSeconds(PHOTO_WAIT_MINUTES * 60).isBefore(java.time.Instant.now()) }
+                .getOrDefault(false)
+        } == true
     val itemCount: Int get() = items.sumOf { it.qty }
 }
 
@@ -86,6 +105,7 @@ data class NewOrder(
     @SerialName("gift_note") val giftNote: String? = null,
     @SerialName("delivery_date") val deliveryDate: String,
     @SerialName("delivery_window") val deliveryWindow: String,
+    @SerialName("photo_requested") val photoRequested: Boolean = false,
 )
 
 class OrdersRepository {

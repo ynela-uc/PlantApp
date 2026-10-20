@@ -217,6 +217,7 @@ fun OrderDetailScreen(
                             color = PlantGreenDark,
                         )
                         Text(stringResource(R.string.review_body), color = TextMuted, style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.review_timeout_note), color = TextMuted, style = MaterialTheme.typography.bodySmall)
                         Spacer(Modifier.height(10.dp))
                         if (photoUrl != null) {
                             AsyncImage(
@@ -265,13 +266,13 @@ fun OrderDetailScreen(
             if (status == OrderStatus.Cancelled) {
                 StatusChip(status)
             } else {
-                val reached = OrderStatus.timeline.indexOf(status)
-                OrderStatus.timeline.forEachIndexed { index, step ->
+                val reached = order.timeline.indexOf(status)
+                order.timeline.forEachIndexed { index, step ->
                     TimelineRow(
                         label = stringResource(statusLabel(step)),
                         done = index <= reached,
                         current = index == reached,
-                        last = index == OrderStatus.timeline.lastIndex,
+                        last = index == order.timeline.lastIndex,
                     )
                 }
             }

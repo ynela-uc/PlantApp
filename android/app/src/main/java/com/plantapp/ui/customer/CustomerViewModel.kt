@@ -53,6 +53,8 @@ data class CheckoutForm(
     val deliveryDate: String,
     /** any / morning / afternoon / evening */
     val window: String,
+    /** The customer asked to approve a photo first (only counts for products where the shop offers it). */
+    val photoRequested: Boolean = false,
 )
 
 /** What is stored for one cart line: which product, the customer's option choices, how many. */
@@ -288,6 +290,7 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
                             giftNote = form.giftNote.takeIf { form.isGift && it.isNotBlank() },
                             deliveryDate = form.deliveryDate,
                             deliveryWindow = form.window,
+                            photoRequested = form.photoRequested,
                         )
                     )
                     val keys = group.lines.map { it.key }.toSet()

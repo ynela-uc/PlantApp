@@ -108,6 +108,9 @@ struct OrderDetailView: View {
                             Text(lang.t("review_body"))
                                 .font(.system(size: 14))
                                 .foregroundStyle(Theme.muted)
+                            Text(lang.t("review_timeout_note"))
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.muted)
                             if let path = order.preparationPhotoPath {
                                 SignedImage(path: path)
                                     .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -148,13 +151,13 @@ struct OrderDetailView: View {
                     if status == .cancelled {
                         StatusChip(status: status)
                     } else {
-                        let reached = OrderStatus.timeline.firstIndex(of: status) ?? 0
-                        ForEach(Array(OrderStatus.timeline.enumerated()), id: \.offset) { index, step in
+                        let reached = order.timeline.firstIndex(of: status) ?? 0
+                        ForEach(Array(order.timeline.enumerated()), id: \.offset) { index, step in
                             TimelineRow(
                                 label: lang.t(step.labelKey),
                                 done: index <= reached,
                                 current: index == reached,
-                                last: index == OrderStatus.timeline.count - 1
+                                last: index == order.timeline.count - 1
                             )
                         }
                     }

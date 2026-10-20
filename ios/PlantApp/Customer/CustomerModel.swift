@@ -328,7 +328,8 @@ final class CustomerModel: ObservableObject {
                     recipientPhone: optional(form.recipientPhone),
                     giftNote: optional(form.giftNote),
                     deliveryDate: form.deliveryDate,
-                    deliveryWindow: form.window
+                    deliveryWindow: form.window,
+                    photoRequested: form.photoRequested
                 )
                 do {
                     try await OrdersService.create(order)

@@ -87,5 +87,12 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] On the entry screen the three sections have their own colour: Flowers coral, Plants green, Gifts gold; buttons and the tab bar are teal.
 - [ ] Seller screens still use the amber colour for the seller badge; nothing is hard to read (white text on teal, dark teal text on sand).
 
+## 13. Photo approval is optional now
+- [ ] Seller -> edit a product: a "Photo before delivery" choice with three options (Not needed / If the customer asks / Always). New products are "Not needed".
+- [ ] Customer orders a product set to "Not needed": no photo section at checkout. Seller accepts the order and taps "Out for delivery" straight away (no camera step). The customer's order page shows only Placed, Preparing, Out for delivery, Delivered.
+- [ ] Product set to "If the customer asks": checkout shows "I want to see a photo before delivery". Untick it: no photo step. Tick it: the seller must send a photo and the customer must approve it.
+- [ ] Product set to "Always": checkout says the shop will send a photo (no checkbox). The customer sees "If you do not answer within 60 minutes, the shop will continue" under the photo.
+- [ ] After a photo is sent, the seller sees "Waiting for the customer"; after 60 minutes the text changes and a "Continue (no answer after 60 minutes)" button appears.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

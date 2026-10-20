@@ -234,6 +234,8 @@ struct Listing: Codable, Identifiable, Equatable {
     var inStock: Bool
     var imagePath: String?
     var aiGenerated: Bool
+    /// off / optional / required: whether the shop sends a photo for the customer to approve before delivery.
+    var photoApproval: String
     var sellers: SellerInfo?
 
     enum CodingKeys: String, CodingKey {
@@ -248,6 +250,7 @@ struct Listing: Codable, Identifiable, Equatable {
         case inStock = "in_stock"
         case imagePath = "image_path"
         case aiGenerated = "ai_generated"
+        case photoApproval = "photo_approval"
     }
 
     init(from decoder: Decoder) throws {
@@ -271,6 +274,7 @@ struct Listing: Codable, Identifiable, Equatable {
         inStock = try c.decodeIfPresent(Bool.self, forKey: .inStock) ?? true
         imagePath = try c.decodeIfPresent(String.self, forKey: .imagePath)
         aiGenerated = try c.decodeIfPresent(Bool.self, forKey: .aiGenerated) ?? false
+        photoApproval = try c.decodeIfPresent(String.self, forKey: .photoApproval) ?? "off"
         sellers = try c.decodeIfPresent(SellerInfo.self, forKey: .sellers)
     }
 
@@ -317,10 +321,12 @@ struct NewListing: Encodable {
     let imagePath: String?
     let inStock: Bool
     let aiGenerated: Bool
+    let photoApproval: String
 
     enum CodingKeys: String, CodingKey {
         case name, description, care, section, category, occasions, pieces, options, collection
         case oldPriceIqd = "old_price_iqd"
+        case photoApproval = "photo_approval"
         case sellerId = "seller_id"
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
@@ -350,10 +356,12 @@ struct ListingUpdate: Encodable {
     let imagePath: String?
     let inStock: Bool
     let aiGenerated: Bool
+    let photoApproval: String
 
     enum CodingKeys: String, CodingKey {
         case name, description, care, section, category, occasions, pieces, options, collection
         case oldPriceIqd = "old_price_iqd"
+        case photoApproval = "photo_approval"
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
         case heightCm = "height_cm"
@@ -383,6 +391,7 @@ struct ListingUpdate: Encodable {
         try c.encode(imagePath, forKey: .imagePath)
         try c.encode(inStock, forKey: .inStock)
         try c.encode(aiGenerated, forKey: .aiGenerated)
+        try c.encode(photoApproval, forKey: .photoApproval)
     }
 }
 
@@ -442,6 +451,9 @@ enum OrderStatus: String, CaseIterable {
     /// Steps shown on the timeline (cancelled is shown on its own).
     static let timeline: [OrderStatus] = [.placed, .preparing, .photoSent, .approved, .outForDelivery, .delivered]
 
+    /// Orders without a photo step go straight from preparing to out for delivery.
+    static let timelineWithoutPhoto: [OrderStatus] = [.placed, .preparing, .outForDelivery, .delivered]
+
     var labelKey: String {
         switch self {
         case .placed: return "status_placed"
@@ -476,9 +488,14 @@ struct Order: Codable, Identifiable, Equatable {
     var changeRequest: String?
     var buyerName: String
     var buyerPhone: String
+    /// True when the shop must send a photo that the customer approves before delivery.
+    var photoRequired: Bool
+    var photoSentAt: String?
 
     enum CodingKeys: String, CodingKey {
         case id, items, status, city, address
+        case photoRequired = "photo_required"
+        case photoSentAt = "photo_sent_at"
         case sellerId = "seller_id"
         case sellerName = "seller_name"
         case createdAt = "created_at"
@@ -518,9 +535,24 @@ struct Order: Codable, Identifiable, Equatable {
         changeRequest = try c.decodeIfPresent(String.self, forKey: .changeRequest)
         buyerName = try c.decodeIfPresent(String.self, forKey: .buyerName) ?? ""
         buyerPhone = try c.decodeIfPresent(String.self, forKey: .buyerPhone) ?? ""
+        photoRequired = try c.decodeIfPresent(Bool.self, forKey: .photoRequired) ?? false
+        photoSentAt = try c.decodeIfPresent(String.self, forKey: .photoSentAt)
     }
 
     var statusEnum: OrderStatus { OrderStatus.from(status) }
+
+    /// The steps this order goes through (with or without the photo approval).
+    var timeline: [OrderStatus] { photoRequired ? OrderStatus.timeline : OrderStatus.timelineWithoutPhoto }
+
+    /// The customer has not answered the photo within an hour: the shop may continue (the database checks this too).
+    var photoAnswerOverdue: Bool {
+        guard statusEnum == .photoSent, let text = photoSentAt else { return false }
+        let withFraction = ISO8601DateFormatter()
+        withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let plain = ISO8601DateFormatter()
+        guard let sent = withFraction.date(from: text) ?? plain.date(from: text) else { return false }
+        return Date().timeIntervalSince(sent) > 3600
+    }
     var shortId: String { String(id.prefix(6)).uppercased() }
     var itemCount: Int { items.reduce(0) { $0 + $1.qty } }
 }
@@ -543,9 +575,11 @@ struct NewOrder: Encodable {
     let giftNote: String?
     let deliveryDate: String
     let deliveryWindow: String
+    let photoRequested: Bool
 
     enum CodingKeys: String, CodingKey {
         case items, city, address
+        case photoRequested = "photo_requested"
         case buyerId = "buyer_id"
         case sellerId = "seller_id"
         case sellerName = "seller_name"
@@ -575,6 +609,8 @@ struct CheckoutForm {
     var deliveryDate = ""
     /// any / morning / afternoon / evening
     var window = "any"
+    /// The customer asked to approve a photo first (only counts for products where the shop offers it).
+    var photoRequested = false
 }
 
 // MARK: - AI suggestions

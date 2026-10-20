@@ -60,6 +60,7 @@ data class NewListing(
     @SerialName("image_path") val imagePath: String?,
     @SerialName("in_stock") val inStock: Boolean,
     @SerialName("ai_generated") val aiGenerated: Boolean,
+    @SerialName("photo_approval") val photoApproval: String = "off",
 )
 
 @Serializable
@@ -81,6 +82,7 @@ data class ListingUpdate(
     @SerialName("image_path") val imagePath: String?,
     @SerialName("in_stock") val inStock: Boolean,
     @SerialName("ai_generated") val aiGenerated: Boolean,
+    @SerialName("photo_approval") val photoApproval: String = "off",
 )
 
 class SellerRepository {
