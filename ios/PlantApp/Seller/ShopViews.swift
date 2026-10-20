@@ -17,6 +17,7 @@ struct ShopTab: View {
                     .padding(.bottom, 16)
 
                 InfoRow(label: lang.t("field_phone"), value: shop.phone)
+                InfoRow(label: lang.t("shop_types_label"), value: shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", "))
                 InfoRow(
                     label: lang.t("shop_delivery"),
                     value: shop.isNationwide
@@ -57,6 +58,7 @@ struct ShopEditorView: View {
     @State private var bio: String
     @State private var nationwide: Bool
     @State private var cities: Set<String>
+    @State private var types: Set<String>
     @State private var showError = false
 
     init(shop: Shop) {
@@ -66,6 +68,7 @@ struct ShopEditorView: View {
         _bio = State(initialValue: shop.bio)
         _nationwide = State(initialValue: shop.isNationwide)
         _cities = State(initialValue: Set(shop.deliversTo ?? []))
+        _types = State(initialValue: Set(shop.shopTypes))
     }
 
     var body: some View {
@@ -82,6 +85,18 @@ struct ShopEditorView: View {
                     AppField(title: lang.t("field_shop_name"), text: $name)
                     AppField(title: lang.t("field_phone"), text: $phone, keyboard: .phonePad)
                     AppField(title: lang.t("field_bio"), text: $bio, multiline: true)
+
+                    Text(lang.t("shop_types_title"))
+                        .font(.system(size: 14, weight: .bold))
+                        .padding(.top, 8)
+                    FlowLayout(spacing: 8) {
+                        ForEach(Catalog.sections) { entry in
+                            Pill(label: "\(entry.emoji) \(lang.t("sec_" + entry.key))", selected: types.contains(entry.key), accent: Theme.amber) {
+                                if types.contains(entry.key) { types.remove(entry.key) } else { types.insert(entry.key) }
+                                showError = false
+                            }
+                        }
+                    }
 
                     Text(lang.t("shop_delivery"))
                         .font(.system(size: 14, weight: .bold))
@@ -126,7 +141,7 @@ struct ShopEditorView: View {
 
     private func save() {
         let blank: (String) -> Bool = { $0.trimmingCharacters(in: .whitespaces).isEmpty }
-        if blank(name) || blank(phone) || (!nationwide && cities.isEmpty) {
+        if blank(name) || blank(phone) || types.isEmpty || (!nationwide && cities.isEmpty) {
             showError = true
             return
         }
@@ -137,7 +152,8 @@ struct ShopEditorView: View {
                 phone: phone.trimmingCharacters(in: .whitespaces),
                 bio: bio.trimmingCharacters(in: .whitespacesAndNewlines),
                 deliveryScope: nationwide ? "nationwide" : "local",
-                deliversTo: nationwide ? nil : Cities.codes.filter { cities.contains($0) }
+                deliversTo: nationwide ? nil : Cities.codes.filter { cities.contains($0) },
+                shopTypes: Catalog.sections.map(\.key).filter { types.contains($0) }
             )
         )
     }

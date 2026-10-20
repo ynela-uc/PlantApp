@@ -21,6 +21,7 @@ data class Shop(
     val rating: Double = 0.0,
     val phone: String = "",
     val bio: String = "",
+    @SerialName("shop_types") val shopTypes: List<String> = listOf(Catalog.PLANTS),
 ) {
     val isNationwide: Boolean get() = deliveryScope == "nationwide"
 }
@@ -32,11 +33,15 @@ data class ShopUpdate(
     val bio: String,
     @SerialName("delivery_scope") val deliveryScope: String,
     @SerialName("delivers_to") val deliversTo: List<String>?,
+    @SerialName("shop_types") val shopTypes: List<String>,
 )
 
 @Serializable
 data class NewListing(
     @SerialName("seller_id") val sellerId: String,
+    val section: String,
+    val category: String?,
+    val occasions: List<String>,
     @SerialName("plant_key") val plantKey: String?,
     val name: Map<String, String>,
     @SerialName("scientific_name") val scientificName: String?,
@@ -51,6 +56,9 @@ data class NewListing(
 
 @Serializable
 data class ListingUpdate(
+    val section: String,
+    val category: String?,
+    val occasions: List<String>,
     @SerialName("plant_key") val plantKey: String?,
     val name: Map<String, String>,
     @SerialName("scientific_name") val scientificName: String?,

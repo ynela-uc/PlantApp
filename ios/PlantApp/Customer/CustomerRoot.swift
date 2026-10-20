@@ -13,6 +13,15 @@ struct CustomerRoot: View {
     }
 
     var body: some View {
+        if model.entered {
+            tabs
+        } else {
+            EntryView(profile: profile)
+                .environmentObject(model)
+        }
+    }
+
+    private var tabs: some View {
         ZStack {
             TabView(selection: Binding(get: { model.tab }, set: { model.setTab($0) })) {
                 BrowseView(profile: profile)

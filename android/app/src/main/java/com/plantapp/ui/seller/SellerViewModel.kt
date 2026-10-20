@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.plantapp.data.AiException
 import com.plantapp.data.AiRepository
+import com.plantapp.data.Catalog
 import com.plantapp.data.Listing
 import com.plantapp.data.ListingUpdate
 import com.plantapp.data.NewListing
@@ -36,7 +37,7 @@ enum class TextField { Name, Description, Water, Light, Fertilizer }
 /** What happened the last time the AI ran, shown above the editor fields. */
 enum class AiMessage { Filled, LowConfidence, NotAPlant, NotConfigured, LimitReached, Network, Failed }
 
-enum class EditorError { Required, SaveFailed }
+enum class EditorError { Required, CategoryMissing, SaveFailed }
 
 /** Everything in the add/edit plant page. Texts are maps keyed by language code (en / ar / ckb). */
 class EditorState(
@@ -58,6 +59,10 @@ class EditorState(
     val aiMessage: AiMessage? = null,
     val saving: Boolean = false,
     val error: EditorError? = null,
+    /** Catalog keys: which section and category this product is filed under, and its occasions. */
+    val section: String? = null,
+    val category: String? = null,
+    val occasions: List<String> = emptyList(),
 ) {
     fun copy(
         photoBytes: ByteArray? = this.photoBytes,
@@ -76,9 +81,13 @@ class EditorState(
         aiMessage: AiMessage? = this.aiMessage,
         saving: Boolean = this.saving,
         error: EditorError? = this.error,
+        section: String? = this.section,
+        category: String? = this.category,
+        occasions: List<String> = this.occasions,
     ) = EditorState(
         listingId, photoBytes, existingImagePath, plantKey, name, scientificName, description,
         water, light, fertilizer, heightText, priceText, inStock, aiGenerated, aiBusy, aiMessage, saving, error,
+        section, category, occasions,
     )
 }
 
@@ -229,6 +238,9 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                 priceText = listing.priceIqd.toString(),
                 inStock = listing.inStock,
                 aiGenerated = listing.aiGenerated,
+                section = listing.section,
+                category = listing.category,
+                occasions = listing.occasions,
             )
         )
     }
@@ -255,6 +267,18 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
     fun setHeight(value: String) = editor { it.copy(heightText = value.filter(Char::isDigit).take(3)) }
     fun setPrice(value: String) = editor { it.copy(priceText = value.filter(Char::isDigit).take(9), error = null) }
     fun setInStock(value: Boolean) = editor { it.copy(inStock = value) }
+
+    /** Picking another section clears a category that belongs to the old one. */
+    fun setSection(key: String) = editor { e ->
+        val stillValid = Catalog.section(key)?.categories?.any { it.key == e.category } == true
+        e.copy(section = key, category = if (stillValid) e.category else null, error = null)
+    }
+
+    fun setCategory(key: String) = editor { it.copy(category = key, error = null) }
+
+    fun toggleOccasion(key: String) = editor { e ->
+        e.copy(occasions = if (key in e.occasions) e.occasions - key else e.occasions + key)
+    }
 
     /** A new photo was taken or picked. For a new plant the AI runs straight away. */
     fun onPlantPhoto(raw: ByteArray, runAiNow: Boolean) {
@@ -293,6 +317,9 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
             aiGenerated = true,
             aiMessage = if (s.confidence == "low") AiMessage.LowConfidence else AiMessage.Filled,
             plantKey = s.plantKey.takeIf { it != "Other" },
+            section = Catalog.section(s.section)?.key ?: e.section,
+            category = Catalog.section(s.section)?.categories?.firstOrNull { it.key == s.category }?.key ?: e.category,
+            occasions = s.occasions.filter { key -> Catalog.occasions.any { it.key == key } }.ifEmpty { e.occasions },
             name = s.name.toMap(),
             scientificName = s.scientificName,
             description = s.description.toMap(),
@@ -309,6 +336,10 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
         val price = e.priceText.toIntOrNull()
         if (e.name.values.none { it.isNotBlank() } || price == null || price <= 0) {
             editor { it.copy(error = EditorError.Required) }
+            return
+        }
+        if (e.section == null || e.category == null) {
+            editor { it.copy(error = EditorError.CategoryMissing) }
             return
         }
         editor { it.copy(saving = true, error = null) }
@@ -328,7 +359,8 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                 if (e.listingId == null) {
                     repo.createListing(
                         NewListing(
-                            sellerId = shop.id, plantKey = e.plantKey, name = name, scientificName = scientific,
+                            sellerId = shop.id, section = e.section, category = e.category, occasions = e.occasions,
+                            plantKey = e.plantKey, name = name, scientificName = scientific,
                             description = description, care = care, heightCm = height, priceIqd = price,
                             imagePath = imagePath, inStock = e.inStock, aiGenerated = e.aiGenerated,
                         )
@@ -337,6 +369,7 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                     repo.updateListing(
                         e.listingId,
                         ListingUpdate(
+                            section = e.section, category = e.category, occasions = e.occasions,
                             plantKey = e.plantKey, name = name, scientificName = scientific,
                             description = description, care = care, heightCm = height, priceIqd = price,
                             imagePath = imagePath, inStock = e.inStock, aiGenerated = e.aiGenerated,

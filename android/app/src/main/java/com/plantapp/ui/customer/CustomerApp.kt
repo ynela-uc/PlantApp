@@ -36,6 +36,11 @@ fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
     val assistantState by assistant.state.collectAsStateWithLifecycle()
     val language = rememberLang()
 
+    if (!state.entered) {
+        EntryScreen(profile = profile, onChoose = vm::enter)
+        return
+    }
+
     when (val overlay = state.overlay) {
         is Overlay.Detail -> {
             val listing = state.listing(overlay.listingId)
@@ -122,7 +127,9 @@ fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
                 state = state,
                 onCity = vm::setCity,
                 onQuery = vm::setQuery,
-                onPlantFilter = vm::setPlantFilter,
+                onSection = vm::openSection,
+                onCategory = vm::setCategory,
+                onOccasion = vm::openOccasion,
                 onOpen = vm::openListing,
                 onRetry = vm::load,
                 modifier = content,

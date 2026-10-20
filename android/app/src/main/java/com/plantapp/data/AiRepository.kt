@@ -37,6 +37,10 @@ data class PlantSuggestion(
     val description: Tri = Tri(),
     val care: AiCare = AiCare(),
     @SerialName("height_cm") val heightCm: Int = 0,
+    /** What kind of product the photo shows (Catalog keys); older function versions leave these empty. */
+    val section: String = "",
+    val category: String = "",
+    val occasions: List<String> = emptyList(),
 )
 
 /** Why the AI could not help (the editor then lets the seller type everything in). */

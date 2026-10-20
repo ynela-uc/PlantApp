@@ -51,6 +51,18 @@ struct AuthView: View {
                 if creating {
                     if role == .seller {
                         AppField(title: lang.t("field_shop_name"), text: $form.shopName)
+                        Text(lang.t("shop_types_title"))
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Theme.muted)
+                        FlowLayout(spacing: 8) {
+                            ForEach(Catalog.sections) { entry in
+                                let selected = form.shopTypes.contains(entry.key)
+                                Pill(label: "\(entry.emoji) \(lang.t("sec_" + entry.key))", selected: selected, accent: accent) {
+                                    if selected { form.shopTypes.removeAll { $0 == entry.key } } else { form.shopTypes.append(entry.key) }
+                                    app.clearError()
+                                }
+                            }
+                        }
                     }
                     Text(lang.t("field_city"))
                         .font(.system(size: 13, weight: .semibold))
@@ -106,6 +118,7 @@ struct AuthView: View {
             || (role == .seller && blank(form.shopName))
         if missing { localError = lang.t("err_required"); return }
         if form.password.count < 6 { localError = lang.t("err_password_short"); return }
+        if role == .seller && form.shopTypes.isEmpty { localError = lang.t("err_shop_types"); return }
         var clean = form
         clean.email = email
         clean.firstName = form.firstName.trimmingCharacters(in: .whitespaces)

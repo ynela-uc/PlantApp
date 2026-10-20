@@ -22,6 +22,9 @@ data class SellerInfo(
 data class Listing(
     val id: String,
     @SerialName("seller_id") val sellerId: String,
+    /** flowers / plants / gifts (see Catalog). Rows from before sections existed are plants. */
+    val section: String = "plants",
+    val category: String? = null,
     @SerialName("plant_key") val plantKey: String? = null,
     val name: Map<String, String> = emptyMap(),
     @SerialName("scientific_name") val scientificName: String? = null,
@@ -39,6 +42,10 @@ data class Listing(
     /** Public URL of the shop's photo, or null when the listing has none yet. */
     val imageUrl: String?
         get() = imagePath?.takeIf { it.isNotBlank() }?.let(::plantPhotoUrl)
+
+    /** Emoji shown as the picture until a shop uploads a photo. */
+    val placeholderEmoji: String
+        get() = if (section == Catalog.PLANTS) plantEmoji(plantKey) else Catalog.categoryEmoji(category)
 }
 
 /** Public link to a photo stored in the plant-photos bucket. */

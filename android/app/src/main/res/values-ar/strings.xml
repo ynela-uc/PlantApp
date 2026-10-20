@@ -3,13 +3,13 @@
     <string name="app_name">PlantApp</string>
 
     <string name="welcome_title">أهلاً بك في PlantApp</string>
-    <string name="welcome_tagline">كل ما تحتاجه نباتاتك، في مكان واحد</string>
+    <string name="welcome_tagline">ورود ونباتات وهدايا من المتاجر المحلية</string>
     <string name="role_prompt">كيف تريد المتابعة؟</string>
 
     <string name="role_customer_title">المتابعة كزبون</string>
-    <string name="role_customer_desc">اعثر على النباتات ونصائح العناية والبائعين القريبين منك</string>
+    <string name="role_customer_desc">اعثر على الورود والنباتات والهدايا من متاجر قريبة منك</string>
     <string name="role_seller_title">المتابعة كبائع</string>
-    <string name="role_seller_desc">اعرض نباتاتك وأدر طلباتك</string>
+    <string name="role_seller_desc">اعرض منتجاتك وأدر طلباتك</string>
 
     <string name="back">رجوع</string>
     <string name="language_label">اللغة</string>
@@ -49,11 +49,11 @@
     <string name="nav_cart">السلة</string>
     <string name="nav_profile">حسابي</string>
 
-    <string name="browse_search_hint">ابحث عن نبتة</string>
+    <string name="browse_search_hint">ابحث عن منتج أو متجر</string>
     <string name="browse_delivering_to">التوصيل إلى</string>
     <string name="browse_all">الكل</string>
-    <string name="browse_empty">لا توجد نباتات متاحة للتوصيل إلى %1$s حاليًا.</string>
-    <string name="browse_load_failed">تعذّر تحميل النباتات. تحقق من اتصالك.</string>
+    <string name="browse_empty">لا توجد منتجات متاحة للتوصيل إلى %1$s حاليًا.</string>
+    <string name="browse_load_failed">تعذّر تحميل المنتجات. تحقق من الاتصال.</string>
     <string name="retry">إعادة المحاولة</string>
 
     <string name="price_format">%1$s د.ع</string>
@@ -73,7 +73,7 @@
 
     <string name="cart_title">سلتك</string>
     <string name="cart_empty">سلتك فارغة.</string>
-    <string name="cart_empty_hint">تصفّح النباتات وأضف ما يعجبك.</string>
+    <string name="cart_empty_hint">تصفح المتاجر وأضف ما يعجبك.</string>
     <string name="cart_total">المجموع</string>
     <string name="cart_checkout_soon">إتمام الطلب قادم قريبًا</string>
 
@@ -102,10 +102,10 @@
     <string name="checkout_summary">ملخص الطلب</string>
     <string name="place_order">تأكيد الطلب</string>
     <string name="err_checkout_fields">يرجى إدخال عنوان التوصيل وبيانات المستلم.</string>
-    <string name="err_not_deliverable">%1$s لا يوصل إلى %2$s. احذف هذه النباتات أو اختر مدينة أخرى.</string>
+    <string name="err_not_deliverable">%1$s لا يوصل إلى %2$s. احذف هذه المنتجات أو اختر مدينة أخرى.</string>
 
     <string name="placed_title">تم تقديم الطلب!</string>
-    <string name="placed_body">سيجهّز المتجر نبتتك ويرسل لك صورة لتوافق عليها قبل خروجها للتوصيل. تدفع نقدًا عند الاستلام.</string>
+    <string name="placed_body">سيجهّز المتجر طلبك ويرسل لك صورة للموافقة عليها قبل خروجه للتوصيل. تدفع نقدًا عند الاستلام.</string>
     <string name="placed_view_orders">عرض طلباتي</string>
     <string name="placed_keep_shopping">متابعة التسوق</string>
 
@@ -139,7 +139,7 @@
     <string name="err_link_expired">انتهت صلاحية هذا الرابط أو سبق استخدامه. يرجى طلب رابط جديد.</string>
 
     <string name="nav_seller_orders">الطلبات</string>
-    <string name="nav_my_plants">نباتاتي</string>
+    <string name="nav_my_plants">منتجاتي</string>
     <string name="nav_shop">متجري</string>
     <string name="seller_load_failed">تعذّر تحميل متجرك. تحقق من اتصالك.</string>
 
@@ -169,30 +169,30 @@
     <string name="action_cancel">إلغاء</string>
     <string name="action_delete">حذف</string>
 
-    <string name="plants_title">نباتاتي</string>
-    <string name="plants_add">إضافة نبتة</string>
-    <string name="plants_empty">لا توجد نباتات معروضة بعد.</string>
-    <string name="plants_empty_hint">أضف أول نبتة: التقط صورة ويملأ الذكاء الاصطناعي التفاصيل.</string>
+    <string name="plants_title">منتجاتي</string>
+    <string name="plants_add">إضافة منتج</string>
+    <string name="plants_empty">لا توجد منتجات معروضة لديك بعد.</string>
+    <string name="plants_empty_hint">أضف أول منتج: التقط صورة وسيملأ الذكاء الاصطناعي التفاصيل.</string>
     <string name="plant_in_stock">متوفر</string>
     <string name="plant_out_of_stock">غير متوفر</string>
-    <string name="plant_delete_title">حذف هذه النبتة؟</string>
+    <string name="plant_delete_title">حذف هذا المنتج؟</string>
     <string name="plant_delete_text">ستختفي من السوق. لا يمكن التراجع عن ذلك.</string>
 
-    <string name="editor_title_new">إضافة نبتة</string>
-    <string name="editor_title_edit">تعديل النبتة</string>
-    <string name="editor_photo_hint">التقط صورة لنبتتك وسيملأ الذكاء الاصطناعي التفاصيل لك.</string>
+    <string name="editor_title_new">إضافة منتج</string>
+    <string name="editor_title_edit">تعديل المنتج</string>
+    <string name="editor_photo_hint">التقط صورة لمنتجك وسيملأ الذكاء الاصطناعي التفاصيل لك.</string>
     <string name="editor_ai_button">املأ بالذكاء الاصطناعي</string>
     <string name="editor_ai_busy">جارٍ فحص صورتك…</string>
     <string name="editor_ai_done">تم! راجع التفاصيل أدناه وحدّد سعرك.</string>
     <string name="editor_ai_low">لست متأكدًا جدًا من هذه النبتة. يرجى مراجعة الاسم والتفاصيل.</string>
-    <string name="editor_ai_not_plant">لم أستطع رؤية نبتة في هذه الصورة. جرّب صورة أوضح أو املأ التفاصيل بنفسك.</string>
+    <string name="editor_ai_not_plant">لم أستطع رؤية وردة أو نبتة أو هدية في هذه الصورة. جرّب صورة أوضح أو املأ التفاصيل بنفسك.</string>
     <string name="editor_ai_not_configured">الذكاء الاصطناعي غير مفعّل بعد. يمكنك ملء التفاصيل بنفسك.</string>
     <string name="editor_ai_limit">وصلت إلى حد الذكاء الاصطناعي لهذا اليوم. يمكنك ملء التفاصيل بنفسك.</string>
     <string name="editor_ai_failed">تعذّر على الذكاء الاصطناعي قراءة الصورة. حاول مرة أخرى أو املأ التفاصيل بنفسك.</string>
     <string name="editor_ai_note">تفاصيل الذكاء الاصطناعي نقطة بداية. يمكنك تغيير أي شيء.</string>
-    <string name="editor_error_required">يرجى إدخال اسم النبتة والسعر.</string>
+    <string name="editor_error_required">يرجى إدخال اسم المنتج والسعر.</string>
     <string name="editor_error_save">تعذّر الحفظ. يرجى المحاولة مرة أخرى.</string>
-    <string name="field_plant_name">اسم النبتة</string>
+    <string name="field_plant_name">اسم المنتج</string>
     <string name="field_scientific">الاسم العلمي (اختياري)</string>
     <string name="field_description">الوصف</string>
     <string name="field_water">الري</string>
@@ -209,7 +209,7 @@
     <string name="shop_scope_nationwide">جميع المحافظات</string>
     <string name="shop_delivers_to">المدن التي توصل إليها</string>
 
-    <string name="review_title">نبتتك جاهزة. يرجى مراجعة الصورة.</string>
+    <string name="review_title">طلبك جاهز. يرجى مراجعة الصورة.</string>
     <string name="review_body">هذا بالضبط ما سيرسله لك المتجر.</string>
     <string name="review_approve">موافقة</string>
     <string name="review_change">طلب تعديل</string>
@@ -246,4 +246,67 @@
     <string name="ai_photo_limit">وصلت إلى حد الصور اليومي. يمكنك الاستمرار بالأسئلة النصية أو المحاولة غدًا.</string>
     <string name="ai_unavailable">مساعد النباتات غير مفعّل بعد.</string>
     <string name="ai_disclaimer">قد تكون إجابات الذكاء الاصطناعي خاطئة. للمشاكل الجدية، اسأل مشتلًا محليًا.</string>
+
+    <string name="sec_flowers">الورود</string>
+    <string name="sec_plants">النباتات</string>
+    <string name="sec_gifts">الهدايا والديكور</string>
+    <string name="sec_flowers_desc">باقات، ورود، صناديق ورد</string>
+    <string name="sec_plants_desc">نباتات، تربة، أصص وأدوات</string>
+    <string name="sec_gifts_desc">هدايا، حلويات، ديكور وأكثر</string>
+    <string name="cat_bouquets">باقات</string>
+    <string name="cat_roses">ورد جوري</string>
+    <string name="cat_flower_boxes">صناديق الورد</string>
+    <string name="cat_baskets">سلال الورد</string>
+    <string name="cat_weddings_events">الأعراس والمناسبات</string>
+    <string name="cat_condolence">التعازي</string>
+    <string name="cat_dried_preserved">ورد مجفف ومحفوظ</string>
+    <string name="cat_artificial_flowers">ورود صناعية</string>
+    <string name="cat_indoor">نباتات داخلية</string>
+    <string name="cat_outdoor">نباتات خارجية وحدائق</string>
+    <string name="cat_succulents_cacti">عصاريات وصبار</string>
+    <string name="cat_flowering">نباتات مزهرة</string>
+    <string name="cat_trees_palms">أشجار ونخيل</string>
+    <string name="cat_herbs">أعشاب ونباتات صالحة للأكل</string>
+    <string name="cat_bonsai_orchids">بونساي وأوركيد</string>
+    <string name="cat_soil">تربة وركائز</string>
+    <string name="cat_fertilizer">أسمدة</string>
+    <string name="cat_pots">أصص ومزارع</string>
+    <string name="cat_tools">أدوات البستنة</string>
+    <string name="cat_pest_care">مكافحة الآفات والعناية</string>
+    <string name="cat_seeds_bulbs">بذور وبصيلات</string>
+    <string name="cat_gift_sets">أطقم وصناديق هدايا</string>
+    <string name="cat_chocolate_sweets">شوكولاتة وحلويات</string>
+    <string name="cat_cakes">كيك</string>
+    <string name="cat_personalised">هدايا مخصصة</string>
+    <string name="cat_home_decor">ديكور المنزل</string>
+    <string name="cat_candles_fragrance">شموع وعطور</string>
+    <string name="cat_cards_wrapping">بطاقات وتغليف</string>
+    <string name="cat_plush_toys">دببة وألعاب</string>
+    <string name="cat_accessories_jewelry">إكسسوارات ومجوهرات</string>
+    <string name="cat_balloons_party">بالونات وحفلات</string>
+    <string name="occ_birthday">عيد ميلاد</string>
+    <string name="occ_anniversary">ذكرى سنوية</string>
+    <string name="occ_love">حب ورومانسية</string>
+    <string name="occ_new_baby">مولود جديد</string>
+    <string name="occ_get_well">الشفاء العاجل</string>
+    <string name="occ_congratulations">تهنئة</string>
+    <string name="occ_new_home">منزل جديد</string>
+    <string name="occ_graduation">تخرج</string>
+    <string name="occ_wedding">زفاف</string>
+    <string name="occ_condolence">تعزية</string>
+    <string name="occ_mothers_day">عيد الأم</string>
+    <string name="occ_eid">العيد</string>
+    <string name="occ_nowruz">نوروز</string>
+    <string name="occ_thank_you">شكرًا</string>
+    <string name="home_prompt">عمّ تبحث؟</string>
+    <string name="home_occasions">تسوق حسب المناسبة</string>
+    <string name="home_all_products">كل المنتجات</string>
+    <string name="home_back">الرئيسية</string>
+    <string name="field_section">النوع</string>
+    <string name="field_category">القسم</string>
+    <string name="field_occasions">المناسبات (اختياري)</string>
+    <string name="shop_types_title">ماذا يبيع متجرك؟</string>
+    <string name="shop_types_label">نوع المتجر</string>
+    <string name="err_shop_types">اختر نوعًا واحدًا على الأقل.</string>
+    <string name="editor_error_category">يرجى اختيار النوع والقسم.</string>
 </resources>

@@ -31,7 +31,14 @@ final class CustomerModel: ObservableObject {
     @Published var listings: [Listing] = []
     @Published var city: String
     @Published var query = ""
-    @Published var plantFilter: String?
+    /// Home screen vs. browsing one section (flowers / plants / gifts), one category in it, or one occasion.
+    @Published var section: String?
+    @Published var category: String?
+    @Published var occasion: String?
+    /// The entry screen's "show everything": a plain product list with no section chosen.
+    @Published var showAll = false
+    /// False until the shopper picks what to look at on the entry screen; asked again at every app start.
+    @Published var entered = false
     /// listing id -> quantity
     @Published var cart: [String: Int] = [:]
     @Published var tab: CustomerTab = .browse
@@ -73,27 +80,23 @@ final class CustomerModel: ObservableObject {
     var deliverable: [Listing] { listings.filter { $0.inStock && $0.delivers(to: city) } }
 
     /// Deliverable listings matching the search text and the plant-type chip.
+    /// True when no section, occasion or search is active: the screen shows the home page instead of a product list.
+    var isHome: Bool {
+        section == nil && occasion == nil && !showAll && query.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    /// Deliverable listings matching the section, category, occasion and search text.
     func visible(_ lang: LanguageStore) -> [Listing] {
         let q = query.trimmingCharacters(in: .whitespaces).lowercased()
         return deliverable.filter { listing in
-            (plantFilter == nil || listing.plantKey == plantFilter)
+            (section == nil || listing.section == section)
+                && (category == nil || listing.category == category)
+                && (occasion == nil || listing.occasions.contains(occasion ?? ""))
                 && (q.isEmpty
                     || listing.name.values.contains { $0.lowercased().contains(q) }
                     || lang.localized(listing.name).lowercased().contains(q)
                     || (listing.sellers?.name.lowercased().contains(q) ?? false))
         }
-    }
-
-    /// Distinct plant types among deliverable listings, as (key, listing to take the name from).
-    var plantTypes: [(key: String, listing: Listing)] {
-        var seen = Set<String>()
-        var result: [(key: String, listing: Listing)] = []
-        for listing in deliverable {
-            guard let key = listing.plantKey, !seen.contains(key) else { continue }
-            seen.insert(key)
-            result.append((key, listing))
-        }
-        return result
     }
 
     // MARK: Loading
@@ -140,7 +143,40 @@ final class CustomerModel: ObservableObject {
 
     // MARK: Navigation and cart
 
-    func setCity(_ code: String) { city = code; plantFilter = nil }
+    func setCity(_ code: String) { city = code; category = nil }
+
+    /// Entry screen answer: open this section or occasion (both nil = show everything) and show the app.
+    func enter(section: String?, occasion: String?) {
+        self.section = section
+        self.occasion = occasion
+        category = nil
+        query = ""
+        showAll = section == nil && occasion == nil
+        tab = .browse
+        withAnimation(Theme.slide) { entered = true }
+    }
+
+    /// Opens one section (or goes back to the home page with nil).
+    func openSection(_ key: String?) {
+        withAnimation(Theme.slide) {
+            section = key
+            category = nil
+            occasion = nil
+            query = ""
+            showAll = false
+        }
+    }
+
+    /// Opens everything for one occasion across all sections (or goes back home with nil).
+    func openOccasion(_ key: String?) {
+        withAnimation(Theme.slide) {
+            occasion = key
+            section = nil
+            category = nil
+            query = ""
+            showAll = false
+        }
+    }
 
     func setTab(_ next: CustomerTab) {
         tab = next

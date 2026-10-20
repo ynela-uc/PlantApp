@@ -68,7 +68,8 @@ enum AuthService {
                     deliversTo: [form.city],
                     phone: form.phone,
                     bio: "",
-                    plantsOffered: []
+                    plantsOffered: [],
+                    shopTypes: form.shopTypes
                 )
             ).execute()
         }

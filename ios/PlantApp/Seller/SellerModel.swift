@@ -27,7 +27,7 @@ enum AiMessage {
     }
 }
 
-enum EditorError { case required, saveFailed }
+enum EditorError { case required, categoryMissing, saveFailed }
 
 /// Everything in the add/edit plant page. Texts are maps keyed by language code (en / ar / ckb).
 struct EditorState {
@@ -45,6 +45,10 @@ struct EditorState {
     var priceText = ""
     var inStock = true
     var aiGenerated = false
+    /// Catalog keys: which section and category this product is filed under, and its occasions.
+    var section: String?
+    var category: String?
+    var occasions: [String] = []
     var aiBusy = false
     var aiMessage: AiMessage?
     var saving = false
@@ -196,6 +200,9 @@ final class SellerModel: ObservableObject {
         state.priceText = String(listing.priceIqd)
         state.inStock = listing.inStock
         state.aiGenerated = listing.aiGenerated
+        state.section = listing.section
+        state.category = listing.category
+        state.occasions = listing.occasions
         withAnimation(Theme.slide) { editor = state }
     }
 
@@ -227,6 +234,22 @@ final class SellerModel: ObservableObject {
     func setHeight(_ value: String) { editor?.heightText = String(value.filter(\.isNumber).prefix(3)) }
     func setPrice(_ value: String) { editor?.priceText = String(value.filter(\.isNumber).prefix(9)); editor?.error = nil }
     func setInStock(_ value: Bool) { editor?.inStock = value }
+
+    /// Picking another section clears a category that belongs to the old one.
+    func setSection(_ key: String) {
+        let stillValid = Catalog.section(key)?.categories.contains { $0.key == editor?.category } ?? false
+        editor?.section = key
+        if !stillValid { editor?.category = nil }
+        editor?.error = nil
+    }
+
+    func setCategory(_ key: String) { editor?.category = key; editor?.error = nil }
+
+    func toggleOccasion(_ key: String) {
+        guard var list = editor?.occasions else { return }
+        if let index = list.firstIndex(of: key) { list.remove(at: index) } else { list.append(key) }
+        editor?.occasions = list
+    }
 
     /// A new photo was taken or picked. For a new plant the AI runs straight away.
     func onPlantPhoto(_ raw: Data, runAiNow: Bool) {
@@ -273,6 +296,12 @@ final class SellerModel: ObservableObject {
         editor?.aiGenerated = true
         editor?.aiMessage = s.confidence == "low" ? .lowConfidence : .filled
         editor?.plantKey = s.plantKey == "Other" ? nil : s.plantKey
+        if let suggested = Catalog.section(s.section) {
+            editor?.section = suggested.key
+            if suggested.categories.contains(where: { $0.key == s.category }) { editor?.category = s.category }
+        }
+        let validOccasions = s.occasions.filter { key in Catalog.occasions.contains { $0.key == key } }
+        if !validOccasions.isEmpty { editor?.occasions = validOccasions }
         editor?.name = s.name.map
         editor?.scientificName = s.scientificName
         editor?.description = s.description.map
@@ -287,6 +316,10 @@ final class SellerModel: ObservableObject {
         let price = Int(e.priceText)
         if !e.name.values.contains(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) || (price ?? 0) <= 0 {
             editor?.error = .required
+            return
+        }
+        guard let section = e.section, e.category != nil else {
+            editor?.error = .categoryMissing
             return
         }
         editor?.saving = true
@@ -315,6 +348,7 @@ final class SellerModel: ObservableObject {
                     try await SellerService.updateListing(
                         id: id,
                         update: ListingUpdate(
+                            section: section, category: e.category, occasions: e.occasions,
                             plantKey: e.plantKey, name: name, scientificName: scientificName,
                             description: description, care: care, heightCm: height, priceIqd: price ?? 0,
                             imagePath: imagePath, inStock: e.inStock, aiGenerated: e.aiGenerated
@@ -323,7 +357,8 @@ final class SellerModel: ObservableObject {
                 } else {
                     try await SellerService.createListing(
                         NewListing(
-                            sellerId: shop.id, plantKey: e.plantKey, name: name, scientificName: scientificName,
+                            sellerId: shop.id, section: section, category: e.category, occasions: e.occasions,
+                            plantKey: e.plantKey, name: name, scientificName: scientificName,
                             description: description, care: care, heightCm: height, priceIqd: price ?? 0,
                             imagePath: imagePath, inStock: e.inStock, aiGenerated: e.aiGenerated
                         )

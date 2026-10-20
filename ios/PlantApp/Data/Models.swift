@@ -47,6 +47,8 @@ struct SignUpForm {
     var city = ""
     var address = ""
     var shopName = ""
+    /// Which kinds of shop a seller runs (Catalog section keys).
+    var shopTypes: [String] = []
 }
 
 // MARK: - Shops and plants
@@ -90,11 +92,13 @@ struct Shop: Codable, Equatable {
     var rating: Double
     var phone: String
     var bio: String
+    var shopTypes: [String]
 
     enum CodingKeys: String, CodingKey {
         case id, name, city, rating, phone, bio
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
+        case shopTypes = "shop_types"
     }
 
     init(from decoder: Decoder) throws {
@@ -107,6 +111,7 @@ struct Shop: Codable, Equatable {
         rating = try c.decodeIfPresent(Double.self, forKey: .rating) ?? 0
         phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
         bio = try c.decodeIfPresent(String.self, forKey: .bio) ?? ""
+        shopTypes = try c.decodeIfPresent([String].self, forKey: .shopTypes) ?? [Catalog.plants]
     }
 
     var isNationwide: Bool { deliveryScope == "nationwide" }
@@ -118,11 +123,13 @@ struct ShopUpdate: Encodable {
     let bio: String
     let deliveryScope: String
     let deliversTo: [String]?
+    let shopTypes: [String]
 
     enum CodingKeys: String, CodingKey {
         case name, phone, bio
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
+        case shopTypes = "shop_types"
     }
 
     func encode(to encoder: Encoder) throws {
@@ -132,6 +139,7 @@ struct ShopUpdate: Encodable {
         try c.encode(bio, forKey: .bio)
         try c.encode(deliveryScope, forKey: .deliveryScope)
         try c.encode(deliversTo, forKey: .deliversTo) // nil is sent as null
+        try c.encode(shopTypes, forKey: .shopTypes)
     }
 }
 
@@ -145,6 +153,7 @@ struct NewSeller: Encodable {
     let phone: String
     let bio: String
     let plantsOffered: [String]
+    let shopTypes: [String]
 
     enum CodingKeys: String, CodingKey {
         case name, city, phone, bio
@@ -152,6 +161,7 @@ struct NewSeller: Encodable {
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case plantsOffered = "plants_offered"
+        case shopTypes = "shop_types"
     }
 }
 
@@ -159,6 +169,10 @@ struct NewSeller: Encodable {
 struct Listing: Codable, Identifiable, Equatable {
     let id: String
     let sellerId: String
+    /// flowers / plants / gifts (see Catalog). Rows from before sections existed are plants.
+    var section: String
+    var category: String?
+    var occasions: [String]
     var plantKey: String?
     var name: [String: String]
     var scientificName: String?
@@ -173,6 +187,7 @@ struct Listing: Codable, Identifiable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case id, name, description, care, sellers
+        case section, category, occasions
         case sellerId = "seller_id"
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
@@ -187,6 +202,9 @@ struct Listing: Codable, Identifiable, Equatable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(String.self, forKey: .id)
         sellerId = try c.decode(String.self, forKey: .sellerId)
+        section = try c.decodeIfPresent(String.self, forKey: .section) ?? Catalog.plants
+        category = try c.decodeIfPresent(String.self, forKey: .category)
+        occasions = try c.decodeIfPresent([String].self, forKey: .occasions) ?? []
         plantKey = try c.decodeIfPresent(String.self, forKey: .plantKey)
         name = try c.decodeIfPresent([String: String].self, forKey: .name) ?? [:]
         scientificName = try c.decodeIfPresent(String.self, forKey: .scientificName)
@@ -206,6 +224,11 @@ struct Listing: Codable, Identifiable, Equatable {
         return try? supabase.storage.from("plant-photos").getPublicURL(path: path)
     }
 
+    /// Emoji shown as the picture until a shop uploads a photo.
+    var placeholderEmoji: String {
+        section == Catalog.plants ? plantEmoji(plantKey) : Catalog.categoryEmoji(category)
+    }
+
     /// Whether this listing's shop delivers to `city`.
     func delivers(to city: String) -> Bool {
         guard let shop = sellers else { return false }
@@ -215,6 +238,9 @@ struct Listing: Codable, Identifiable, Equatable {
 
 struct NewListing: Encodable {
     let sellerId: String
+    let section: String
+    let category: String?
+    let occasions: [String]
     let plantKey: String?
     let name: [String: String]
     let scientificName: String?
@@ -227,7 +253,7 @@ struct NewListing: Encodable {
     let aiGenerated: Bool
 
     enum CodingKeys: String, CodingKey {
-        case name, description, care
+        case name, description, care, section, category, occasions
         case sellerId = "seller_id"
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
@@ -240,6 +266,9 @@ struct NewListing: Encodable {
 }
 
 struct ListingUpdate: Encodable {
+    let section: String
+    let category: String?
+    let occasions: [String]
     let plantKey: String?
     let name: [String: String]
     let scientificName: String?
@@ -252,7 +281,7 @@ struct ListingUpdate: Encodable {
     let aiGenerated: Bool
 
     enum CodingKeys: String, CodingKey {
-        case name, description, care
+        case name, description, care, section, category, occasions
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
         case heightCm = "height_cm"
@@ -265,6 +294,9 @@ struct ListingUpdate: Encodable {
     // Updates must send nil as an explicit null so a cleared field is really cleared.
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(section, forKey: .section)
+        try c.encode(category, forKey: .category)
+        try c.encode(occasions, forKey: .occasions)
         try c.encode(plantKey, forKey: .plantKey)
         try c.encode(name, forKey: .name)
         try c.encode(scientificName, forKey: .scientificName)
@@ -505,9 +537,13 @@ struct PlantSuggestion: Codable {
     var description = Tri()
     var care = AiCare()
     var heightCm = 0
+    /// What kind of product the photo shows (Catalog keys); older function versions leave these empty.
+    var section = ""
+    var category = ""
+    var occasions: [String] = []
 
     enum CodingKeys: String, CodingKey {
-        case identified, confidence, name, description, care
+        case identified, confidence, name, description, care, section, category, occasions
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
         case heightCm = "height_cm"
@@ -524,5 +560,8 @@ struct PlantSuggestion: Codable {
         description = try c.decodeIfPresent(Tri.self, forKey: .description) ?? Tri()
         care = try c.decodeIfPresent(AiCare.self, forKey: .care) ?? AiCare()
         heightCm = try c.decodeIfPresent(Int.self, forKey: .heightCm) ?? 0
+        section = try c.decodeIfPresent(String.self, forKey: .section) ?? ""
+        category = try c.decodeIfPresent(String.self, forKey: .category) ?? ""
+        occasions = try c.decodeIfPresent([String].self, forKey: .occasions) ?? []
     }
 }

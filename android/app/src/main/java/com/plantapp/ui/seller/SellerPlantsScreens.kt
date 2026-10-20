@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +54,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.plantapp.R
+import com.plantapp.data.Catalog
+import com.plantapp.ui.PickChip
+import com.plantapp.ui.categoryName
+import com.plantapp.ui.occasionName
+import com.plantapp.ui.sectionName
 import com.plantapp.data.Listing
 import com.plantapp.data.localized
 import com.plantapp.data.plantEmoji
@@ -159,7 +166,7 @@ private fun PlantRow(
                 if (url != null) {
                     AsyncImage(model = url, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                 } else {
-                    Text(plantEmoji(listing.plantKey), fontSize = 30.sp)
+                    Text(listing.placeholderEmoji, fontSize = 30.sp)
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -180,6 +187,7 @@ private fun PlantRow(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PlantEditorScreen(
     editor: EditorState,
@@ -192,9 +200,13 @@ fun PlantEditorScreen(
     onPrice: (String) -> Unit,
     onStock: (Boolean) -> Unit,
     onSave: () -> Unit,
+    onSection: (String) -> Unit,
+    onCategory: (String) -> Unit,
+    onOccasion: (String) -> Unit,
 ) {
     val lang = rememberLang()
     val capture = rememberPhotoCapture(onPhoto)
+    val isPlant = editor.section == Catalog.PLANTS
 
     Column(modifier = Modifier.fillMaxSize().systemBarsPadding().imePadding()) {
         Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
@@ -272,13 +284,38 @@ fun PlantEditorScreen(
             }
 
             Spacer(Modifier.height(20.dp))
+            // Where the product is filed: section, category, occasions
+            PickerTitle(R.string.field_section)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Catalog.sections.forEach { entry ->
+                    PickChip("${entry.emoji} ${sectionName(entry.key)}", editor.section == entry.key) { onSection(entry.key) }
+                }
+            }
+            Catalog.section(editor.section)?.let { current ->
+                PickerTitle(R.string.field_category)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    current.categories.forEach { category ->
+                        PickChip("${category.emoji} ${categoryName(category.key)}", editor.category == category.key) { onCategory(category.key) }
+                    }
+                }
+            }
+            PickerTitle(R.string.field_occasions)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Catalog.occasions.forEach { occasion ->
+                    PickChip("${occasion.emoji} ${occasionName(occasion.key)}", occasion.key in editor.occasions) { onOccasion(occasion.key) }
+                }
+            }
+            Spacer(Modifier.height(20.dp))
+
             Field(editor.name[lang].orEmpty(), { onText(TextField.Name, it) }, R.string.field_plant_name, placeholder = editor.name.localized(lang))
-            Field(editor.scientificName, onScientific, R.string.field_scientific)
+            if (isPlant) Field(editor.scientificName, onScientific, R.string.field_scientific)
             Field(editor.description[lang].orEmpty(), { onText(TextField.Description, it) }, R.string.field_description, placeholder = editor.description.localized(lang), singleLine = false)
-            Field(editor.water[lang].orEmpty(), { onText(TextField.Water, it) }, R.string.field_water, placeholder = editor.water.localized(lang), singleLine = false)
-            Field(editor.light[lang].orEmpty(), { onText(TextField.Light, it) }, R.string.field_light, placeholder = editor.light.localized(lang), singleLine = false)
-            Field(editor.fertilizer[lang].orEmpty(), { onText(TextField.Fertilizer, it) }, R.string.field_fertilizer, placeholder = editor.fertilizer.localized(lang), singleLine = false)
-            Field(editor.heightText, onHeight, R.string.field_height, KeyboardType.Number)
+            if (isPlant) {
+                Field(editor.water[lang].orEmpty(), { onText(TextField.Water, it) }, R.string.field_water, placeholder = editor.water.localized(lang), singleLine = false)
+                Field(editor.light[lang].orEmpty(), { onText(TextField.Light, it) }, R.string.field_light, placeholder = editor.light.localized(lang), singleLine = false)
+                Field(editor.fertilizer[lang].orEmpty(), { onText(TextField.Fertilizer, it) }, R.string.field_fertilizer, placeholder = editor.fertilizer.localized(lang), singleLine = false)
+                Field(editor.heightText, onHeight, R.string.field_height, KeyboardType.Number)
+            }
             Field(editor.priceText, onPrice, R.string.field_price, KeyboardType.Number)
 
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 6.dp)) {
@@ -296,7 +333,13 @@ fun PlantEditorScreen(
             Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp)) {
                 editor.error?.let {
                     Text(
-                        text = stringResource(if (it == EditorError.Required) R.string.editor_error_required else R.string.editor_error_save),
+                        text = stringResource(
+                            when (it) {
+                                EditorError.Required -> R.string.editor_error_required
+                                EditorError.CategoryMissing -> R.string.editor_error_category
+                                EditorError.SaveFailed -> R.string.editor_error_save
+                            }
+                        ),
                         color = ErrorRed,
                         style = MaterialTheme.typography.bodyMedium,
                     )
@@ -346,5 +389,16 @@ private fun Field(
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+    )
+}
+
+@Composable
+private fun PickerTitle(res: Int) {
+    Text(
+        text = stringResource(res),
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.Bold,
+        color = PlantGreenDark,
+        modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
     )
 }

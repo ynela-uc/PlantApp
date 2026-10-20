@@ -65,7 +65,7 @@ private struct PlantRow: View {
         HStack(spacing: 12) {
             Button { model.editPlant(listing) } label: {
                 HStack(spacing: 12) {
-                    PlantPicture(url: listing.imageURL, plantKey: listing.plantKey, emojiSize: 30)
+                    PlantPicture(listing: listing, emojiSize: 30)
                         .frame(width: 64, height: 64)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     VStack(alignment: .leading, spacing: 2) {
@@ -108,6 +108,15 @@ struct PlantEditorView: View {
     @State private var showLibrary = false
 
     private var code: String { lang.language.rawValue }
+    private var isPlant: Bool { editor.section == Catalog.plants }
+
+    private func errorKey(_ error: EditorError) -> String {
+        switch error {
+        case .required: return "editor_error_required"
+        case .categoryMissing: return "editor_error_category"
+        case .saveFailed: return "editor_error_save"
+        }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -152,14 +161,46 @@ struct PlantEditorView: View {
                             .padding(.top, 8)
                     }
 
+                    // Where the product is filed: section, category, occasions
+                    PickerTitle(lang.t("field_section"))
+                    FlowLayout(spacing: 8) {
+                        ForEach(Catalog.sections) { entry in
+                            Pill(label: "\(entry.emoji) \(lang.t("sec_" + entry.key))", selected: editor.section == entry.key, accent: Theme.amber) {
+                                model.setSection(entry.key)
+                            }
+                        }
+                    }
+                    if let current = Catalog.section(editor.section) {
+                        PickerTitle(lang.t("field_category"))
+                        FlowLayout(spacing: 8) {
+                            ForEach(current.categories) { category in
+                                Pill(label: "\(category.emoji) \(lang.t("cat_" + category.key))", selected: editor.category == category.key, accent: Theme.amber) {
+                                    model.setCategory(category.key)
+                                }
+                            }
+                        }
+                    }
+                    PickerTitle(lang.t("field_occasions"))
+                    FlowLayout(spacing: 8) {
+                        ForEach(Catalog.occasions) { occasion in
+                            Pill(label: "\(occasion.emoji) \(lang.t("occ_" + occasion.key))", selected: editor.occasions.contains(occasion.key), accent: Theme.amber) {
+                                model.toggleOccasion(occasion.key)
+                            }
+                        }
+                    }
+
                     VStack(spacing: 12) {
                         AppField(title: lang.t("field_plant_name"), text: textBinding(.name))
-                        AppField(title: lang.t("field_scientific"), text: Binding(get: { editor.scientificName }, set: { model.setScientificName($0) }), autocapitalize: false)
+                        if isPlant {
+                            AppField(title: lang.t("field_scientific"), text: Binding(get: { editor.scientificName }, set: { model.setScientificName($0) }), autocapitalize: false)
+                        }
                         AppField(title: lang.t("field_description"), text: textBinding(.description), multiline: true)
-                        AppField(title: lang.t("field_water"), text: textBinding(.water), multiline: true)
-                        AppField(title: lang.t("field_light"), text: textBinding(.light), multiline: true)
-                        AppField(title: lang.t("field_fertilizer"), text: textBinding(.fertilizer), multiline: true)
-                        AppField(title: lang.t("field_height"), text: Binding(get: { editor.heightText }, set: { model.setHeight($0) }), keyboard: .numberPad)
+                        if isPlant {
+                            AppField(title: lang.t("field_water"), text: textBinding(.water), multiline: true)
+                            AppField(title: lang.t("field_light"), text: textBinding(.light), multiline: true)
+                            AppField(title: lang.t("field_fertilizer"), text: textBinding(.fertilizer), multiline: true)
+                            AppField(title: lang.t("field_height"), text: Binding(get: { editor.heightText }, set: { model.setHeight($0) }), keyboard: .numberPad)
+                        }
                         AppField(title: lang.t("field_price"), text: Binding(get: { editor.priceText }, set: { model.setPrice($0) }), keyboard: .numberPad)
                     }
                     .padding(.top, 20)
@@ -183,7 +224,7 @@ struct PlantEditorView: View {
 
             VStack(spacing: 8) {
                 if let error = editor.error {
-                    ErrorText(message: lang.t(error == .required ? "editor_error_required" : "editor_error_save"))
+                    ErrorText(message: lang.t(errorKey(error)))
                 }
                 Button { model.saveEditor() } label: {
                     BusyLabel(title: lang.t("action_save"), busy: editor.saving)
@@ -238,5 +279,19 @@ struct PlantEditorView: View {
         .frame(maxWidth: .infinity)
         .frame(height: 220)
         .clipShape(RoundedRectangle(cornerRadius: 18))
+    }
+}
+
+private struct PickerTitle: View {
+    let text: String
+    init(_ text: String) { self.text = text }
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 14, weight: .bold))
+            .foregroundStyle(Theme.greenDark)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 14)
+            .padding(.bottom, 8)
     }
 }

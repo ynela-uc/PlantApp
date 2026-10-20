@@ -42,6 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.plantapp.R
+import com.plantapp.data.Catalog
+import com.plantapp.ui.sectionName
 import com.plantapp.data.Profile
 import com.plantapp.data.Shop
 import com.plantapp.data.ShopUpdate
@@ -71,6 +73,7 @@ fun ShopTab(
         Text(cityLabel(shop.city), color = TextMuted)
         Spacer(Modifier.height(16.dp))
         InfoRow(R.string.field_phone, shop.phone)
+        InfoRow(R.string.shop_types_label, shop.shopTypes.map { sectionName(it) }.joinToString(", "))
         InfoRow(
             R.string.shop_delivery,
             if (shop.isNationwide) stringResource(R.string.delivers_nationwide)
@@ -123,6 +126,7 @@ fun ShopEditorScreen(
     var bio by rememberSaveable { mutableStateOf(shop.bio) }
     var nationwide by rememberSaveable { mutableStateOf(shop.isNationwide) }
     val cities = remember_cities(shop.deliversTo.orEmpty())
+    val types = remember_cities(shop.shopTypes)
     var showError by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize().systemBarsPadding().imePadding()) {
@@ -140,7 +144,14 @@ fun ShopEditorScreen(
             OutlinedTextField(phone, { phone = it; showError = false }, label = { Text(stringResource(R.string.field_phone)) }, singleLine = true, shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp))
             OutlinedTextField(bio, { bio = it }, label = { Text(stringResource(R.string.field_bio)) }, minLines = 3, shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp))
 
-            Text(stringResource(R.string.shop_delivery), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
+            Text(stringResource(R.string.shop_types_title), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Catalog.sections.forEach { entry ->
+                    val selected = entry.key in types
+                    Choice("${entry.emoji} ${sectionName(entry.key)}", selected) { if (selected) types.remove(entry.key) else types.add(entry.key) }
+                }
+            }
+            Text(stringResource(R.string.shop_delivery), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
                 Choice(stringResource(R.string.shop_scope_local), !nationwide, Modifier.weight(1f)) { nationwide = false }
                 Choice(stringResource(R.string.shop_scope_nationwide), nationwide, Modifier.weight(1f)) { nationwide = true }
@@ -166,7 +177,7 @@ fun ShopEditorScreen(
                 }
                 Button(
                     onClick = {
-                        if (name.isBlank() || phone.isBlank() || (!nationwide && cities.isEmpty())) {
+                        if (name.isBlank() || phone.isBlank() || types.isEmpty() || (!nationwide && cities.isEmpty())) {
                             showError = true
                         } else {
                             onSave(
@@ -176,6 +187,7 @@ fun ShopEditorScreen(
                                     bio = bio.trim(),
                                     deliveryScope = if (nationwide) "nationwide" else "local",
                                     deliversTo = if (nationwide) null else cities.toList(),
+                                    shopTypes = Catalog.sections.map { it.key }.filter { it in types },
                                 )
                             )
                         }

@@ -37,6 +37,7 @@ data class NewSeller(
     val phone: String,
     val bio: String = "",
     @SerialName("plants_offered") val plantsOffered: List<String> = emptyList(),
+    @SerialName("shop_types") val shopTypes: List<String> = listOf(Catalog.PLANTS),
 )
 
 /** Everything collected by the create-account form (fields not used by a role stay blank). */
@@ -49,4 +50,6 @@ data class SignUpForm(
     val city: String,
     val address: String = "",
     val shopName: String = "",
+    /** Which kinds of shop this seller runs (Catalog section keys). */
+    val shopTypes: List<String> = emptyList(),
 )

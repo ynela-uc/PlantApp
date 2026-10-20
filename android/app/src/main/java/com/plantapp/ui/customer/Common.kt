@@ -74,7 +74,7 @@ fun PlantPicture(listing: Listing, modifier: Modifier, emojiSize: TextUnit) {
         if (url != null) {
             AsyncImage(model = url, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
         } else {
-            Text(text = plantEmoji(listing.plantKey), fontSize = emojiSize)
+            Text(text = listing.placeholderEmoji, fontSize = emojiSize)
         }
     }
 }

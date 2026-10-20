@@ -14,7 +14,7 @@ struct ListingDetailView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
 
-                    PlantPicture(url: listing.imageURL, plantKey: listing.plantKey, emojiSize: 96)
+                    PlantPicture(listing: listing, emojiSize: 96)
                         .frame(maxWidth: .infinity)
                         .frame(height: 240)
 

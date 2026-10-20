@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.plantapp.R
+import com.plantapp.data.Catalog
 import com.plantapp.data.Role
 import com.plantapp.data.SignUpForm
 import com.plantapp.ui.theme.CardBorder
@@ -76,10 +77,14 @@ fun AuthScreen(
     var city by rememberSaveable { mutableStateOf("") }
     var address by rememberSaveable { mutableStateOf("") }
     var shopName by rememberSaveable { mutableStateOf("") }
+    // Seller sign-up: the kinds of shop, as comma-separated Catalog section keys (survives rotation).
+    var shopTypesCsv by rememberSaveable { mutableStateOf("") }
+    val shopTypes = shopTypesCsv.split(',').filter { it.isNotBlank() }
     var localError by rememberSaveable { mutableStateOf<String?>(null) }
 
     val requiredMsg = stringResource(R.string.err_required)
     val shortPasswordMsg = stringResource(R.string.err_password_short)
+    val shopTypesMsg = stringResource(R.string.err_shop_types)
 
     fun submit() {
         localError = null
@@ -94,6 +99,7 @@ fun AuthScreen(
             (role == Role.Seller && shopName.isBlank())
         if (missing) { localError = requiredMsg; return }
         if (password.length < 6) { localError = shortPasswordMsg; return }
+        if (role == Role.Seller && shopTypes.isEmpty()) { localError = shopTypesMsg; return }
         onSignUp(
             SignUpForm(
                 email = email.trim(),
@@ -104,6 +110,7 @@ fun AuthScreen(
                 city = city,
                 address = address.trim(),
                 shopName = shopName.trim(),
+                shopTypes = shopTypes,
             )
         )
     }
@@ -157,6 +164,25 @@ fun AuthScreen(
         if (creating) {
             if (role == Role.Seller) {
                 Field(shopName, { shopName = it; onEdit() }, R.string.field_shop_name)
+                Text(
+                    text = stringResource(R.string.shop_types_title),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(bottom = 12.dp),
+                ) {
+                    Catalog.sections.forEach { entry ->
+                        val selected = entry.key in shopTypes
+                        PickChip("${entry.emoji} ${sectionName(entry.key)}", selected, accent = accent) {
+                            shopTypesCsv = (if (selected) shopTypes - entry.key else shopTypes + entry.key).joinToString(",")
+                            onEdit()
+                        }
+                    }
+                }
             }
             Text(
                 text = stringResource(R.string.field_city),

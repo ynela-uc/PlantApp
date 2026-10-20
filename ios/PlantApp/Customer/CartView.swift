@@ -66,7 +66,7 @@ private struct CartLine: View {
                 model.openListing(listing.id)
             } label: {
                 HStack(spacing: 12) {
-                    PlantPicture(url: listing.imageURL, plantKey: listing.plantKey, emojiSize: 28)
+                    PlantPicture(listing: listing, emojiSize: 28)
                         .frame(width: 56, height: 56)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     VStack(alignment: .leading, spacing: 2) {

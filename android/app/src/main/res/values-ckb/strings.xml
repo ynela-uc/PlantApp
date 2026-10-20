@@ -4,13 +4,13 @@
     <string name="app_name">PlantApp</string>
 
     <string name="welcome_title">بەخێربێیت بۆ PlantApp</string>
-    <string name="welcome_tagline">هەموو ئەو شتانەی ڕووەکەکانت پێویستیانە، لە یەک شوێندا</string>
+    <string name="welcome_tagline">گوڵ، ڕووەک و دیاری لە فرۆشگا ناوخۆییەکانەوە</string>
     <string name="role_prompt">چۆن دەتەوێت بەردەوام بیت؟</string>
 
     <string name="role_customer_title">بەردەوامبوون وەک کڕیار</string>
-    <string name="role_customer_desc">ڕووەک، ئامۆژگاری چاودێری و فرۆشیارە نزیکەکان بدۆزەرەوە</string>
+    <string name="role_customer_desc">گوڵ، ڕووەک و دیاری لە فرۆشگا نزیکەکانەوە بدۆزەرەوە</string>
     <string name="role_seller_title">بەردەوامبوون وەک فرۆشیار</string>
-    <string name="role_seller_desc">ڕووەکەکانت بخەرە ڕوو و داواکارییەکانت بەڕێوەببە</string>
+    <string name="role_seller_desc">بەرهەمەکانت دابنێ و داواکارییەکانت بەڕێوەبەرە</string>
 
     <string name="back">گەڕانەوە</string>
     <string name="language_label">زمان</string>
@@ -50,11 +50,11 @@
     <string name="nav_cart">سەبەتە</string>
     <string name="nav_profile">هەژمار</string>
 
-    <string name="browse_search_hint">بەدوای ڕووەکدا بگەڕێ</string>
+    <string name="browse_search_hint">بەدوای بەرهەم یان فرۆشگا بگەڕێ</string>
     <string name="browse_delivering_to">گەیاندن بۆ</string>
     <string name="browse_all">هەمووی</string>
-    <string name="browse_empty">هیچ ڕووەکێک بۆ گەیاندن بۆ %1$s بەردەست نییە.</string>
-    <string name="browse_load_failed">نەتوانرا ڕووەکەکان باربکرێن. پەیوەندییەکەت بپشکنە.</string>
+    <string name="browse_empty">هیچ شتێک بەردەست نییە بۆ گەیاندن بۆ %1$s هێشتا.</string>
+    <string name="browse_load_failed">نەتوانرا بەرهەمەکان باربکرێن. پەیوەندییەکەت بپشکنە.</string>
     <string name="retry">دووبارە هەوڵبدەرەوە</string>
 
     <string name="price_format">%1$s دینار</string>
@@ -74,7 +74,7 @@
 
     <string name="cart_title">سەبەتەکەت</string>
     <string name="cart_empty">سەبەتەکەت بەتاڵە.</string>
-    <string name="cart_empty_hint">ڕووەک بگەڕێ و ئەوانەی حەزت لێیە زیادبکە.</string>
+    <string name="cart_empty_hint">فرۆشگاکان بگەڕێ و ئەوەی بەدڵتە زیادی بکە.</string>
     <string name="cart_total">کۆی گشتی</string>
     <string name="cart_checkout_soon">تەواوکردنی داواکاری بەم زووانە دێت</string>
 
@@ -103,10 +103,10 @@
     <string name="checkout_summary">پوختەی داواکاری</string>
     <string name="place_order">داواکردن</string>
     <string name="err_checkout_fields">تکایە ناونیشانی گەیاندن و زانیاری وەرگر پڕبکەرەوە.</string>
-    <string name="err_not_deliverable">%1$s ناگەیەنێت بۆ %2$s. ئەو ڕووەکانە لاببە یان شارێکی تر هەڵبژێرە.</string>
+    <string name="err_not_deliverable">%1$s گەیاندن ناکات بۆ %2$s. ئەو بەرهەمانە لابە یان شارێکی تر هەڵبژێرە.</string>
 
     <string name="placed_title">داواکارییەکە تۆمارکرا!</string>
-    <string name="placed_body">دوکانەکە ڕووەکەکەت ئامادە دەکات و وێنەیەکت بۆ دەنێرێت بۆ پەسەندکردن پێش ئەوەی بنێردرێت. پارەکە لە کاتی وەرگرتن دەدەیت.</string>
+    <string name="placed_body">فرۆشگاکە داواکارییەکەت ئامادە دەکات و وێنەیەکت بۆ دەنێرێت بۆ پەسەندکردن پێش ئەوەی بچێتە گەیاندن. کاتی گەیشتن بە کاش دەیدەیت.</string>
     <string name="placed_view_orders">داواکارییەکانم ببینە</string>
     <string name="placed_keep_shopping">بەردەوامبە لە کڕین</string>
 
@@ -140,7 +140,7 @@
     <string name="err_link_expired">ئەم بەستەرە بەسەرچووە یان پێشتر بەکارهاتووە. تکایە بەستەرێکی نوێ داوا بکە.</string>
 
     <string name="nav_seller_orders">داواکارییەکان</string>
-    <string name="nav_my_plants">ڕووەکەکانم</string>
+    <string name="nav_my_plants">بەرهەمەکانم</string>
     <string name="nav_shop">دوکانەکەم</string>
     <string name="seller_load_failed">نەتوانرا دوکانەکەت باربکرێت. پەیوەندییەکەت بپشکنە.</string>
 
@@ -170,30 +170,30 @@
     <string name="action_cancel">هەڵوەشاندنەوە</string>
     <string name="action_delete">سڕینەوە</string>
 
-    <string name="plants_title">ڕووەکەکانم</string>
-    <string name="plants_add">زیادکردنی ڕووەک</string>
-    <string name="plants_empty">هێشتا هیچ ڕووەکێکت نەخستووەتە ڕوو.</string>
-    <string name="plants_empty_hint">یەکەم ڕووەکت زیاد بکە: وێنە بگرە و ژیری دەستکرد وردەکارییەکان پڕ دەکاتەوە.</string>
+    <string name="plants_title">بەرهەمەکانم</string>
+    <string name="plants_add">زیادکردنی بەرهەم</string>
+    <string name="plants_empty">هیچ بەرهەمێکت دانەناوە هێشتا.</string>
+    <string name="plants_empty_hint">یەکەم بەرهەمت زیاد بکە: وێنەیەک بگرە و ژیری دەستکرد وردەکارییەکان پڕدەکاتەوە.</string>
     <string name="plant_in_stock">بەردەستە</string>
     <string name="plant_out_of_stock">بەردەست نییە</string>
-    <string name="plant_delete_title">ئەم ڕووەکە بسڕدرێتەوە؟</string>
+    <string name="plant_delete_title">ئەم بەرهەمە بسڕدرێتەوە؟</string>
     <string name="plant_delete_text">لە بازاڕ نامێنێت. ناتوانرێت پاشگەز ببیتەوە.</string>
 
-    <string name="editor_title_new">زیادکردنی ڕووەک</string>
-    <string name="editor_title_edit">دەستکاریکردنی ڕووەک</string>
-    <string name="editor_photo_hint">وێنەی ڕووەکەکەت بگرە و ژیری دەستکرد وردەکارییەکان بۆت پڕ دەکاتەوە.</string>
+    <string name="editor_title_new">زیادکردنی بەرهەم</string>
+    <string name="editor_title_edit">دەستکاریکردنی بەرهەم</string>
+    <string name="editor_photo_hint">وێنەی بەرهەمەکەت بگرە و ژیری دەستکرد وردەکارییەکان بۆت پڕدەکاتەوە.</string>
     <string name="editor_ai_button">پڕکردنەوە بە ژیری دەستکرد</string>
     <string name="editor_ai_busy">سەیری وێنەکەت دەکرێت…</string>
     <string name="editor_ai_done">تەواو! تکایە وردەکارییەکانی خوارەوە بپشکنە و نرخەکەت دیاری بکە.</string>
     <string name="editor_ai_low">لەم ڕووەکە زۆر دڵنیا نیم. تکایە ناو و وردەکارییەکان بپشکنە.</string>
-    <string name="editor_ai_not_plant">نەمتوانی ڕووەکێک ببینم لەم وێنەیەدا. وێنەیەکی ڕوونتر تاقی بکەرەوە یان خۆت وردەکارییەکان بنووسە.</string>
+    <string name="editor_ai_not_plant">نەمتوانی گوڵ، ڕووەک یان دیاری لەم وێنەیە ببینم. وێنەیەکی ڕوونتر تاقی بکەرەوە، یان خۆت وردەکارییەکان پڕبکەرەوە.</string>
     <string name="editor_ai_not_configured">ژیری دەستکرد هێشتا چالاک نەکراوە. دەتوانیت خۆت وردەکارییەکان بنووسیت.</string>
     <string name="editor_ai_limit">گەیشتیتە سنووری ئەمڕۆی ژیری دەستکرد. دەتوانیت خۆت وردەکارییەکان بنووسیت.</string>
     <string name="editor_ai_failed">ژیری دەستکرد نەیتوانی وێنەکە بخوێنێتەوە. دووبارە هەوڵبدەرەوە یان خۆت بینووسە.</string>
     <string name="editor_ai_note">وردەکارییەکانی ژیری دەستکرد دەستپێکێکن. دەتوانیت هەموو شتێک بگۆڕیت.</string>
-    <string name="editor_error_required">تکایە ناوی ڕووەک و نرخ بنووسە.</string>
+    <string name="editor_error_required">تکایە ناوی بەرهەم و نرخ بنووسە.</string>
     <string name="editor_error_save">نەتوانرا پاشەکەوت بکرێت. تکایە دووبارە هەوڵبدەرەوە.</string>
-    <string name="field_plant_name">ناوی ڕووەک</string>
+    <string name="field_plant_name">ناوی بەرهەم</string>
     <string name="field_scientific">ناوی زانستی (ئارەزوومەندانە)</string>
     <string name="field_description">وەسف</string>
     <string name="field_water">ئاودان</string>
@@ -210,7 +210,7 @@
     <string name="shop_scope_nationwide">هەموو شارەکان</string>
     <string name="shop_delivers_to">ئەو شارانەی دەیانگەیەنیت</string>
 
-    <string name="review_title">ڕووەکەکەت ئامادەیە. تکایە وێنەکە بپشکنە.</string>
+    <string name="review_title">داواکارییەکەت ئامادەیە. تکایە وێنەکە ببینە.</string>
     <string name="review_body">ئەمە ئەوەیە کە دوکانەکە بۆتی دەنێرێت.</string>
     <string name="review_approve">پەسەندکردن</string>
     <string name="review_change">داوای گۆڕانکاری</string>
@@ -247,4 +247,67 @@
     <string name="ai_photo_limit">گەیشتیتە سنووری وێنەی ئەمڕۆ. هێشتا دەتوانیت پرسیار بنووسیت، یان سبەینێ هەوڵبدەرەوە.</string>
     <string name="ai_unavailable">یاریدەدەری ڕووەک هێشتا چالاک نەکراوە.</string>
     <string name="ai_disclaimer">وەڵامەکانی ژیری دەستکرد لەوانەیە هەڵە بن. بۆ کێشە گرنگەکان، لە نەمامگەیەکی ناوچەیی بپرسە.</string>
+
+    <string name="sec_flowers">گوڵ</string>
+    <string name="sec_plants">ڕووەک</string>
+    <string name="sec_gifts">دیاری و ڕازاندنەوە</string>
+    <string name="sec_flowers_desc">دەستە گوڵ، گوڵەباخ، سندووقی گوڵ</string>
+    <string name="sec_plants_desc">ڕووەک، خاک، گوڵدان و ئامراز</string>
+    <string name="sec_gifts_desc">دیاری، شیرینی، ڕازاندنەوە و زیاتر</string>
+    <string name="cat_bouquets">دەستە گوڵ</string>
+    <string name="cat_roses">گوڵەباخ</string>
+    <string name="cat_flower_boxes">سندووقی گوڵ</string>
+    <string name="cat_baskets">سەبەتەی گوڵ</string>
+    <string name="cat_weddings_events">ئاهەنگ و بۆنەکان</string>
+    <string name="cat_condolence">سەرەخۆشی</string>
+    <string name="cat_dried_preserved">گوڵی وشککراو</string>
+    <string name="cat_artificial_flowers">گوڵی دەستکرد</string>
+    <string name="cat_indoor">ڕووەکی ناوماڵ</string>
+    <string name="cat_outdoor">ڕووەکی دەرەوە و باخچە</string>
+    <string name="cat_succulents_cacti">کاکتوس و سەکەلێنت</string>
+    <string name="cat_flowering">ڕووەکی گوڵدار</string>
+    <string name="cat_trees_palms">دار و دارخورما</string>
+    <string name="cat_herbs">گیای خواردن</string>
+    <string name="cat_bonsai_orchids">بۆنسای و ئۆرکید</string>
+    <string name="cat_soil">خاک</string>
+    <string name="cat_fertilizer">پەین</string>
+    <string name="cat_pots">گوڵدان</string>
+    <string name="cat_tools">ئامرازی باخەوانی</string>
+    <string name="cat_pest_care">دژە کرم و چاودێری</string>
+    <string name="cat_seeds_bulbs">تۆو و پیاز</string>
+    <string name="cat_gift_sets">سێتی دیاری</string>
+    <string name="cat_chocolate_sweets">چکولەت و شیرینی</string>
+    <string name="cat_cakes">کێک</string>
+    <string name="cat_personalised">دیاری تایبەت</string>
+    <string name="cat_home_decor">ڕازاندنەوەی ماڵ</string>
+    <string name="cat_candles_fragrance">مۆم و بۆنخۆش</string>
+    <string name="cat_cards_wrapping">کارت و پێچان</string>
+    <string name="cat_plush_toys">یاری و ئاژەڵی لوکە</string>
+    <string name="cat_accessories_jewelry">ئەکسسوار و زێڕ</string>
+    <string name="cat_balloons_party">بالۆن و ئاهەنگ</string>
+    <string name="occ_birthday">ڕۆژی لەدایکبوون</string>
+    <string name="occ_anniversary">ساڵیاد</string>
+    <string name="occ_love">خۆشەویستی</string>
+    <string name="occ_new_baby">منداڵی نوێ</string>
+    <string name="occ_get_well">ساڕێژبوون</string>
+    <string name="occ_congratulations">پیرۆزبایی</string>
+    <string name="occ_new_home">ماڵی نوێ</string>
+    <string name="occ_graduation">دەرچوون</string>
+    <string name="occ_wedding">هاوسەرگیری</string>
+    <string name="occ_condolence">سەرەخۆشی</string>
+    <string name="occ_mothers_day">ڕۆژی دایک</string>
+    <string name="occ_eid">جەژن</string>
+    <string name="occ_nowruz">نەورۆز</string>
+    <string name="occ_thank_you">سوپاس</string>
+    <string name="home_prompt">بەدوای چیدا دەگەڕێیت؟</string>
+    <string name="home_occasions">بەپێی بۆنە بکڕە</string>
+    <string name="home_all_products">هەموو بەرهەمەکان</string>
+    <string name="home_back">سەرەکی</string>
+    <string name="field_section">بەش</string>
+    <string name="field_category">پۆل</string>
+    <string name="field_occasions">بۆنەکان (ئارەزوومەندانە)</string>
+    <string name="shop_types_title">فرۆشگاکەت چی دەفرۆشێت؟</string>
+    <string name="shop_types_label">جۆری فرۆشگا</string>
+    <string name="err_shop_types">لانیکەم یەکێک هەڵبژێرە.</string>
+    <string name="editor_error_category">تکایە بەش و پۆل هەڵبژێرە.</string>
 </resources>

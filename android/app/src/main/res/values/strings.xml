@@ -3,13 +3,13 @@
     <string name="app_name">PlantApp</string>
 
     <string name="welcome_title">Welcome to PlantApp</string>
-    <string name="welcome_tagline">Everything your plants need, in one place</string>
+    <string name="welcome_tagline">Flowers, plants and gifts from local shops</string>
     <string name="role_prompt">How would you like to continue?</string>
 
     <string name="role_customer_title">Continue as Customer</string>
-    <string name="role_customer_desc">Find plants, care tips and sellers near you</string>
+    <string name="role_customer_desc">Find flowers, plants and gifts from shops near you</string>
     <string name="role_seller_title">Continue as Seller</string>
-    <string name="role_seller_desc">List your plants and manage your orders</string>
+    <string name="role_seller_desc">List your products and manage your orders</string>
 
     <string name="back">Back</string>
     <string name="language_label">Language</string>
@@ -49,11 +49,11 @@
     <string name="nav_cart">Cart</string>
     <string name="nav_profile">Profile</string>
 
-    <string name="browse_search_hint">Search plants</string>
+    <string name="browse_search_hint">Search products or shops</string>
     <string name="browse_delivering_to">Delivering to</string>
     <string name="browse_all">All</string>
-    <string name="browse_empty">No plants available for delivery to %1$s yet.</string>
-    <string name="browse_load_failed">Could not load plants. Check your connection.</string>
+    <string name="browse_empty">Nothing available for delivery to %1$s yet.</string>
+    <string name="browse_load_failed">Could not load products. Check your connection.</string>
     <string name="retry">Try again</string>
 
     <string name="price_format">%1$s IQD</string>
@@ -73,7 +73,7 @@
 
     <string name="cart_title">Your cart</string>
     <string name="cart_empty">Your cart is empty.</string>
-    <string name="cart_empty_hint">Browse plants and add the ones you like.</string>
+    <string name="cart_empty_hint">Browse the shops and add what you like.</string>
     <string name="cart_total">Total</string>
     <string name="cart_checkout_soon">Checkout is coming next</string>
 
@@ -102,10 +102,10 @@
     <string name="checkout_summary">Order summary</string>
     <string name="place_order">Place order</string>
     <string name="err_checkout_fields">Please fill in the delivery address and the recipient details.</string>
-    <string name="err_not_deliverable">%1$s does not deliver to %2$s. Remove those plants or choose another city.</string>
+    <string name="err_not_deliverable">%1$s does not deliver to %2$s. Remove those items or choose another city.</string>
 
     <string name="placed_title">Order placed!</string>
-    <string name="placed_body">The shop will prepare your plant and send you a photo to approve before it goes out for delivery. You pay cash when it arrives.</string>
+    <string name="placed_body">The shop will prepare your order and send you a photo to approve before it goes out for delivery. You pay cash when it arrives.</string>
     <string name="placed_view_orders">View my orders</string>
     <string name="placed_keep_shopping">Keep shopping</string>
 
@@ -139,7 +139,7 @@
     <string name="err_link_expired">That link has expired or was already used. Please request a new reset link.</string>
 
     <string name="nav_seller_orders">Orders</string>
-    <string name="nav_my_plants">My plants</string>
+    <string name="nav_my_plants">My products</string>
     <string name="nav_shop">My shop</string>
     <string name="seller_load_failed">Could not load your shop. Check your connection.</string>
 
@@ -169,30 +169,30 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
 
-    <string name="plants_title">My plants</string>
-    <string name="plants_add">Add a plant</string>
-    <string name="plants_empty">You have no plants listed yet.</string>
-    <string name="plants_empty_hint">Add your first plant: take a photo and the AI fills in the details.</string>
+    <string name="plants_title">My products</string>
+    <string name="plants_add">Add a product</string>
+    <string name="plants_empty">You have no products listed yet.</string>
+    <string name="plants_empty_hint">Add your first product: take a photo and the AI fills in the details.</string>
     <string name="plant_in_stock">In stock</string>
     <string name="plant_out_of_stock">Out of stock</string>
-    <string name="plant_delete_title">Delete this plant?</string>
+    <string name="plant_delete_title">Delete this product?</string>
     <string name="plant_delete_text">It will disappear from the marketplace. This cannot be undone.</string>
 
-    <string name="editor_title_new">Add a plant</string>
-    <string name="editor_title_edit">Edit plant</string>
-    <string name="editor_photo_hint">Take a photo of your plant and the AI will fill in the details for you.</string>
+    <string name="editor_title_new">Add a product</string>
+    <string name="editor_title_edit">Edit product</string>
+    <string name="editor_photo_hint">Take a photo of your product and the AI will fill in the details for you.</string>
     <string name="editor_ai_button">Fill in with AI</string>
     <string name="editor_ai_busy">Looking at your photo…</string>
     <string name="editor_ai_done">Done! Please check the details below and set your price.</string>
     <string name="editor_ai_low">I am not very sure about this one. Please check the name and details.</string>
-    <string name="editor_ai_not_plant">I could not see a plant in this photo. Try a clearer photo, or fill in the details yourself.</string>
+    <string name="editor_ai_not_plant">I could not see a flower, plant or gift in this photo. Try a clearer photo, or fill in the details yourself.</string>
     <string name="editor_ai_not_configured">The AI is not switched on yet. You can fill in the details yourself.</string>
     <string name="editor_ai_limit">You have reached today\'s AI limit. You can fill in the details yourself.</string>
     <string name="editor_ai_failed">The AI could not read the photo. Try again, or fill in the details yourself.</string>
     <string name="editor_ai_note">The AI details are a starting point. You can change anything.</string>
-    <string name="editor_error_required">Please enter the plant name and a price.</string>
+    <string name="editor_error_required">Please enter the product name and a price.</string>
     <string name="editor_error_save">Could not save. Please try again.</string>
-    <string name="field_plant_name">Plant name</string>
+    <string name="field_plant_name">Product name</string>
     <string name="field_scientific">Scientific name (optional)</string>
     <string name="field_description">Description</string>
     <string name="field_water">Watering</string>
@@ -209,7 +209,7 @@
     <string name="shop_scope_nationwide">Nationwide</string>
     <string name="shop_delivers_to">Cities you deliver to</string>
 
-    <string name="review_title">Your plant is ready. Please check the photo.</string>
+    <string name="review_title">Your order is ready. Please check the photo.</string>
     <string name="review_body">This is exactly what the shop will send you.</string>
     <string name="review_approve">Approve</string>
     <string name="review_change">Ask for a change</string>
@@ -246,4 +246,67 @@
     <string name="ai_photo_limit">You have reached today\'s photo limit. You can still type questions, or try again tomorrow.</string>
     <string name="ai_unavailable">The plant helper is not switched on yet.</string>
     <string name="ai_disclaimer">AI answers can be wrong. For serious problems, ask a local nursery.</string>
+
+    <string name="sec_flowers">Flowers</string>
+    <string name="sec_plants">Plants</string>
+    <string name="sec_gifts">Gifts &amp; decor</string>
+    <string name="sec_flowers_desc">Bouquets, roses, flower boxes</string>
+    <string name="sec_plants_desc">Plants, soil, pots &amp; tools</string>
+    <string name="sec_gifts_desc">Gifts, sweets, decor &amp; more</string>
+    <string name="cat_bouquets">Bouquets</string>
+    <string name="cat_roses">Roses</string>
+    <string name="cat_flower_boxes">Flower boxes</string>
+    <string name="cat_baskets">Flower baskets</string>
+    <string name="cat_weddings_events">Weddings &amp; events</string>
+    <string name="cat_condolence">Condolence &amp; funerals</string>
+    <string name="cat_dried_preserved">Dried &amp; preserved</string>
+    <string name="cat_artificial_flowers">Artificial flowers</string>
+    <string name="cat_indoor">Indoor plants</string>
+    <string name="cat_outdoor">Outdoor &amp; garden</string>
+    <string name="cat_succulents_cacti">Succulents &amp; cacti</string>
+    <string name="cat_flowering">Flowering plants</string>
+    <string name="cat_trees_palms">Trees &amp; palms</string>
+    <string name="cat_herbs">Herbs &amp; edible</string>
+    <string name="cat_bonsai_orchids">Bonsai &amp; orchids</string>
+    <string name="cat_soil">Soil &amp; substrates</string>
+    <string name="cat_fertilizer">Fertilizers</string>
+    <string name="cat_pots">Pots &amp; planters</string>
+    <string name="cat_tools">Garden tools</string>
+    <string name="cat_pest_care">Pest control &amp; care</string>
+    <string name="cat_seeds_bulbs">Seeds &amp; bulbs</string>
+    <string name="cat_gift_sets">Gift sets &amp; boxes</string>
+    <string name="cat_chocolate_sweets">Chocolate &amp; sweets</string>
+    <string name="cat_cakes">Cakes</string>
+    <string name="cat_personalised">Personalised gifts</string>
+    <string name="cat_home_decor">Home decor</string>
+    <string name="cat_candles_fragrance">Candles &amp; fragrance</string>
+    <string name="cat_cards_wrapping">Cards &amp; wrapping</string>
+    <string name="cat_plush_toys">Plush &amp; toys</string>
+    <string name="cat_accessories_jewelry">Accessories &amp; jewelry</string>
+    <string name="cat_balloons_party">Balloons &amp; party</string>
+    <string name="occ_birthday">Birthday</string>
+    <string name="occ_anniversary">Anniversary</string>
+    <string name="occ_love">Love &amp; romance</string>
+    <string name="occ_new_baby">New baby</string>
+    <string name="occ_get_well">Get well</string>
+    <string name="occ_congratulations">Congratulations</string>
+    <string name="occ_new_home">New home</string>
+    <string name="occ_graduation">Graduation</string>
+    <string name="occ_wedding">Wedding</string>
+    <string name="occ_condolence">Condolence</string>
+    <string name="occ_mothers_day">Mother\'s Day</string>
+    <string name="occ_eid">Eid</string>
+    <string name="occ_nowruz">Nowruz</string>
+    <string name="occ_thank_you">Thank you</string>
+    <string name="home_prompt">What are you looking for?</string>
+    <string name="home_occasions">Shop by occasion</string>
+    <string name="home_all_products">All products</string>
+    <string name="home_back">Home</string>
+    <string name="field_section">Section</string>
+    <string name="field_category">Category</string>
+    <string name="field_occasions">Occasions (optional)</string>
+    <string name="shop_types_title">What does your shop sell?</string>
+    <string name="shop_types_label">Shop type</string>
+    <string name="err_shop_types">Choose at least one.</string>
+    <string name="editor_error_category">Please choose a section and a category.</string>
 </resources>

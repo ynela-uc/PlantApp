@@ -95,8 +95,19 @@ struct LanguageSelector: View {
 /// Plant photo from a public URL, with the plant's emoji while there is no photo (or it is loading).
 struct PlantPicture: View {
     let url: URL?
-    let plantKey: String?
+    let emoji: String
     var emojiSize: CGFloat = 54
+
+    init(url: URL?, emoji: String, emojiSize: CGFloat = 54) {
+        self.url = url
+        self.emoji = emoji
+        self.emojiSize = emojiSize
+    }
+
+    /// The shop's photo of a product, or the product's emoji until a photo exists.
+    init(listing: Listing, emojiSize: CGFloat = 54) {
+        self.init(url: listing.imageURL, emoji: listing.placeholderEmoji, emojiSize: emojiSize)
+    }
 
     // The photo sits in an overlay so it can never make the view bigger than the frame
     // it is given (a big photo used to spill over the back button and the text below).
@@ -111,11 +122,11 @@ struct PlantPicture: View {
                             // meant for the controls around it (it used to swallow the back button).
                             image.resizable().scaledToFill().allowsHitTesting(false)
                         default:
-                            Text(plantEmoji(plantKey)).font(.system(size: emojiSize))
+                            Text(emoji).font(.system(size: emojiSize))
                         }
                     }
                 } else {
-                    Text(plantEmoji(plantKey)).font(.system(size: emojiSize))
+                    Text(emoji).font(.system(size: emojiSize))
                 }
             }
             .clipped()

@@ -321,7 +321,7 @@ private struct ShopRow: View {
         let listing = match.listing
         Button(action: action) {
             HStack(spacing: 10) {
-                PlantPicture(url: listing.imageURL, plantKey: listing.plantKey, emojiSize: 24)
+                PlantPicture(listing: listing, emojiSize: 24)
                     .frame(width: 48, height: 48)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 VStack(alignment: .leading, spacing: 2) {

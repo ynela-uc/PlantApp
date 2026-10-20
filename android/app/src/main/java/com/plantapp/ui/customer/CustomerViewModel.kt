@@ -49,12 +49,19 @@ data class CheckoutForm(
 )
 
 data class CustomerState(
+    /** False until the shopper picks what to look at on the entry screen; asked again at every app start. */
+    val entered: Boolean = false,
     val loading: Boolean = true,
     val failed: Boolean = false,
     val listings: List<Listing> = emptyList(),
     val city: String = "",
     val query: String = "",
-    val plantFilter: String? = null,
+    /** Home screen vs. browsing one section (flowers / plants / gifts), one category in it, or one occasion. */
+    val section: String? = null,
+    val category: String? = null,
+    val occasion: String? = null,
+    /** The entry screen's "show everything": a plain product list with no section chosen. */
+    val showAll: Boolean = false,
     /** listing id -> quantity */
     val cart: Map<String, Int> = emptyMap(),
     val tab: CustomerTab = CustomerTab.Browse,
@@ -81,22 +88,22 @@ data class CustomerState(
     /** Listings that can be delivered to [city] and are in stock. */
     val deliverable: List<Listing> get() = listings.filter { it.inStock && it.deliversTo(city) }
 
-    /** Deliverable listings matching the search text and the plant-type chip. */
+    /** True when no section, occasion or search is active: the screen shows the home page instead of a product list. */
+    val isHome: Boolean get() = section == null && occasion == null && query.isBlank() && !showAll
+
+    /** Deliverable listings matching the section, category, occasion and search text. */
     fun visible(lang: String): List<Listing> {
         val q = query.trim().lowercase()
         return deliverable.filter { listing ->
-            (plantFilter == null || listing.plantKey == plantFilter) &&
+            (section == null || listing.section == section) &&
+                (category == null || listing.category == category) &&
+                (occasion == null || occasion in listing.occasions) &&
                 (q.isEmpty() || listing.name.values.any { it.lowercase().contains(q) } ||
                     listing.name.localized(lang).lowercase().contains(q) ||
                     (listing.sellers?.name?.lowercase()?.contains(q) == true))
         }
     }
 
-    /** Distinct plant types among deliverable listings, as (key, listing to take the name from). */
-    fun plantTypes(): List<Pair<String, Listing>> =
-        deliverable.filter { it.plantKey != null }
-            .distinctBy { it.plantKey }
-            .map { it.plantKey!! to it }
 }
 
 class CustomerViewModel(private val profile: Profile) : ViewModel() {
@@ -146,9 +153,23 @@ class CustomerViewModel(private val profile: Profile) : ViewModel() {
         }
     }
 
-    fun setCity(city: String) = _state.update { it.copy(city = city, plantFilter = null) }
+    /** Entry screen answer: open this section or occasion (both null = show everything) and show the app. */
+    fun enter(section: String?, occasion: String?) = _state.update {
+        it.copy(
+            entered = true, section = section, occasion = occasion, category = null, query = "",
+            showAll = section == null && occasion == null, tab = CustomerTab.Browse,
+        )
+    }
+
+    fun setCity(city: String) = _state.update { it.copy(city = city, category = null) }
     fun setQuery(query: String) = _state.update { it.copy(query = query) }
-    fun setPlantFilter(key: String?) = _state.update { it.copy(plantFilter = key) }
+
+    /** Opens one section (or goes back to the home page with null). */
+    fun openSection(key: String?) = _state.update { it.copy(section = key, category = null, occasion = null, query = "", showAll = false) }
+    fun setCategory(key: String?) = _state.update { it.copy(category = key) }
+
+    /** Opens everything for one occasion across all sections (or goes back home with null). */
+    fun openOccasion(key: String?) = _state.update { it.copy(occasion = key, section = null, category = null, query = "", showAll = false) }
 
     fun setTab(tab: CustomerTab) {
         _state.update { it.copy(tab = tab) }

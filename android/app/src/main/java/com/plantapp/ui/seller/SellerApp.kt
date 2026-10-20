@@ -82,6 +82,9 @@ fun SellerApp(profile: Profile, onSignOut: () -> Unit) {
             onPrice = vm::setPrice,
             onStock = vm::setInStock,
             onSave = vm::saveEditor,
+            onSection = vm::setSection,
+            onCategory = vm::setCategory,
+            onOccasion = vm::toggleOccasion,
         )
         return
     }

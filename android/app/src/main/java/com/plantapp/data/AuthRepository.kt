@@ -50,6 +50,7 @@ class AuthRepository {
                     city = form.city,
                     deliversTo = listOf(form.city),
                     phone = form.phone,
+                    shopTypes = form.shopTypes,
                 )
             )
         }
