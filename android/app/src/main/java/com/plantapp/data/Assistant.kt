@@ -29,6 +29,10 @@ data class AssistantReply(
     val health: String = "unknown",
     val answer: String = "",
     @SerialName("follow_ups") val followUps: List<String> = emptyList(),
+    /** Part of the marketplace that matches the question (Catalog keys; empty when nothing fits). */
+    @SerialName("browse_section") val browseSection: String = "",
+    @SerialName("browse_category") val browseCategory: String = "",
+    @SerialName("browse_occasion") val browseOccasion: String = "",
 )
 
 /** One line of the chat as sent to the function. */

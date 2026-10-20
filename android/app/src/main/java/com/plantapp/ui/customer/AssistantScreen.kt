@@ -22,6 +22,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import com.plantapp.data.Catalog
+import com.plantapp.ui.occasionName
+import com.plantapp.ui.sectionName
+import com.plantapp.ui.categoryName
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -81,6 +87,7 @@ fun AssistantScreen(
     onSendPhoto: (ByteArray) -> Unit,
     onNewChat: () -> Unit,
     onOpenListing: (String) -> Unit,
+    onBrowse: (section: String?, category: String?, occasion: String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lang = rememberLang()
@@ -115,7 +122,7 @@ fun AssistantScreen(
 
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             if (state.messages.isEmpty()) {
-                EmptyState(capture)
+                EmptyState(capture) { example -> if (!state.busy) onSendText(example) }
             } else {
                 LazyColumn(
                     state = listState,
@@ -135,6 +142,7 @@ fun AssistantScreen(
                                 matches = if (reply != null) findShops(reply, customer.listings, customer.city) else emptyList(),
                                 city = customer.city,
                                 onOpenListing = onOpenListing,
+                                onBrowse = onBrowse,
                                 onFollowUp = { if (!state.busy) onSendText(it) },
                                 isLast = message.id == state.messages.last().id && !state.busy,
                             )
@@ -202,22 +210,68 @@ fun AssistantScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun EmptyState(capture: PhotoCapture) {
+private fun EmptyState(capture: PhotoCapture, onExample: (String) -> Unit) {
+    val examples = listOf(
+        stringResource(R.string.ai_example_gift),
+        stringResource(R.string.ai_example_care),
+        stringResource(R.string.ai_example_flowers),
+    )
     Column(
-        modifier = Modifier.fillMaxSize().padding(28.dp),
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
     ) {
-        Text("🌿", fontSize = 64.sp)
-        Spacer(Modifier.height(12.dp))
+        Text("🌿", fontSize = 56.sp)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.ai_intro_title),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = PlantGreenDark,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(6.dp))
         Text(
             text = stringResource(R.string.ai_intro),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             color = TextMuted,
             textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(14.dp))
+        Surface(shape = RoundedCornerShape(16.dp), color = Color.White, border = BorderStroke(1.dp, CardBorder)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.ai_can_identify), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.ai_can_care), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.ai_can_gift), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.ai_can_shop), style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.ai_try),
+            style = MaterialTheme.typography.labelLarge,
+            color = TextMuted,
+        )
+        Spacer(Modifier.height(8.dp))
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            examples.forEach { example ->
+                Surface(
+                    modifier = Modifier.clickable { onExample(example) },
+                    shape = RoundedCornerShape(999.dp),
+                    color = PlantGreenSoft,
+                ) {
+                    Text(
+                        text = example,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                        color = PlantGreenDark,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(20.dp))
         Button(
             onClick = capture.takePhoto,
             modifier = Modifier.fillMaxWidth().height(52.dp),
@@ -270,6 +324,7 @@ private fun AssistantBubble(
     matches: List<ShopMatch>,
     city: String,
     onOpenListing: (String) -> Unit,
+    onBrowse: (String?, String?, String?) -> Unit,
     onFollowUp: (String) -> Unit,
     isLast: Boolean,
 ) {
@@ -332,6 +387,37 @@ private fun AssistantBubble(
                                 )
                                 group.forEach { match -> ShopRow(match, lang) { onOpenListing(match.listing.id) } }
                             }
+                        }
+                    }
+                }
+
+                // A shortcut to the products the guide suggests (a section, category or occasion)
+                if (reply != null) {
+                    val section = Catalog.section(reply.browseSection)
+                    val category = section?.categories?.firstOrNull { it.key == reply.browseCategory }
+                    val occasion = Catalog.occasions.firstOrNull { it.key == reply.browseOccasion }
+                    val label = when {
+                        category != null -> "${category.emoji} ${categoryName(category.key)}"
+                        section != null -> "${section.emoji} ${sectionName(section.key)}"
+                        occasion != null -> "${occasion.emoji} ${occasionName(occasion.key)}"
+                        else -> null
+                    }
+                    if (label != null) {
+                        Spacer(Modifier.height(12.dp))
+                        Surface(
+                            modifier = Modifier.clickable {
+                                onBrowse(reply.browseSection.ifBlank { null }, reply.browseCategory.ifBlank { null }, reply.browseOccasion.ifBlank { null })
+                            },
+                            shape = RoundedCornerShape(999.dp),
+                            color = PlantGreen,
+                        ) {
+                            Text(
+                                text = stringResource(R.string.ai_browse, label),
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
                         }
                     }
                 }

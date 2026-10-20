@@ -226,13 +226,13 @@
     <string name="city_karbala">كربلاء</string>
     <string name="city_duhok">دهوك</string>
 
-    <string name="nav_ai">مساعد النباتات</string>
-    <string name="ai_title">مساعد النباتات</string>
-    <string name="ai_intro">التقط صورة لأي نبتة. سأخبرك ما هي، وكيف تعتني بها، وما المشكلة فيها، ومن أين تشتريها.</string>
-    <string name="ai_input_hint">اسأل عن نبتتك…</string>
+    <string name="nav_ai">المرشد</string>
+    <string name="ai_title">المرشد الذكي</string>
+    <string name="ai_intro">اسألني عن الورود والنباتات والهدايا. هذا ما يمكنني فعله:</string>
+    <string name="ai_input_hint">اسأل عن النباتات أو الورود أو الهدايا…</string>
     <string name="ai_send">إرسال</string>
     <string name="ai_new_chat">محادثة جديدة</string>
-    <string name="ai_thinking">جارٍ فحص نبتتك…</string>
+    <string name="ai_thinking">جارٍ التفكير…</string>
     <string name="ai_health_healthy">تبدو بصحة جيدة</string>
     <string name="ai_health_attention">تحتاج إلى عناية</string>
     <string name="ai_health_unhealthy">غير سليمة</string>
@@ -241,10 +241,10 @@
     <string name="ai_group_delivers">توصيل إلى %1$s</string>
     <string name="ai_group_other">مدن أخرى (لا توصيل إلى %1$s)</string>
     <string name="ai_similar">مشابهة</string>
-    <string name="ai_no_shops">لا يوجد متجر في التطبيق يبيع هذه النبتة حاليًا.</string>
-    <string name="ai_limit">وصلت إلى الحد اليومي لمساعد النباتات. حاول مرة أخرى غدًا.</string>
+    <string name="ai_no_shops">لا يوجد متجر في التطبيق يبيع هذا حاليًا.</string>
+    <string name="ai_limit">وصلت إلى الحد اليومي للمرشد الذكي. حاول مرة أخرى غدًا.</string>
     <string name="ai_photo_limit">وصلت إلى حد الصور اليومي. يمكنك الاستمرار بالأسئلة النصية أو المحاولة غدًا.</string>
-    <string name="ai_unavailable">مساعد النباتات غير مفعّل بعد.</string>
+    <string name="ai_unavailable">المرشد الذكي غير مفعّل بعد.</string>
     <string name="ai_disclaimer">قد تكون إجابات الذكاء الاصطناعي خاطئة. للمشاكل الجدية، اسأل مشتلًا محليًا.</string>
 
     <string name="sec_flowers">الورود</string>
@@ -330,4 +330,15 @@
     <string name="shop_collections">المجموعات</string>
     <string name="shop_visit">زيارة المتجر</string>
     <string name="shop_products">المنتجات</string>
+
+    <string name="ai_intro_title">أنا مرشدك الذكي</string>
+    <string name="ai_can_identify">🌿  أتعرف على أي نبتة أو وردة من صورة</string>
+    <string name="ai_can_care">💧  أعطيك نصائح العناية وأكتشف مشكلة النبتة المريضة</string>
+    <string name="ai_can_gift">🎁  أقترح أفكار هدايا لكل مناسبة وميزانية</string>
+    <string name="ai_can_shop">🛒  أدلّك على المتاجر التي تبيعه، الأقرب أولًا</string>
+    <string name="ai_try">جرّب أحدها:</string>
+    <string name="ai_example_gift">هدية لعيد ميلاد أمي</string>
+    <string name="ai_example_care">كل كم يوم أسقي الصبار؟</string>
+    <string name="ai_example_flowers">ورد لحفل زفاف</string>
+    <string name="ai_browse">🛍  تصفح: %1$s</string>
 </resources>

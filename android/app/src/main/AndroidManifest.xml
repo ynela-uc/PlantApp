@@ -5,6 +5,7 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
+        android:name=".PlantApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -27,6 +28,13 @@
                 <data android:scheme="plantapp" android:host="auth-callback" />
             </intent-filter>
         </activity>
+
+        <!-- Shows the error of a crash on screen (separate process, plain views) -->
+        <activity
+            android:name=".CrashActivity"
+            android:exported="false"
+            android:process=":crash"
+            android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" />
 
         <!-- Lets the camera app write the photo into the app's cache folder -->
         <provider

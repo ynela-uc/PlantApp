@@ -191,6 +191,25 @@ final class CustomerModel: ObservableObject {
 
     func setCity(_ code: String) { city = code; category = nil }
 
+    /// Jump from the Smart Guide to the products it suggested: a section (and category) or an occasion.
+    func browse(section: String?, category: String?, occasion: String?) {
+        let useSection = Catalog.section(section)?.key
+        withAnimation(Theme.slide) {
+            overlay = nil
+            entered = true
+            tab = .browse
+            query = ""
+            showAll = false
+            self.section = useSection
+            if let useSection, let found = Catalog.section(useSection), found.categories.contains(where: { $0.key == category }) {
+                self.category = category
+            } else {
+                self.category = nil
+            }
+            self.occasion = (useSection == nil && Catalog.occasions.contains(where: { $0.key == occasion })) ? occasion : nil
+        }
+    }
+
     /// Entry screen answer: open this section or occasion (both nil = show everything) and show the app.
     func enter(section: String?, occasion: String?) {
         self.section = section

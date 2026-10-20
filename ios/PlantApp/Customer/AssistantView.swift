@@ -58,25 +58,61 @@ struct AssistantView: View {
     // MARK: Empty state
 
     private var emptyState: some View {
-        VStack(spacing: 12) {
-            Spacer()
-            Text("🌿").font(.system(size: 64))
-            Text(lang.t("ai_intro"))
-                .font(.system(size: 16))
-                .foregroundStyle(Theme.muted)
-                .multilineTextAlignment(.center)
-            Button {
-                openCamera(camera: $showCamera, library: $showLibrary)
-            } label: {
-                Text("📷  " + lang.t("photo_take"))
+        ScrollView {
+            VStack(spacing: 12) {
+                Text("🌿").font(.system(size: 56))
+                Text(lang.t("ai_intro_title"))
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(Theme.greenDark)
+                    .multilineTextAlignment(.center)
+                Text(lang.t("ai_intro"))
+                    .font(.system(size: 15))
+                    .foregroundStyle(Theme.muted)
+                    .multilineTextAlignment(.center)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(["ai_can_identify", "ai_can_care", "ai_can_gift", "ai_can_shop"], id: \.self) { key in
+                        Text(lang.t(key)).font(.system(size: 15))
+                    }
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .card()
+
+                Text(lang.t("ai_try"))
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(Theme.muted)
+                    .padding(.top, 4)
+                FlowLayout(spacing: 8) {
+                    ForEach(["ai_example_gift", "ai_example_care", "ai_example_flowers"], id: \.self) { key in
+                        Button {
+                            assistant.sendText(lang.t(key), language: code)
+                        } label: {
+                            Text(lang.t(key))
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Theme.greenDark)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 7)
+                                .background(Theme.greenSoft)
+                                .clipShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                Button {
+                    openCamera(camera: $showCamera, library: $showLibrary)
+                } label: {
+                    Text("📷  " + lang.t("photo_take"))
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .padding(.top, 12)
+                Button(lang.t("photo_pick")) { showLibrary = true }
+                    .buttonStyle(PrimaryButtonStyle(filled: false))
             }
-            .buttonStyle(PrimaryButtonStyle())
-            .padding(.top, 12)
-            Button(lang.t("photo_pick")) { showLibrary = true }
-                .buttonStyle(PrimaryButtonStyle(filled: false))
-            Spacer()
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
         }
-        .padding(.horizontal, 28)
     }
 
     // MARK: Conversation
@@ -227,6 +263,26 @@ private struct AssistantBubble: View {
                     whereToBuy(reply)
                 }
 
+                if let reply = message.reply, let label = browseLabel(reply) {
+                    Button {
+                        model.browse(
+                            section: reply.browseSection.isEmpty ? nil : reply.browseSection,
+                            category: reply.browseCategory.isEmpty ? nil : reply.browseCategory,
+                            occasion: reply.browseOccasion.isEmpty ? nil : reply.browseOccasion
+                        )
+                    } label: {
+                        Text(lang.t("ai_browse", label))
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(Theme.green)
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 12)
+                }
+
                 if isLast, let reply = message.reply, !reply.followUps.isEmpty {
                     FlowLayout(spacing: 8) {
                         ForEach(Array(reply.followUps.prefix(3).enumerated()), id: \.offset) { _, question in
@@ -276,6 +332,20 @@ private struct AssistantBubble: View {
                 }
             }
         }
+    }
+
+    /// "🕯️ Candles & fragrance" for the shortcut chip, or nil when the guide suggested nothing to browse.
+    private func browseLabel(_ reply: AssistantReply) -> String? {
+        if let section = Catalog.section(reply.browseSection) {
+            if let category = section.categories.first(where: { $0.key == reply.browseCategory }) {
+                return "\(category.emoji) \(lang.t("cat_" + category.key))"
+            }
+            return "\(section.emoji) \(lang.t("sec_" + section.key))"
+        }
+        if let occasion = Catalog.occasions.first(where: { $0.key == reply.browseOccasion }) {
+            return "\(occasion.emoji) \(lang.t("occ_" + occasion.key))"
+        }
+        return nil
     }
 
     private func header(for reach: ShopReach) -> String {

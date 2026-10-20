@@ -11,9 +11,16 @@ struct AssistantReply: Codable, Equatable {
     var health = "unknown"
     var answer = ""
     var followUps: [String] = []
+    /// Part of the marketplace that matches the question (Catalog keys; empty when nothing fits).
+    var browseSection = ""
+    var browseCategory = ""
+    var browseOccasion = ""
 
     enum CodingKeys: String, CodingKey {
         case identified, confidence, names, health, answer
+        case browseSection = "browse_section"
+        case browseCategory = "browse_category"
+        case browseOccasion = "browse_occasion"
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
         case followUps = "follow_ups"
@@ -30,6 +37,9 @@ struct AssistantReply: Codable, Equatable {
         health = try c.decodeIfPresent(String.self, forKey: .health) ?? "unknown"
         answer = try c.decodeIfPresent(String.self, forKey: .answer) ?? ""
         followUps = try c.decodeIfPresent([String].self, forKey: .followUps) ?? []
+        browseSection = try c.decodeIfPresent(String.self, forKey: .browseSection) ?? ""
+        browseCategory = try c.decodeIfPresent(String.self, forKey: .browseCategory) ?? ""
+        browseOccasion = try c.decodeIfPresent(String.self, forKey: .browseOccasion) ?? ""
     }
 }
 

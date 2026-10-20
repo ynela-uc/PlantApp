@@ -2,6 +2,7 @@ package com.plantapp.ui.customer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plantapp.data.Catalog
 import com.plantapp.data.Listing
 import com.plantapp.data.SellerInfo
 import com.plantapp.data.ListingsRepository
@@ -188,6 +189,17 @@ class CustomerViewModel(private val profile: Profile) : ViewModel() {
         it.copy(
             entered = true, section = section, occasion = occasion, category = null, query = "",
             showAll = section == null && occasion == null, tab = CustomerTab.Browse,
+        )
+    }
+
+    /** Jump from the Smart Guide to the products it suggested: a section (and category) or an occasion. */
+    fun browse(section: String?, category: String?, occasion: String?) = _state.update {
+        val useSection = section?.takeIf { s -> Catalog.section(s) != null }
+        it.copy(
+            overlay = null, entered = true, tab = CustomerTab.Browse, query = "", showAll = false,
+            section = useSection,
+            category = if (useSection != null) category?.takeIf { c -> Catalog.section(useSection)?.categories?.any { k -> k.key == c } == true } else null,
+            occasion = if (useSection == null) occasion?.takeIf { o -> Catalog.occasions.any { k -> k.key == o } } else null,
         )
     }
 

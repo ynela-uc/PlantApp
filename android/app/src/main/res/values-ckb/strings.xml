@@ -227,13 +227,13 @@
     <string name="city_karbala">کەربەلا</string>
     <string name="city_duhok">دهۆک</string>
 
-    <string name="nav_ai">یاریدەدەری ڕووەک</string>
-    <string name="ai_title">یاریدەدەری ڕووەک</string>
-    <string name="ai_intro">وێنەی هەر ڕووەکێک بگرە. پێت دەڵێم چییە، چۆن چاودێری بکەیت، کێشەکەی چییە، و لە کوێ بیکڕیت.</string>
-    <string name="ai_input_hint">دەربارەی ڕووەکەکەت بپرسە…</string>
+    <string name="nav_ai">ڕێنیشاندەر</string>
+    <string name="ai_title">ڕێنیشاندەری زیرەک</string>
+    <string name="ai_intro">هەر شتێک دەربارەی گوڵ، ڕووەک و دیاری بپرسە. ئەمانە دەتوانم بیکەم:</string>
+    <string name="ai_input_hint">پرسیار بکە دەربارەی ڕووەک، گوڵ یان دیاری…</string>
     <string name="ai_send">ناردن</string>
     <string name="ai_new_chat">گفتوگۆی نوێ</string>
-    <string name="ai_thinking">سەیری ڕووەکەکەت دەکرێت…</string>
+    <string name="ai_thinking">بیردەکەمەوە…</string>
     <string name="ai_health_healthy">تەندروستە</string>
     <string name="ai_health_attention">پێویستی بە سەرنجە</string>
     <string name="ai_health_unhealthy">نەخۆشە</string>
@@ -242,10 +242,10 @@
     <string name="ai_group_delivers">گەیاندن بۆ %1$s</string>
     <string name="ai_group_other">شارەکانی تر (گەیاندن نییە بۆ %1$s)</string>
     <string name="ai_similar">هاوشێوە</string>
-    <string name="ai_no_shops">هیچ فرۆشگایەک لە ئەپەکەدا ئەم ڕووەکە نافرۆشێت هێشتا.</string>
-    <string name="ai_limit">گەیشتیتە سنووری ئەمڕۆ بۆ یاریدەدەری ڕووەک. تکایە سبەینێ دووبارە هەوڵبدەرەوە.</string>
+    <string name="ai_no_shops">هیچ فرۆشگایەک لە ئەپەکەدا ئەمە نافرۆشێت هێشتا.</string>
+    <string name="ai_limit">گەیشتیتە سنووری ئەمڕۆ بۆ ڕێنیشاندەری زیرەک. تکایە سبەینێ دووبارە هەوڵبدەرەوە.</string>
     <string name="ai_photo_limit">گەیشتیتە سنووری وێنەی ئەمڕۆ. هێشتا دەتوانیت پرسیار بنووسیت، یان سبەینێ هەوڵبدەرەوە.</string>
-    <string name="ai_unavailable">یاریدەدەری ڕووەک هێشتا چالاک نەکراوە.</string>
+    <string name="ai_unavailable">ڕێنیشاندەری زیرەک هێشتا چالاک نەکراوە.</string>
     <string name="ai_disclaimer">وەڵامەکانی ژیری دەستکرد لەوانەیە هەڵە بن. بۆ کێشە گرنگەکان، لە نەمامگەیەکی ناوچەیی بپرسە.</string>
 
     <string name="sec_flowers">گوڵ</string>
@@ -331,4 +331,15 @@
     <string name="shop_collections">کۆمەڵەکان</string>
     <string name="shop_visit">سەردانی فرۆشگا</string>
     <string name="shop_products">بەرهەمەکان</string>
+
+    <string name="ai_intro_title">من ڕێنیشاندەری زیرەکتم</string>
+    <string name="ai_can_identify">🌿  لە وێنەوە هەر ڕووەک یان گوڵێک دەناسمەوە</string>
+    <string name="ai_can_care">💧  ئامۆژگاری چاودێری دەدەم و کێشەی ڕووەکی نەخۆش دەدۆزمەوە</string>
+    <string name="ai_can_gift">🎁  بیرۆکەی دیاری پێشنیار دەکەم بۆ هەموو بۆنەیەک و بودجەیەک</string>
+    <string name="ai_can_shop">🛒  پیشانت دەدەم کام فرۆشگا دەیفرۆشێت، نزیکترین یەکەم</string>
+    <string name="ai_try">یەکێکیان تاقی بکەرەوە:</string>
+    <string name="ai_example_gift">دیاری بۆ ڕۆژی لەدایکبوونی دایکم</string>
+    <string name="ai_example_care">هەموو چەند ڕۆژ ئاو بە کاکتوس بدەم؟</string>
+    <string name="ai_example_flowers">گوڵ بۆ ئاهەنگی هاوسەرگیری</string>
+    <string name="ai_browse">🛍  ببینە: %1$s</string>
 </resources>

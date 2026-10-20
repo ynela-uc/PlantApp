@@ -157,6 +157,7 @@ fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
                 onSendPhoto = { assistant.sendPhoto(it, language) },
                 onNewChat = assistant::newChat,
                 onOpenListing = vm::openListing,
+                onBrowse = vm::browse,
                 modifier = content,
             )
             CustomerTab.Cart -> CartScreen(

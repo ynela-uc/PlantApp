@@ -1,8 +1,9 @@
-// Supabase Edge Function: plant-assistant
+// Supabase Edge Function: plant-assistant (the "Smart Guide" inside the app)
 //
-// A plant-care helper for everyone (customers and sellers): identify a plant from a photo,
-// say whether it looks healthy, answer follow-up questions, and name the plant in all three
-// app languages so the app can find shops that sell it.
+// A helper for everyone (customers and sellers) in a marketplace for flowers, plants and gifts: identify a plant
+// or flower from a photo, say whether it looks healthy, give care advice, suggest gift ideas for an occasion and
+// budget, name the plant in all three app languages so the app can find shops that sell it, and say which part of
+// the marketplace to browse (section, category, occasion).
 //
 // Input  (POST JSON):
 //   { language: "en" | "ar" | "ckb",
@@ -24,6 +25,18 @@ const MAX_MESSAGES = 12;
 const MAX_TEXT_CHARS = 1000;
 const MAX_IMAGE_BASE64_CHARS = 6_000_000; // ~4.5 MB of image data
 const MODEL = Deno.env.get("AI_MODEL") ?? "claude-haiku-5-5";
+
+// Keys of the marketplace catalog (see docs/categories.md).
+const CATEGORIES = {
+  flowers: ["bouquets", "roses", "flower_boxes", "baskets", "weddings_events", "condolence", "dried_preserved", "artificial_flowers"],
+  plants: ["indoor", "outdoor", "succulents_cacti", "flowering", "trees_palms", "herbs", "bonsai_orchids", "soil", "fertilizer", "pots", "tools", "pest_care", "seeds_bulbs"],
+  gifts: ["gift_sets", "chocolate_sweets", "cakes", "personalised", "home_decor", "candles_fragrance", "cards_wrapping", "plush_toys", "accessories_jewelry", "balloons_party"],
+};
+const ALL_CATEGORIES = [...CATEGORIES.flowers, ...CATEGORIES.plants, ...CATEGORIES.gifts];
+const OCCASIONS = [
+  "birthday", "anniversary", "love", "new_baby", "get_well", "congratulations", "new_home",
+  "graduation", "wedding", "condolence", "mothers_day", "eid", "nowruz", "thank_you",
+];
 
 const PLANT_KEYS = [
   "Monstera", "Snake Plant", "Pothos", "Ficus", "Cactus", "Succulents", "Aloe Vera", "Palm",
@@ -60,9 +73,14 @@ const SCHEMA = {
     answer: { type: "string" },
     // Up to three short questions the user may want to ask next, in the user's language.
     follow_ups: { type: "array", items: { type: "string" } },
+    // What to show in the shop: the part of the marketplace that best matches the question ("" when nothing fits).
+    browse_section: { type: "string", enum: ["", "flowers", "plants", "gifts"] },
+    browse_category: { type: "string", enum: ["", ...ALL_CATEGORIES] },
+    browse_occasion: { type: "string", enum: ["", ...OCCASIONS] },
   },
   required: [
     "identified", "confidence", "plant_key", "scientific_name", "names", "health", "answer", "follow_ups",
+    "browse_section", "browse_category", "browse_occasion",
   ],
   additionalProperties: false,
 };
@@ -74,19 +92,20 @@ const LANGUAGE_NAMES: Record<string, string> = {
 };
 
 const SYSTEM = [
-  "You are the plant-care assistant inside a plant shopping app used in Iraq (hot dry summers, strong sun, hard tap water, cool winters in the north).",
-  "People send a photo of a plant and ask what it is, how to care for it, or what is wrong with it.",
+  "You are the Smart Guide inside a marketplace app for flowers, plants and gifts in Iraq (hot dry summers, strong sun, hard tap water, cool winters in the north).",
+  "People use you to: identify a plant or flower from a photo, learn how to care for it or what is wrong with it, get gift ideas for an occasion, a person or a budget, and find what to buy.",
   "",
   "Rules:",
   "- Write the answer and follow_ups in the language requested in the user's message. names must have all three languages (en, ar, ckb).",
   "- Keep the answer short and practical: at most about 120 words, plain text, no markdown, no bullet symbols; use short sentences or numbered steps written as 1) 2) 3).",
-  "- When the photo shows a plant, identify it. When it also shows problems (yellow or brown leaves, spots, wilting, pests, rot, dry soil), say what is most likely wrong and what to do now, and set health to needs_attention or unhealthy. Otherwise set health to healthy.",
-  '- With no photo, or no plant in the photo, set health to "unknown". If the conversation already established a plant, keep describing that plant in identified/plant_key/scientific_name/names.',
-  "- If you cannot tell which plant it is, set identified=false and plant_key=Other with empty strings, and say so kindly in the answer; ask for a clearer photo of the leaves or the whole plant.",
+  "- When a photo shows a plant or flower, identify it (identified=true). When it also shows problems (yellow or brown leaves, spots, wilting, pests, rot, dry soil), say what is most likely wrong and what to do now, and set health to needs_attention or unhealthy. Otherwise set health to healthy.",
+  '- With no photo, or when the question is not about one specific plant, set identified=false and health to "unknown" and plant_key=Other with empty strings; do not ask for a photo unless a photo would really help. If the conversation already established a plant, keep describing that plant in identified/plant_key/scientific_name/names.',
+  "- If a photo was sent but you cannot tell which plant it is, set identified=false and say so kindly in the answer; ask for a clearer photo of the leaves or the whole plant.",
   "- plant_key: the closest key from the allowed list, or Other. Never invent facts; say when you are unsure and what you would check.",
-  "- Mention if a plant is toxic to cats, dogs or children when that matters. For serious or spreading problems, suggest showing the plant to a local nursery.",
-  "- Only help with plants, gardening and caring for them. Politely decline anything else in one sentence.",
-  "- Do not recommend specific shops or brands; the app shows shops itself.",
+  "- Gift and shopping questions (a gift for someone, an occasion, a budget, what to buy): suggest 2 to 4 concrete ideas in the answer, matched to the person, the occasion and the budget in Iraqi dinar (IQD). Do not name shops, brands or prices of specific products; the app shows real products itself.",
+  "- browse_section, browse_category and browse_occasion: the part of the marketplace that best matches the question so the app can show matching products. Use an empty string for each one that does not clearly apply. A category must belong to its section. Sections and categories: flowers: " + CATEGORIES.flowers.join(", ") + "; plants (including supplies like soil, fertilizer, pots, tools): " + CATEGORIES.plants.join(", ") + "; gifts and decor: " + CATEGORIES.gifts.join(", ") + ". Occasions: " + OCCASIONS.join(", ") + ".",
+  "- Mention if a plant is toxic to cats, dogs or children when that matters. For serious or spreading plant problems, suggest showing the plant to a local nursery.",
+  "- Only help with plants, flowers, gardening, plant care, gifts, decor and choosing what to buy in this app. Politely decline anything else in one sentence.",
 ].join("\n");
 
 type Msg = { role: "user" | "assistant"; text: string };

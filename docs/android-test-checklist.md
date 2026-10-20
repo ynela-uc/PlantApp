@@ -51,8 +51,8 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Forgot password: request a reset email for a test account, open the link on the same phone, set a new password, you are signed in.
   (Needs a real inbox. Supabase's built-in email is rate limited, so try this at most a few times.)
 
-## 9. Plant helper (the "Plant help" tab for customers)
-- [ ] Customer -> Plant help tab: take a photo of a real plant. A few seconds later you get: the plant's name (in the app language), scientific name, a health tag, short care advice, and 2-3 suggested follow-up questions.
+## 9. Smart Guide (the "Guide" tab for customers)
+- [ ] Customer -> Guide tab (check the intro explains what it can do, and the three example chips work): take a photo of a real plant. A few seconds later you get: the plant's name (in the app language), scientific name, a health tag, short care advice, and 2-3 suggested follow-up questions.
 - [ ] A shop that sells that plant (add one as the seller first) appears under "Where to buy": shops in your city first, then shops that deliver to you, then other cities. Tap one: the plant page opens.
 - [ ] Take a photo of a sick plant (yellow or brown leaves): the health tag says "Needs attention" or "Unhealthy" and the answer says what to do.
 - [ ] Type a question ("how often do I water it?") or tap a suggested question: you get an answer about the same plant.
