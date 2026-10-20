@@ -125,149 +125,157 @@ struct PlantEditorView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    BackButton(accent: Theme.amber) { model.closeEditor() }
-                        .padding(.vertical, 8)
-                    Text(lang.t(editor.listingId == nil ? "editor_title_new" : "editor_title_edit"))
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(Theme.greenDark)
-                        .padding(.bottom, 16)
+                    // Split into Groups: this Mac's Xcode 14.2 (iOS 16.2 SDK) has the
+                    // pre-variadic-generics ViewBuilder, capped at 10 children per block.
+                    Group {
+                        BackButton(accent: Theme.amber) { model.closeEditor() }
+                            .padding(.vertical, 8)
+                        Text(lang.t(editor.listingId == nil ? "editor_title_new" : "editor_title_edit"))
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(Theme.greenDark)
+                            .padding(.bottom, 16)
 
-                    photoArea
+                        photoArea
 
-                    HStack(spacing: 10) {
-                        Button { openCamera(camera: $showCamera, library: $showLibrary) } label: {
-                            Text("📷  " + lang.t("photo_take"))
-                        }
-                        .buttonStyle(PrimaryButtonStyle(color: Theme.amber))
-                        Button(lang.t("photo_pick")) { showLibrary = true }
-                            .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
-                    }
-                    .disabled(editor.aiBusy)
-                    .padding(.top, 10)
-
-                    Button { model.runAi() } label: {
-                        Text("✨  " + lang.t("editor_ai_button"))
-                    }
-                    .buttonStyle(PrimaryButtonStyle(color: Theme.green))
-                    .disabled(editor.photoData == nil || editor.aiBusy)
-                    .padding(.top, 10)
-
-                    if let message = editor.aiMessage {
-                        let good = message == .filled
-                        Text(lang.t(message.key))
-                            .font(.system(size: 14))
-                            .foregroundStyle(good ? Theme.greenDark : Color(hex: 0x8A5A00))
-                            .padding(12)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(good ? Theme.greenSoft : Theme.amberSoft)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .padding(.top, 8)
-                    }
-
-                    // Where the product is filed: section, category, occasions
-                    PickerTitle(lang.t("field_section"))
-                    FlowLayout(spacing: 8) {
-                        ForEach(Catalog.sections) { entry in
-                            Pill(label: "\(entry.emoji) \(lang.t("sec_" + entry.key))", selected: editor.section == entry.key, accent: Theme.amber) {
-                                model.setSection(entry.key)
+                        HStack(spacing: 10) {
+                            Button { openCamera(camera: $showCamera, library: $showLibrary) } label: {
+                                Text("📷  " + lang.t("photo_take"))
                             }
+                            .buttonStyle(PrimaryButtonStyle(color: Theme.amber))
+                            Button(lang.t("photo_pick")) { showLibrary = true }
+                                .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                        }
+                        .disabled(editor.aiBusy)
+                        .padding(.top, 10)
+
+                        Button { model.runAi() } label: {
+                            Text("✨  " + lang.t("editor_ai_button"))
+                        }
+                        .buttonStyle(PrimaryButtonStyle(color: Theme.green))
+                        .disabled(editor.photoData == nil || editor.aiBusy)
+                        .padding(.top, 10)
+
+                        if let message = editor.aiMessage {
+                            let good = message == .filled
+                            Text(lang.t(message.key))
+                                .font(.system(size: 14))
+                                .foregroundStyle(good ? Theme.greenDark : Color(hex: 0x8A5A00))
+                                .padding(12)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(good ? Theme.greenSoft : Theme.amberSoft)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .padding(.top, 8)
                         }
                     }
-                    if let current = Catalog.section(editor.section) {
-                        PickerTitle(lang.t("field_category"))
+
+                    Group {
+                        // Where the product is filed: section, category, occasions
+                        PickerTitle(lang.t("field_section"))
                         FlowLayout(spacing: 8) {
-                            ForEach(current.categories) { category in
-                                Pill(label: "\(category.emoji) \(lang.t("cat_" + category.key))", selected: editor.category == category.key, accent: Theme.amber) {
-                                    model.setCategory(category.key)
+                            ForEach(Catalog.sections) { entry in
+                                Pill(label: "\(entry.emoji) \(lang.t("sec_" + entry.key))", selected: editor.section == entry.key, accent: Theme.amber) {
+                                    model.setSection(entry.key)
                                 }
                             }
                         }
-                    }
-                    if showOccasions {
-                        PickerTitle(lang.t("field_occasions"))
-                        FlowLayout(spacing: 8) {
-                            ForEach(Catalog.occasions) { occasion in
-                                Pill(label: "\(occasion.emoji) \(lang.t("occ_" + occasion.key))", selected: editor.occasions.contains(occasion.key), accent: Theme.amber) {
-                                    model.toggleOccasion(occasion.key)
+                        if let current = Catalog.section(editor.section) {
+                            PickerTitle(lang.t("field_category"))
+                            FlowLayout(spacing: 8) {
+                                ForEach(current.categories) { category in
+                                    Pill(label: "\(category.emoji) \(lang.t("cat_" + category.key))", selected: editor.category == category.key, accent: Theme.amber) {
+                                        model.setCategory(category.key)
+                                    }
                                 }
                             }
-                        }
-                    }
-
-                    VStack(spacing: 12) {
-                        AppField(title: lang.t("field_plant_name"), text: textBinding(.name))
-                        if isPlant {
-                            AppField(title: lang.t("field_scientific"), text: Binding(get: { editor.scientificName }, set: { model.setScientificName($0) }), autocapitalize: false)
-                        }
-                        AppField(title: lang.t("field_description"), text: textBinding(.description), multiline: true)
-                        if isPlant {
-                            AppField(title: lang.t("field_water"), text: textBinding(.water), multiline: true)
-                            AppField(title: lang.t("field_light"), text: textBinding(.light), multiline: true)
-                            AppField(title: lang.t("field_fertilizer"), text: textBinding(.fertilizer), multiline: true)
-                            AppField(title: lang.t("field_height"), text: Binding(get: { editor.heightText }, set: { model.setHeight($0) }), keyboard: .numberPad)
-                        }
-                        AppField(title: lang.t("field_price"), text: Binding(get: { editor.priceText }, set: { model.setPrice($0) }), keyboard: .numberPad)
-                        AppField(
-                            title: lang.t("field_old_price"),
-                            text: Binding(get: { editor.oldPriceText }, set: { value in model.updateEditor { $0.oldPriceText = String(value.filter(\.isNumber).prefix(9)) } }),
-                            keyboard: .numberPad
-                        )
-                        if showPieces {
-                            AppField(
-                                title: lang.t("field_pieces"),
-                                text: Binding(get: { editor.piecesText }, set: { value in model.updateEditor { $0.piecesText = String(value.filter(\.isNumber).prefix(3)) } }),
-                                keyboard: .numberPad
-                            )
                         }
                         if showOccasions {
-                            AppField(
-                                title: lang.t("field_collection"),
-                                text: Binding(get: { editor.collection }, set: { value in model.updateEditor { $0.collection = String(value.prefix(40)) } })
-                            )
-                        }
-                    }
-                    .padding(.top, 20)
-
-                    // Choices the customer makes (colour, scent, ...)
-                    PickerTitle(lang.t("options_title"))
-                    ForEach(Array(editor.options.enumerated()), id: \.offset) { index, draft in
-                        VStack(spacing: 8) {
-                            AppField(
-                                title: lang.t("option_name_hint"),
-                                text: Binding(get: { draft.name }, set: { value in model.updateEditor { if index < $0.options.count { $0.options[index].name = value } } })
-                            )
-                            AppField(
-                                title: lang.t("option_values_hint"),
-                                text: Binding(get: { draft.valuesText }, set: { value in model.updateEditor { if index < $0.options.count { $0.options[index].valuesText = value } } })
-                            )
-                            Button {
-                                model.updateEditor { if index < $0.options.count { $0.options.remove(at: index) } }
-                            } label: {
-                                Text("🗑  " + lang.t("action_delete")).foregroundStyle(Theme.error)
+                            PickerTitle(lang.t("field_occasions"))
+                            FlowLayout(spacing: 8) {
+                                ForEach(Catalog.occasions) { occasion in
+                                    Pill(label: "\(occasion.emoji) \(lang.t("occ_" + occasion.key))", selected: editor.occasions.contains(occasion.key), accent: Theme.amber) {
+                                        model.toggleOccasion(occasion.key)
+                                    }
+                                }
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .padding(.bottom, 8)
-                    }
-                    if editor.options.count < 3 {
-                        Button("＋  " + lang.t("option_add")) {
-                            model.updateEditor { $0.options.append(OptionDraft()) }
+
+                        VStack(spacing: 12) {
+                            AppField(title: lang.t("field_plant_name"), text: textBinding(.name))
+                            if isPlant {
+                                AppField(title: lang.t("field_scientific"), text: Binding(get: { editor.scientificName }, set: { model.setScientificName($0) }), autocapitalize: false)
+                            }
+                            AppField(title: lang.t("field_description"), text: textBinding(.description), multiline: true)
+                            if isPlant {
+                                AppField(title: lang.t("field_water"), text: textBinding(.water), multiline: true)
+                                AppField(title: lang.t("field_light"), text: textBinding(.light), multiline: true)
+                                AppField(title: lang.t("field_fertilizer"), text: textBinding(.fertilizer), multiline: true)
+                                AppField(title: lang.t("field_height"), text: Binding(get: { editor.heightText }, set: { model.setHeight($0) }), keyboard: .numberPad)
+                            }
+                            AppField(title: lang.t("field_price"), text: Binding(get: { editor.priceText }, set: { model.setPrice($0) }), keyboard: .numberPad)
+                            AppField(
+                                title: lang.t("field_old_price"),
+                                text: Binding(get: { editor.oldPriceText }, set: { value in model.updateEditor { $0.oldPriceText = String(value.filter(\.isNumber).prefix(9)) } }),
+                                keyboard: .numberPad
+                            )
+                            if showPieces {
+                                AppField(
+                                    title: lang.t("field_pieces"),
+                                    text: Binding(get: { editor.piecesText }, set: { value in model.updateEditor { $0.piecesText = String(value.filter(\.isNumber).prefix(3)) } }),
+                                    keyboard: .numberPad
+                                )
+                            }
+                            if showOccasions {
+                                AppField(
+                                    title: lang.t("field_collection"),
+                                    text: Binding(get: { editor.collection }, set: { value in model.updateEditor { $0.collection = String(value.prefix(40)) } })
+                                )
+                            }
                         }
-                        .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                        .padding(.top, 20)
                     }
 
-                    Toggle(lang.t("plant_in_stock"), isOn: Binding(get: { editor.inStock }, set: { model.setInStock($0) }))
-                        .font(.system(size: 16, weight: .semibold))
-                        .tint(Theme.green)
-                        .padding(.top, 12)
+                    Group {
+                        // Choices the customer makes (colour, scent, ...)
+                        PickerTitle(lang.t("options_title"))
+                        ForEach(Array(editor.options.enumerated()), id: \.offset) { index, draft in
+                            VStack(spacing: 8) {
+                                AppField(
+                                    title: lang.t("option_name_hint"),
+                                    text: Binding(get: { draft.name }, set: { value in model.updateEditor { if index < $0.options.count { $0.options[index].name = value } } })
+                                )
+                                AppField(
+                                    title: lang.t("option_values_hint"),
+                                    text: Binding(get: { draft.valuesText }, set: { value in model.updateEditor { if index < $0.options.count { $0.options[index].valuesText = value } } })
+                                )
+                                Button {
+                                    model.updateEditor { if index < $0.options.count { $0.options.remove(at: index) } }
+                                } label: {
+                                    Text("🗑  " + lang.t("action_delete")).foregroundStyle(Theme.error)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.bottom, 8)
+                        }
+                        if editor.options.count < 3 {
+                            Button("＋  " + lang.t("option_add")) {
+                                model.updateEditor { $0.options.append(OptionDraft()) }
+                            }
+                            .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                        }
 
-                    if editor.aiGenerated {
-                        Text(lang.t("editor_ai_note"))
-                            .font(.system(size: 12))
-                            .foregroundStyle(Theme.muted)
-                            .padding(.top, 8)
+                        Toggle(lang.t("plant_in_stock"), isOn: Binding(get: { editor.inStock }, set: { model.setInStock($0) }))
+                            .font(.system(size: 16, weight: .semibold))
+                            .tint(Theme.green)
+                            .padding(.top, 12)
+
+                        if editor.aiGenerated {
+                            Text(lang.t("editor_ai_note"))
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.muted)
+                                .padding(.top, 8)
+                        }
+                        Spacer().frame(height: 16)
                     }
-                    Spacer().frame(height: 16)
                 }
                 .padding(.horizontal, 20)
             }

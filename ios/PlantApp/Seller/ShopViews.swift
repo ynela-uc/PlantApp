@@ -10,38 +10,45 @@ struct ShopTab: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                Text(shop.name)
-                    .font(.system(size: 24, weight: .bold))
-                    .foregroundStyle(Theme.greenDark)
-                Text(lang.cityName(shop.city)).foregroundStyle(Theme.muted)
-                    .padding(.bottom, 16)
+                // Split into Groups: this Mac's Xcode 14.2 (iOS 16.2 SDK) has the
+                // pre-variadic-generics ViewBuilder, capped at 10 children per block.
+                Group {
+                    Text(shop.name)
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(Theme.greenDark)
+                    Text(lang.cityName(shop.city)).foregroundStyle(Theme.muted)
+                        .padding(.bottom, 16)
 
-                InfoRow(label: lang.t("field_phone"), value: shop.phone)
-                InfoRow(label: lang.t("shop_fee_title"), value: lang.price(shop.deliveryFeeIqd))
-                InfoRow(label: lang.t("shop_types_label"), value: shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", "))
-                InfoRow(
-                    label: lang.t("shop_delivery"),
-                    value: shop.isNationwide
-                        ? lang.t("delivers_nationwide")
-                        : (shop.deliversTo ?? []).map { lang.cityName($0) }.joined(separator: ", ")
-                )
-                if !shop.bio.isEmpty {
-                    Text(shop.bio).padding(.top, 8)
+                    InfoRow(label: lang.t("field_phone"), value: shop.phone)
+                    InfoRow(label: lang.t("shop_fee_title"), value: lang.price(shop.deliveryFeeIqd))
+                    InfoRow(label: lang.t("shop_types_label"), value: shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", "))
+                    InfoRow(
+                        label: lang.t("shop_delivery"),
+                        value: shop.isNationwide
+                            ? lang.t("delivers_nationwide")
+                            : (shop.deliversTo ?? []).map { lang.cityName($0) }.joined(separator: ", ")
+                    )
                 }
-                Text(lang.t("shop_owner", profile.fullName))
-                    .font(.system(size: 12))
-                    .foregroundStyle(Theme.muted)
-                    .padding(.top, 4)
 
-                Button(lang.t("shop_edit")) { model.openShopEditor() }
-                    .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
-                    .padding(.top, 16)
+                Group {
+                    if !shop.bio.isEmpty {
+                        Text(shop.bio).padding(.top, 8)
+                    }
+                    Text(lang.t("shop_owner", profile.fullName))
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.muted)
+                        .padding(.top, 4)
 
-                LanguageSelector().padding(.top, 28)
+                    Button(lang.t("shop_edit")) { model.openShopEditor() }
+                        .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                        .padding(.top, 16)
 
-                Button(lang.t("action_signout")) { app.signOut() }
-                    .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
-                    .padding(.top, 28)
+                    LanguageSelector().padding(.top, 28)
+
+                    Button(lang.t("action_signout")) { app.signOut() }
+                        .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                        .padding(.top, 28)
+                }
             }
             .padding(20)
         }
@@ -80,71 +87,77 @@ struct ShopEditorView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    BackButton(accent: Theme.amber) { model.closeOverlay() }
-                        .padding(.vertical, 8)
-                    Text(lang.t("shop_edit"))
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(Theme.greenDark)
-                        .padding(.bottom, 4)
+                    // Split into Groups: this Mac's Xcode 14.2 (iOS 16.2 SDK) has the
+                    // pre-variadic-generics ViewBuilder, capped at 10 children per block.
+                    Group {
+                        BackButton(accent: Theme.amber) { model.closeOverlay() }
+                            .padding(.vertical, 8)
+                        Text(lang.t("shop_edit"))
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(Theme.greenDark)
+                            .padding(.bottom, 4)
 
-                    AppField(title: lang.t("field_shop_name"), text: $name)
-                    AppField(title: lang.t("field_phone"), text: $phone, keyboard: .phonePad)
-                    AppField(title: lang.t("field_bio"), text: $bio, multiline: true)
+                        AppField(title: lang.t("field_shop_name"), text: $name)
+                        AppField(title: lang.t("field_phone"), text: $phone, keyboard: .phonePad)
+                        AppField(title: lang.t("field_bio"), text: $bio, multiline: true)
 
-                    Text(lang.t("shop_types_title"))
-                        .font(.system(size: 14, weight: .bold))
-                        .padding(.top, 8)
-                    FlowLayout(spacing: 8) {
-                        ForEach(Catalog.sections) { entry in
-                            Pill(label: "\(entry.emoji) \(lang.t("sec_" + entry.key))", selected: types.contains(entry.key), accent: Theme.amber) {
-                                if types.contains(entry.key) { types.remove(entry.key) } else { types.insert(entry.key) }
-                                showError = false
-                            }
-                        }
-                    }
-
-                    AppField(
-                        title: lang.t("shop_fee_title"),
-                        text: Binding(get: { feeText }, set: { feeText = String($0.filter(\.isNumber).prefix(7)) }),
-                        keyboard: .numberPad
-                    )
-                    .padding(.top, 8)
-                    Text(lang.t("shop_fee_cities"))
-                        .font(.system(size: 12))
-                        .foregroundStyle(Theme.muted)
-                    ForEach(Cities.codes, id: \.self) { code in
-                        AppField(
-                            title: lang.cityName(code),
-                            text: Binding(
-                                get: { cityFees[code] ?? "" },
-                                set: { cityFees[code] = String($0.filter(\.isNumber).prefix(7)) }
-                            ),
-                            keyboard: .numberPad
-                        )
-                    }
-
-                    Text(lang.t("shop_delivery"))
-                        .font(.system(size: 14, weight: .bold))
-                        .padding(.top, 8)
-                    HStack(spacing: 10) {
-                        ScopeChoice(label: lang.t("shop_scope_local"), selected: !nationwide) { nationwide = false }
-                        ScopeChoice(label: lang.t("shop_scope_nationwide"), selected: nationwide) { nationwide = true }
-                    }
-                    if !nationwide {
-                        Text(lang.t("shop_delivers_to"))
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(Theme.muted)
-                            .padding(.top, 4)
+                        Text(lang.t("shop_types_title"))
+                            .font(.system(size: 14, weight: .bold))
+                            .padding(.top, 8)
                         FlowLayout(spacing: 8) {
-                            ForEach(Cities.codes, id: \.self) { code in
-                                Pill(label: lang.cityName(code), selected: cities.contains(code), accent: Theme.amber) {
-                                    if cities.contains(code) { cities.remove(code) } else { cities.insert(code) }
+                            ForEach(Catalog.sections) { entry in
+                                Pill(label: "\(entry.emoji) \(lang.t("sec_" + entry.key))", selected: types.contains(entry.key), accent: Theme.amber) {
+                                    if types.contains(entry.key) { types.remove(entry.key) } else { types.insert(entry.key) }
                                     showError = false
                                 }
                             }
                         }
                     }
-                    Spacer().frame(height: 16)
+
+                    Group {
+                        AppField(
+                            title: lang.t("shop_fee_title"),
+                            text: Binding(get: { feeText }, set: { feeText = String($0.filter(\.isNumber).prefix(7)) }),
+                            keyboard: .numberPad
+                        )
+                        .padding(.top, 8)
+                        Text(lang.t("shop_fee_cities"))
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.muted)
+                        ForEach(Cities.codes, id: \.self) { code in
+                            AppField(
+                                title: lang.cityName(code),
+                                text: Binding(
+                                    get: { cityFees[code] ?? "" },
+                                    set: { cityFees[code] = String($0.filter(\.isNumber).prefix(7)) }
+                                ),
+                                keyboard: .numberPad
+                            )
+                        }
+
+                        Text(lang.t("shop_delivery"))
+                            .font(.system(size: 14, weight: .bold))
+                            .padding(.top, 8)
+                        HStack(spacing: 10) {
+                            ScopeChoice(label: lang.t("shop_scope_local"), selected: !nationwide) { nationwide = false }
+                            ScopeChoice(label: lang.t("shop_scope_nationwide"), selected: nationwide) { nationwide = true }
+                        }
+                        if !nationwide {
+                            Text(lang.t("shop_delivers_to"))
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(Theme.muted)
+                                .padding(.top, 4)
+                            FlowLayout(spacing: 8) {
+                                ForEach(Cities.codes, id: \.self) { code in
+                                    Pill(label: lang.cityName(code), selected: cities.contains(code), accent: Theme.amber) {
+                                        if cities.contains(code) { cities.remove(code) } else { cities.insert(code) }
+                                        showError = false
+                                    }
+                                }
+                            }
+                        }
+                        Spacer().frame(height: 16)
+                    }
                 }
                 .padding(.horizontal, 20)
             }
