@@ -27,7 +27,7 @@ const CATEGORIES = {
 const ALL_CATEGORIES = [...CATEGORIES.flowers, ...CATEGORIES.plants, ...CATEGORIES.gifts];
 const OCCASIONS = [
   "birthday", "anniversary", "love", "new_baby", "get_well", "congratulations", "new_home",
-  "graduation", "wedding", "condolence", "mothers_day", "eid", "nowruz", "thank_you",
+  "graduation", "wedding", "condolence", "mothers_day", "eid", "thank_you",
 ];
 
 const CORS = {

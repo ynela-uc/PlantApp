@@ -208,6 +208,9 @@ fun PlantEditorScreen(
     val lang = rememberLang()
     val capture = rememberPhotoCapture(onPhoto)
     val isPlant = editor.section == Catalog.PLANTS
+    // Occasions and collections suit flowers and gifts; piece counts (packages) suit gifts.
+    val showOccasions = editor.section == Catalog.FLOWERS || editor.section == Catalog.GIFTS
+    val showPieces = editor.section == Catalog.GIFTS
 
     Column(modifier = Modifier.fillMaxSize().systemBarsPadding().imePadding()) {
         Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
@@ -300,10 +303,12 @@ fun PlantEditorScreen(
                     }
                 }
             }
-            PickerTitle(R.string.field_occasions)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Catalog.occasions.forEach { occasion ->
-                    PickChip("${occasion.emoji} ${occasionName(occasion.key)}", occasion.key in editor.occasions) { onOccasion(occasion.key) }
+            if (showOccasions) {
+                PickerTitle(R.string.field_occasions)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Catalog.occasions.forEach { occasion ->
+                        PickChip("${occasion.emoji} ${occasionName(occasion.key)}", occasion.key in editor.occasions) { onOccasion(occasion.key) }
+                    }
                 }
             }
             Spacer(Modifier.height(20.dp))
@@ -324,13 +329,17 @@ fun PlantEditorScreen(
                 R.string.field_old_price,
                 KeyboardType.Number,
             )
-            Field(
-                editor.piecesText,
-                { value -> onUpdate { it.copy(piecesText = value.filter(Char::isDigit).take(3)) } },
-                R.string.field_pieces,
-                KeyboardType.Number,
-            )
-            Field(editor.collection, { value -> onUpdate { it.copy(collection = value.take(40)) } }, R.string.field_collection)
+            if (showPieces) {
+                Field(
+                    editor.piecesText,
+                    { value -> onUpdate { it.copy(piecesText = value.filter(Char::isDigit).take(3)) } },
+                    R.string.field_pieces,
+                    KeyboardType.Number,
+                )
+            }
+            if (showOccasions) {
+                Field(editor.collection, { value -> onUpdate { it.copy(collection = value.take(40)) } }, R.string.field_collection)
+            }
 
             // Choices the customer makes (colour, scent, ...)
             PickerTitle(R.string.options_title)

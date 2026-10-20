@@ -17,6 +17,6 @@ Adding a category = add the key here, the three string files, `Catalog.kt`, `Cat
 | `gifts` 🎁 | `gift_sets`, `chocolate_sweets`, `cakes`, `personalised`, `home_decor`, `candles_fragrance`, `cards_wrapping`, `plush_toys`, `accessories_jewelry`, `balloons_party` |
 
 Occasions (`occasions`, any number per product): `birthday`, `anniversary`, `love`, `new_baby`, `get_well`,
-`congratulations`, `new_home`, `graduation`, `wedding`, `condolence`, `mothers_day`, `eid`, `nowruz`, `thank_you`.
+`congratulations`, `new_home`, `graduation`, `wedding`, `condolence`, `mothers_day`, `eid`, `thank_you`.
 
 Plant-only product fields (`plant_key`, `scientific_name`, `care`, `height_cm`) stay empty for other sections.

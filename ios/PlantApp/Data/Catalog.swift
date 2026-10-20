@@ -80,7 +80,6 @@ enum Catalog {
         CatalogOccasion(key: "condolence", emoji: "🕊️"),
         CatalogOccasion(key: "mothers_day", emoji: "🌷"),
         CatalogOccasion(key: "eid", emoji: "🌙"),
-        CatalogOccasion(key: "nowruz", emoji: "🌱"),
         CatalogOccasion(key: "thank_you", emoji: "🙏"),
     ]
 

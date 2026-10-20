@@ -109,6 +109,9 @@ struct PlantEditorView: View {
 
     private var code: String { lang.language.rawValue }
     private var isPlant: Bool { editor.section == Catalog.plants }
+    /// Occasions and collections suit flowers and gifts; piece counts (packages) suit gifts.
+    private var showOccasions: Bool { editor.section == Catalog.flowers || editor.section == Catalog.gifts }
+    private var showPieces: Bool { editor.section == Catalog.gifts }
 
     private func errorKey(_ error: EditorError) -> String {
         switch error {
@@ -180,11 +183,13 @@ struct PlantEditorView: View {
                             }
                         }
                     }
-                    PickerTitle(lang.t("field_occasions"))
-                    FlowLayout(spacing: 8) {
-                        ForEach(Catalog.occasions) { occasion in
-                            Pill(label: "\(occasion.emoji) \(lang.t("occ_" + occasion.key))", selected: editor.occasions.contains(occasion.key), accent: Theme.amber) {
-                                model.toggleOccasion(occasion.key)
+                    if showOccasions {
+                        PickerTitle(lang.t("field_occasions"))
+                        FlowLayout(spacing: 8) {
+                            ForEach(Catalog.occasions) { occasion in
+                                Pill(label: "\(occasion.emoji) \(lang.t("occ_" + occasion.key))", selected: editor.occasions.contains(occasion.key), accent: Theme.amber) {
+                                    model.toggleOccasion(occasion.key)
+                                }
                             }
                         }
                     }
@@ -207,15 +212,19 @@ struct PlantEditorView: View {
                             text: Binding(get: { editor.oldPriceText }, set: { value in model.updateEditor { $0.oldPriceText = String(value.filter(\.isNumber).prefix(9)) } }),
                             keyboard: .numberPad
                         )
-                        AppField(
-                            title: lang.t("field_pieces"),
-                            text: Binding(get: { editor.piecesText }, set: { value in model.updateEditor { $0.piecesText = String(value.filter(\.isNumber).prefix(3)) } }),
-                            keyboard: .numberPad
-                        )
-                        AppField(
-                            title: lang.t("field_collection"),
-                            text: Binding(get: { editor.collection }, set: { value in model.updateEditor { $0.collection = String(value.prefix(40)) } })
-                        )
+                        if showPieces {
+                            AppField(
+                                title: lang.t("field_pieces"),
+                                text: Binding(get: { editor.piecesText }, set: { value in model.updateEditor { $0.piecesText = String(value.filter(\.isNumber).prefix(3)) } }),
+                                keyboard: .numberPad
+                            )
+                        }
+                        if showOccasions {
+                            AppField(
+                                title: lang.t("field_collection"),
+                                text: Binding(get: { editor.collection }, set: { value in model.updateEditor { $0.collection = String(value.prefix(40)) } })
+                            )
+                        }
                     }
                     .padding(.top, 20)
 

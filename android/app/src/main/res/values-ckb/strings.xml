@@ -221,11 +221,21 @@
     <string name="city_baghdad">بەغدا</string>
     <string name="city_erbil">هەولێر</string>
     <string name="city_basra">بەسرە</string>
-    <string name="city_mosul">مووسڵ</string>
+    <string name="city_mosul">نەینەوا</string>
     <string name="city_najaf">نەجەف</string>
     <string name="city_sulaymaniyah">سلێمانی</string>
     <string name="city_karbala">کەربەلا</string>
     <string name="city_duhok">دهۆک</string>
+    <string name="city_kirkuk">کەرکووک</string>
+    <string name="city_anbar">ئەنبار</string>
+    <string name="city_babil">بابل</string>
+    <string name="city_diyala">دیالە</string>
+    <string name="city_wasit">واست</string>
+    <string name="city_maysan">میسان</string>
+    <string name="city_dhiqar">زیقار</string>
+    <string name="city_muthanna">موسەنا</string>
+    <string name="city_qadisiyah">قادسیە</string>
+    <string name="city_salahaldin">سەلاحەدین</string>
 
     <string name="nav_ai">ڕێنیشاندەر</string>
     <string name="ai_title">ڕێنیشاندەری زیرەک</string>
@@ -297,7 +307,6 @@
     <string name="occ_condolence">سەرەخۆشی</string>
     <string name="occ_mothers_day">ڕۆژی دایک</string>
     <string name="occ_eid">جەژن</string>
-    <string name="occ_nowruz">نەورۆز</string>
     <string name="occ_thank_you">سوپاس</string>
     <string name="home_prompt">بەدوای چیدا دەگەڕێیت؟</string>
     <string name="home_occasions">بەپێی بۆنە بکڕە</string>

@@ -76,7 +76,6 @@ object Catalog {
         Occasion("condolence", "🕊️"),
         Occasion("mothers_day", "🌷"),
         Occasion("eid", "🌙"),
-        Occasion("nowruz", "🌱"),
         Occasion("thank_you", "🙏"),
     )
 

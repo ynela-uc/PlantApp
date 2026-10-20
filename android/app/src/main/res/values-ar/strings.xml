@@ -220,11 +220,21 @@
     <string name="city_baghdad">بغداد</string>
     <string name="city_erbil">أربيل</string>
     <string name="city_basra">البصرة</string>
-    <string name="city_mosul">الموصل</string>
+    <string name="city_mosul">نينوى</string>
     <string name="city_najaf">النجف</string>
     <string name="city_sulaymaniyah">السليمانية</string>
     <string name="city_karbala">كربلاء</string>
     <string name="city_duhok">دهوك</string>
+    <string name="city_kirkuk">كركوك</string>
+    <string name="city_anbar">الأنبار</string>
+    <string name="city_babil">بابل</string>
+    <string name="city_diyala">ديالى</string>
+    <string name="city_wasit">واسط</string>
+    <string name="city_maysan">ميسان</string>
+    <string name="city_dhiqar">ذي قار</string>
+    <string name="city_muthanna">المثنى</string>
+    <string name="city_qadisiyah">القادسية</string>
+    <string name="city_salahaldin">صلاح الدين</string>
 
     <string name="nav_ai">المرشد</string>
     <string name="ai_title">المرشد الذكي</string>
@@ -296,7 +306,6 @@
     <string name="occ_condolence">لمسة وفاء</string>
     <string name="occ_mothers_day">عيد الأم</string>
     <string name="occ_eid">عيد مبارك</string>
-    <string name="occ_nowruz">نوروز</string>
     <string name="occ_thank_you">شكر وامتنان</string>
     <string name="home_prompt">ماذا تبحث عنه اليوم؟</string>
     <string name="home_occasions">تسوق حسب المناسبة</string>

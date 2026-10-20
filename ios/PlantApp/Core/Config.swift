@@ -13,5 +13,6 @@ enum Config {
 
 /// City codes as stored in the database (English names), in display order.
 enum Cities {
-    static let codes = ["Baghdad", "Erbil", "Basra", "Mosul", "Najaf", "Sulaymaniyah", "Karbala", "Duhok"]
+    static let codes = ["Baghdad", "Erbil", "Basra", "Mosul", "Najaf", "Sulaymaniyah", "Karbala", "Duhok",
+                        "Kirkuk", "Anbar", "Babil", "Diyala", "Wasit", "Maysan", "DhiQar", "Muthanna", "Qadisiyah", "SalahAlDin"]
 }

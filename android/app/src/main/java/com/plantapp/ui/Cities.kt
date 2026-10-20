@@ -1,27 +1,20 @@
 package com.plantapp.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.plantapp.R
 
 /** City codes as stored in the database (English names), in display order. */
 val CityCodes = listOf(
     "Baghdad", "Erbil", "Basra", "Mosul", "Najaf", "Sulaymaniyah", "Karbala", "Duhok",
+    "Kirkuk", "Anbar", "Babil", "Diyala", "Wasit", "Maysan", "DhiQar", "Muthanna", "Qadisiyah", "SalahAlDin",
 )
 
-/** Localised display name for a stored city code. Unknown codes are shown as-is. */
+/** Localised display name for a stored city code (string city_<code in lowercase>). Unknown codes are shown as-is. */
 @Composable
 fun cityLabel(code: String): String {
-    val id = when (code) {
-        "Baghdad" -> R.string.city_baghdad
-        "Erbil" -> R.string.city_erbil
-        "Basra" -> R.string.city_basra
-        "Mosul" -> R.string.city_mosul
-        "Najaf" -> R.string.city_najaf
-        "Sulaymaniyah" -> R.string.city_sulaymaniyah
-        "Karbala" -> R.string.city_karbala
-        "Duhok" -> R.string.city_duhok
-        else -> null
-    }
-    return if (id != null) stringResource(id) else code
+    val context = LocalContext.current
+    val id = remember(code, context) { context.resources.getIdentifier("city_" + code.lowercase(), "string", context.packageName) }
+    return if (id != 0) stringResource(id) else code
 }
