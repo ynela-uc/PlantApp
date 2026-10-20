@@ -61,5 +61,14 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] "New chat" clears the conversation.
 - Limits (per person, per day): 12 photos and 40 messages. After that the app shows a "limit reached" message.
 
+## 10. Sections, categories and the entry screen
+- [ ] Close the app completely and open it as a customer: the first screen asks "What are you looking for?" with Flowers, Plants and Gifts & decor, plus occasions and "All products". It appears every time the app starts.
+- [ ] Tap Plants: the existing plants appear, with category chips (Indoor plants, Succulents & cacti, Soil, Fertilizers, Pots, Tools ...). Tap a chip to filter. "Home" goes back to the three tiles.
+- [ ] Tap an occasion (e.g. Birthday): only products the shop tagged with that occasion appear.
+- [ ] Seller: create a NEW seller account: you must pick at least one shop type (flowers, plants, gifts). Shop tab shows the types; edit them.
+- [ ] Seller: Add a product -> choose Section and Category (required) and optional occasions. For Flowers or Gifts the plant-only fields (scientific name, water, light, height) disappear.
+- [ ] Seller: photograph a candle, a bouquet or a pot with the AI button: the AI picks the section and category and fills the name and description in three languages.
+- [ ] The new product shows up for customers under its section and category.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).
