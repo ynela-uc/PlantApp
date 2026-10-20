@@ -20,6 +20,7 @@ struct EntryView: View {
 
                 ForEach(Catalog.sections) { entry in
                     SectionTile(
+                        key: entry.key,
                         emoji: entry.emoji,
                         title: lang.t("sec_" + entry.key),
                         detail: lang.t("sec_" + entry.key + "_desc")

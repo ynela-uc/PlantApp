@@ -60,6 +60,8 @@ import com.plantapp.ui.theme.PlantGreenDark
 import com.plantapp.ui.theme.PlantGreenSoft
 import com.plantapp.ui.theme.SellerAmberSoft
 import com.plantapp.ui.theme.TextMuted
+import com.plantapp.ui.theme.sectionAccent
+import com.plantapp.ui.theme.sectionAccentSoft
 
 /**
  * The shopper's front door. With nothing chosen it shows the three sections (flowers, plants, gifts)
@@ -151,6 +153,7 @@ fun BrowseScreen(
                     SectionTitle(stringResource(R.string.home_prompt))
                     Catalog.sections.forEach { entry ->
                         SectionTile(
+                            key = entry.key,
                             emoji = entry.emoji,
                             title = sectionName(entry.key),
                             description = sectionDescription(entry.key),
@@ -239,7 +242,7 @@ private fun SectionTitle(text: String) {
 }
 
 @Composable
-private fun SectionTile(emoji: String, title: String, description: String, onClick: () -> Unit) {
+private fun SectionTile(key: String, emoji: String, title: String, description: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
@@ -249,7 +252,7 @@ private fun SectionTile(emoji: String, title: String, description: String, onCli
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                modifier = Modifier.size(56.dp).clip(CircleShape).background(PlantGreenSoft),
+                modifier = Modifier.size(56.dp).clip(CircleShape).background(sectionAccentSoft(key)),
                 contentAlignment = Alignment.Center,
             ) { Text(emoji, fontSize = 28.sp) }
             Spacer(Modifier.size(14.dp))
@@ -258,7 +261,7 @@ private fun SectionTile(emoji: String, title: String, description: String, onCli
                 Text(description, color = TextMuted, style = MaterialTheme.typography.bodySmall)
             }
             val chevron = if (LocalLayoutDirection.current == LayoutDirection.Rtl) "‹" else "›"
-            Text(chevron, fontSize = 26.sp, color = PlantGreen)
+            Text(chevron, fontSize = 26.sp, color = sectionAccent(key))
         }
     }
 }

@@ -47,6 +47,8 @@ import com.plantapp.ui.theme.PlantGreen
 import com.plantapp.ui.theme.PlantGreenDark
 import com.plantapp.ui.theme.PlantGreenSoft
 import com.plantapp.ui.theme.ScreenBackground
+import com.plantapp.ui.theme.sectionAccent
+import com.plantapp.ui.theme.sectionAccentSoft
 import com.plantapp.ui.theme.TextMuted
 
 /**
@@ -91,7 +93,7 @@ fun EntryScreen(profile: Profile, onChoose: (section: String?, occasion: String?
             ) {
                 Row(modifier = Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
                     Box(
-                        modifier = Modifier.size(64.dp).clip(CircleShape).background(PlantGreenSoft),
+                        modifier = Modifier.size(64.dp).clip(CircleShape).background(sectionAccentSoft(entry.key)),
                         contentAlignment = Alignment.Center,
                     ) { Text(entry.emoji, fontSize = 32.sp) }
                     Spacer(Modifier.size(16.dp))
@@ -105,7 +107,7 @@ fun EntryScreen(profile: Profile, onChoose: (section: String?, occasion: String?
                         Text(sectionDescription(entry.key), color = TextMuted, style = MaterialTheme.typography.bodyMedium)
                     }
                     val chevron = if (LocalLayoutDirection.current == LayoutDirection.Rtl) "‹" else "›"
-                    Text(chevron, fontSize = 30.sp, color = PlantGreen)
+                    Text(chevron, fontSize = 30.sp, color = sectionAccent(entry.key))
                 }
             }
         }

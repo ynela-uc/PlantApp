@@ -87,6 +87,7 @@ struct BrowseView: View {
             heading(lang.t("home_prompt"))
             ForEach(Catalog.sections) { entry in
                 SectionTile(
+                    key: entry.key,
                     emoji: entry.emoji,
                     title: lang.t("sec_" + entry.key),
                     detail: lang.t("sec_" + entry.key + "_desc")
@@ -154,6 +155,7 @@ struct BrowseView: View {
 /// Big tile for one section: emoji, name, short description.
 struct SectionTile: View {
     @Environment(\.layoutDirection) private var direction
+    let key: String
     let emoji: String
     let title: String
     let detail: String
@@ -165,7 +167,7 @@ struct SectionTile: View {
                 Text(emoji)
                     .font(.system(size: 28))
                     .frame(width: 56, height: 56)
-                    .background(Theme.greenSoft)
+                    .background(Theme.sectionAccentSoft(key))
                     .clipShape(Circle())
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -179,7 +181,7 @@ struct SectionTile: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: direction == .rightToLeft ? "chevron.left" : "chevron.right")
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(Theme.green)
+                    .foregroundStyle(Theme.sectionAccent(key))
             }
             .padding(16)
             .card(radius: 20)

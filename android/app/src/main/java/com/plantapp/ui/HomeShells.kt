@@ -59,7 +59,7 @@ fun HomeShell(profile: Profile, onSignOut: () -> Unit) {
         OutlinedButton(onClick = onSignOut, modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = stringResource(R.string.action_signout),
-                color = if (isSeller) SellerAmber else Color(0xFF2E7D32),
+                color = if (isSeller) SellerAmber else Color(0xFF0E6F73),
                 fontWeight = FontWeight.SemiBold,
             )
         }

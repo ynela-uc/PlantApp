@@ -466,7 +466,7 @@ private fun ShopRow(match: ShopMatch, lang: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp).clip(RoundedCornerShape(12.dp)).clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFF7FBF7),
+        color = Color(0xFFF5F8F7),
         border = BorderStroke(1.dp, CardBorder),
     ) {
         Row(

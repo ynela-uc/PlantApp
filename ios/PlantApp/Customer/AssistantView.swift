@@ -417,7 +417,7 @@ private struct ShopRow: View {
                 }
             }
             .padding(8)
-            .background(Color(hex: 0xF7FBF7))
+            .background(Color(hex: 0xF5F8F7))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.border, lineWidth: 1))
         }

@@ -81,5 +81,11 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Order details (customer and seller): each line shows its choice (Blue), the delivery fee row, and the total. The seller's "collect in cash" amount includes delivery.
 - [ ] On the product page tap "Visit the shop": the shop page shows its name, types, delivery fee, and Collections chips; tapping "Autumn 2026" shows only those products.
 
+## 12. Colours and logo
+- [ ] The app icon on the home screen is a teal square with a white gift tag (coral hole, teal leaf inside), not the old green icon.
+- [ ] The welcome screen shows the same logo at the top, on a warm sand background (no green tint anywhere).
+- [ ] On the entry screen the three sections have their own colour: Flowers coral, Plants green, Gifts gold; buttons and the tab bar are teal.
+- [ ] Seller screens still use the amber colour for the seller badge; nothing is hard to read (white text on teal, dark teal text on sand).
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

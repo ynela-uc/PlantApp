@@ -8,11 +8,10 @@ struct WelcomeView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 0) {
-                    Text("🌿")
-                        .font(.system(size: 44))
-                        .frame(width: 88, height: 88)
-                        .background(Theme.green)
-                        .clipShape(Circle())
+                    Image("Logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 96, height: 96)
                         .padding(.top, 40)
 
                     Text(lang.t("welcome_title"))

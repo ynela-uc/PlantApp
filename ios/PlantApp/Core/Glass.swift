@@ -15,7 +15,7 @@ struct AppBackground: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(hex: 0xE2F3E2), Color(hex: 0xF4FBF4), Color(hex: 0xE8F2E8)],
+                colors: [Color(hex: 0xE6F0EE), Color(hex: 0xF7F5EF), Color(hex: 0xF3EEE2)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -28,12 +28,12 @@ struct AppBackground: View {
                     .blur(radius: 70)
                     .position(x: w * 0.05, y: h * 0.10)
                 Circle()
-                    .fill(Color(hex: 0x9CCB86).opacity(0.28))
+                    .fill(Theme.flowerCoral.opacity(0.14))
                     .frame(width: w * 0.8, height: w * 0.8)
                     .blur(radius: 70)
                     .position(x: w * 0.95, y: h * 0.55)
                 Circle()
-                    .fill(Theme.amber.opacity(0.10))
+                    .fill(Theme.giftGold.opacity(0.18))
                     .frame(width: w * 0.7, height: w * 0.7)
                     .blur(radius: 70)
                     .position(x: w * 0.2, y: h * 0.95)

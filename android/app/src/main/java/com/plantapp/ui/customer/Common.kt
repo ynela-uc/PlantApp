@@ -64,7 +64,7 @@ fun DeliveryBadge(shop: SellerInfo?, modifier: Modifier = Modifier) {
     }
 }
 
-val PictureBackground = Color(0xFFE8F5E9)
+val PictureBackground = Color(0xFFE8EFEC)
 
 /** The shop's photo of a plant, or the plant emoji until a photo exists. */
 @Composable

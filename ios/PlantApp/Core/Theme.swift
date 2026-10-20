@@ -13,15 +13,42 @@ extension Color {
 }
 
 enum Theme {
-    static let green = Color(hex: 0x2E7D32)
-    static let greenDark = Color(hex: 0x1B5E20)
-    static let greenSoft = Color(hex: 0xE3F2E3)
-    static let amber = Color(hex: 0xB8860B)
-    static let amberSoft = Color(hex: 0xFFF3E0)
-    static let background = Color(hex: 0xF4FBF4)
-    static let muted = Color(hex: 0x4E6E4F)
-    static let border = Color(hex: 0xE0ECE0)
-    static let picture = Color(hex: 0xE8F5E9)
+    // Brand colours: teal and sand, with one accent per service (flowers coral, plants green, gifts gold).
+    // The names keep "green" for the main brand colour so existing screens pick up the new look unchanged.
+    static let green = Color(hex: 0x0E6F73)
+    static let greenDark = Color(hex: 0x0B4F52)
+    static let greenSoft = Color(hex: 0xDCEEEE)
+    static let amber = Color(hex: 0xB7791F)
+    static let amberSoft = Color(hex: 0xFFF2DA)
+    static let background = Color(hex: 0xF7F5EF)
+    static let muted = Color(hex: 0x55706F)
+    static let border = Color(hex: 0xE7E1D3)
+    static let picture = Color(hex: 0xE8EFEC)
+    static let flowerCoral = Color(hex: 0xF26B5B)
+    static let flowerCoralSoft = Color(hex: 0xFEE9E5)
+    static let leafGreen = Color(hex: 0x3FA56B)
+    static let leafGreenSoft = Color(hex: 0xE1F3E8)
+    static let giftGold = Color(hex: 0xF2B544)
+    static let giftGoldSoft = Color(hex: 0xFFF1D3)
+
+    /// The accent colour of a section (flowers / plants / gifts); the brand teal for anything else.
+    static func sectionAccent(_ key: String?) -> Color {
+        switch key {
+        case "flowers": return flowerCoral
+        case "plants": return leafGreen
+        case "gifts": return giftGold
+        default: return green
+        }
+    }
+
+    static func sectionAccentSoft(_ key: String?) -> Color {
+        switch key {
+        case "flowers": return flowerCoralSoft
+        case "plants": return leafGreenSoft
+        case "gifts": return giftGoldSoft
+        default: return greenSoft
+        }
+    }
     static let error = Color(hex: 0xC62828)
     static let errorSoft = Color(hex: 0xFFEBEE)
 }

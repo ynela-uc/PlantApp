@@ -55,15 +55,11 @@ fun WelcomeScreen(onRoleChosen: (Role) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Box(
-            modifier = Modifier
-                .size(88.dp)
-                .clip(CircleShape)
-                .background(PlantGreen),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(text = "🌿", fontSize = 44.sp)
-        }
+        androidx.compose.foundation.Image(
+            painter = androidx.compose.ui.res.painterResource(R.drawable.logo),
+            contentDescription = null,
+            modifier = Modifier.size(96.dp),
+        )
 
         Spacer(Modifier.height(20.dp))
 
