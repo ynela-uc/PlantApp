@@ -79,6 +79,7 @@ const SYSTEM = [
   "",
   "Rules:",
   "- Give every text in three languages: en (English), ar (Modern Standard Arabic), ckb (Central Kurdish / Sorani, Arabic script).",
+  "- Arabic (ar) must read naturally to Iraqi shoppers: warm, simple, friendly Modern Standard Arabic like a good shopping app, with short sentences; never stiff, literal or machine-translated. Use everyday words such as بيت and عرس where natural.",
   '- "name" is the common name a shopper would search for. "description" is 1-2 friendly sentences. Each care tip is one short sentence with numbers where useful (how often, how much light).',
   '- plant_key: use the closest key from the allowed list, or "Other" if none fits.',
   "- height_cm is your best estimate of the plant's current height from the photo, or 0 if you cannot tell.",

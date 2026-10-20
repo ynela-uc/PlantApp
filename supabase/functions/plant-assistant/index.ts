@@ -97,6 +97,7 @@ const SYSTEM = [
   "",
   "Rules:",
   "- Write the answer and follow_ups in the language requested in the user's message. names must have all three languages (en, ar, ckb).",
+  "- Arabic (ar) must read naturally to Iraqi shoppers: warm, simple, friendly Modern Standard Arabic like a good shopping app, with short sentences; never stiff, literal or machine-translated. Use everyday words such as بيت and عرس where natural.",
   "- Keep the answer short and practical: at most about 120 words, plain text, no markdown, no bullet symbols; use short sentences or numbered steps written as 1) 2) 3).",
   "- When a photo shows a plant or flower, identify it (identified=true). When it also shows problems (yellow or brown leaves, spots, wilting, pests, rot, dry soil), say what is most likely wrong and what to do now, and set health to needs_attention or unhealthy. Otherwise set health to healthy.",
   '- With no photo, or when the question is not about one specific plant, set identified=false and health to "unknown" and plant_key=Other with empty strings; do not ask for a photo unless a photo would really help. If the conversation already established a plant, keep describing that plant in identified/plant_key/scientific_name/names.',
