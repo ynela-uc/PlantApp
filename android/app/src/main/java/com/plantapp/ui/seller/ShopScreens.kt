@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.plantapp.R
 import com.plantapp.data.Catalog
+import com.plantapp.ui.customer.priceText
 import com.plantapp.ui.sectionName
 import com.plantapp.data.Profile
 import com.plantapp.data.Shop
@@ -74,6 +76,7 @@ fun ShopTab(
         Spacer(Modifier.height(16.dp))
         InfoRow(R.string.field_phone, shop.phone)
         InfoRow(R.string.shop_types_label, shop.shopTypes.map { sectionName(it) }.joinToString(", "))
+        InfoRow(R.string.shop_fee_title, priceText(shop.deliveryFeeIqd))
         InfoRow(
             R.string.shop_delivery,
             if (shop.isNationwide) stringResource(R.string.delivers_nationwide)
@@ -127,6 +130,12 @@ fun ShopEditorScreen(
     var nationwide by rememberSaveable { mutableStateOf(shop.isNationwide) }
     val cities = remember_cities(shop.deliversTo.orEmpty())
     val types = remember_cities(shop.shopTypes)
+    var feeText by rememberSaveable { mutableStateOf(shop.deliveryFeeIqd.toString()) }
+    val cityFees = remember {
+        androidx.compose.runtime.mutableStateMapOf<String, String>().apply {
+            shop.deliveryFees.forEach { (city, fee) -> put(city, fee.toString()) }
+        }
+    }
     var showError by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize().systemBarsPadding().imePadding()) {
@@ -150,6 +159,27 @@ fun ShopEditorScreen(
                     val selected = entry.key in types
                     Choice("${entry.emoji} ${sectionName(entry.key)}", selected) { if (selected) types.remove(entry.key) else types.add(entry.key) }
                 }
+            }
+            Text(stringResource(R.string.shop_fee_title), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            OutlinedTextField(
+                feeText,
+                { feeText = it.filter(Char::isDigit).take(7) },
+                singleLine = true,
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
+            )
+            Text(stringResource(R.string.shop_fee_cities), style = MaterialTheme.typography.bodySmall, color = TextMuted, modifier = Modifier.padding(bottom = 6.dp))
+            CityCodes.forEach { code ->
+                OutlinedTextField(
+                    cityFees[code].orEmpty(),
+                    { value -> cityFees[code] = value.filter(Char::isDigit).take(7) },
+                    label = { Text(cityLabel(code)) },
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
+                )
             }
             Text(stringResource(R.string.shop_delivery), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
@@ -188,6 +218,8 @@ fun ShopEditorScreen(
                                     deliveryScope = if (nationwide) "nationwide" else "local",
                                     deliversTo = if (nationwide) null else cities.toList(),
                                     shopTypes = Catalog.sections.map { it.key }.filter { it in types },
+                                    deliveryFeeIqd = feeText.toIntOrNull() ?: 0,
+                                    deliveryFees = cityFees.mapNotNull { (city, text) -> text.toIntOrNull()?.let { city to it } }.toMap(),
                                 )
                             )
                         }

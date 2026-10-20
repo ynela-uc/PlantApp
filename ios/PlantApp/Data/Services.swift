@@ -15,7 +15,7 @@ let supabase = SupabaseClient(
     )
 )
 
-private let listingColumns = "*, sellers(id,name,city,delivery_scope,delivers_to,rating,phone)"
+private let listingColumns = "*, sellers(id,name,city,delivery_scope,delivers_to,rating,phone,bio,delivery_fee_iqd,delivery_fees,shop_types)"
 
 // MARK: - Auth
 
@@ -69,7 +69,8 @@ enum AuthService {
                     phone: form.phone,
                     bio: "",
                     plantsOffered: [],
-                    shopTypes: form.shopTypes
+                    shopTypes: form.shopTypes,
+                    deliveryFeeIqd: 5000
                 )
             ).execute()
         }

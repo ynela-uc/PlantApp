@@ -50,7 +50,7 @@ private struct OrderCard: View {
                     Spacer()
                     StatusChip(status: order.statusEnum)
                 }
-                Text(order.items.map { "\(lang.localized($0.name)) × \($0.qty)" }.joined(separator: ", "))
+                Text(order.items.map { $0.label(lang.localized($0.name)) }.joined(separator: ", "))
                     .font(.system(size: 14))
                     .foregroundStyle(Theme.muted)
                     .multilineTextAlignment(.leading)
@@ -162,11 +162,19 @@ struct OrderDetailView: View {
                     SectionHeading(text: lang.t("order_items"))
                     ForEach(Array(order.items.enumerated()), id: \.offset) { _, item in
                         HStack {
-                            Text("\(lang.localized(item.name)) × \(item.qty)")
+                            Text(item.label(lang.localized(item.name)))
                             Spacer()
                             if item.unitPriceIqd > 0 { Text(lang.price(item.unitPriceIqd * item.qty)) }
                         }
                         .padding(.vertical, 3)
+                    }
+                    if order.deliveryFeeIqd > 0 {
+                        HStack {
+                            Text(lang.t("delivery_fee_label")).foregroundStyle(Theme.muted)
+                            Spacer()
+                            Text(lang.price(order.deliveryFeeIqd))
+                        }
+                        .padding(.top, 6)
                     }
                     if order.totalIqd > 0 {
                         TotalRow(label: lang.t("cart_total"), value: lang.price(order.totalIqd), bold: true)

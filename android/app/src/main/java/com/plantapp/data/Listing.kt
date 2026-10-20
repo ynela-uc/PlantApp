@@ -13,9 +13,21 @@ data class SellerInfo(
     @SerialName("delivers_to") val deliversTo: List<String>? = null,
     val rating: Double = 0.0,
     val phone: String = "",
+    val bio: String = "",
+    @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 0,
+    /** City code -> fee, for cities that cost more or less than [deliveryFeeIqd]. */
+    @SerialName("delivery_fees") val deliveryFees: Map<String, Int> = emptyMap(),
+    @SerialName("shop_types") val shopTypes: List<String> = emptyList(),
 ) {
     val isNationwide: Boolean get() = deliveryScope == "nationwide"
+
+    /** What this shop charges to deliver to [city]. */
+    fun feeFor(city: String): Int = deliveryFees[city] ?: deliveryFeeIqd
 }
+
+/** A choice the customer makes before adding a product to the cart, e.g. Colour: Blue / Black. */
+@Serializable
+data class ListingOption(val name: String, val values: List<String>)
 
 /** One plant offered by one shop. Text fields are maps keyed by language code (en / ar / ckb). */
 @Serializable
@@ -33,6 +45,13 @@ data class Listing(
     @SerialName("height_cm") val heightCm: Int? = null,
     @SerialName("pot_size_cm") val potSizeCm: Int? = null,
     @SerialName("price_iqd") val priceIqd: Int,
+    /** The price before a discount; shown crossed out next to [priceIqd]. */
+    @SerialName("old_price_iqd") val oldPriceIqd: Int? = null,
+    /** How many pieces are in this package, for sets and bundles. */
+    val pieces: Int? = null,
+    val options: List<ListingOption> = emptyList(),
+    /** A named group in the shop (Autumn 2026, Ramadan, ...). */
+    val collection: String? = null,
     @SerialName("in_stock") val inStock: Boolean = true,
     @SerialName("image_path") val imagePath: String? = null,
     @SerialName("ai_generated") val aiGenerated: Boolean = false,
@@ -42,6 +61,10 @@ data class Listing(
     /** Public URL of the shop's photo, or null when the listing has none yet. */
     val imageUrl: String?
         get() = imagePath?.takeIf { it.isNotBlank() }?.let(::plantPhotoUrl)
+
+    /** Percent off when [oldPriceIqd] is above the current price, else null. */
+    val discountPercent: Int?
+        get() = oldPriceIqd?.takeIf { it > priceIqd && it > 0 }?.let { (it - priceIqd) * 100 / it }
 
     /** Emoji shown as the picture until a shop uploads a photo. */
     val placeholderEmoji: String

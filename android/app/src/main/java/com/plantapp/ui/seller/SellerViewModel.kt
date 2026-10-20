@@ -6,6 +6,7 @@ import com.plantapp.data.AiException
 import com.plantapp.data.AiRepository
 import com.plantapp.data.Catalog
 import com.plantapp.data.Listing
+import com.plantapp.data.ListingOption
 import com.plantapp.data.ListingUpdate
 import com.plantapp.data.NewListing
 import com.plantapp.data.Order
@@ -39,6 +40,9 @@ enum class AiMessage { Filled, LowConfidence, NotAPlant, NotConfigured, LimitRea
 
 enum class EditorError { Required, CategoryMissing, SaveFailed }
 
+/** One option group being edited: a name ("Colour") and its choices typed as "Blue, Black". */
+data class OptionDraft(val name: String = "", val valuesText: String = "")
+
 /** Everything in the add/edit plant page. Texts are maps keyed by language code (en / ar / ckb). */
 class EditorState(
     val listingId: String? = null,
@@ -63,6 +67,10 @@ class EditorState(
     val section: String? = null,
     val category: String? = null,
     val occasions: List<String> = emptyList(),
+    val oldPriceText: String = "",
+    val piecesText: String = "",
+    val collection: String = "",
+    val options: List<OptionDraft> = emptyList(),
 ) {
     fun copy(
         photoBytes: ByteArray? = this.photoBytes,
@@ -84,10 +92,14 @@ class EditorState(
         section: String? = this.section,
         category: String? = this.category,
         occasions: List<String> = this.occasions,
+        oldPriceText: String = this.oldPriceText,
+        piecesText: String = this.piecesText,
+        collection: String = this.collection,
+        options: List<OptionDraft> = this.options,
     ) = EditorState(
         listingId, photoBytes, existingImagePath, plantKey, name, scientificName, description,
         water, light, fertilizer, heightText, priceText, inStock, aiGenerated, aiBusy, aiMessage, saving, error,
-        section, category, occasions,
+        section, category, occasions, oldPriceText, piecesText, collection, options,
     )
 }
 
@@ -236,6 +248,10 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                 fertilizer = listing.care["fertilizer"].orEmpty(),
                 heightText = listing.heightCm?.toString().orEmpty(),
                 priceText = listing.priceIqd.toString(),
+                oldPriceText = listing.oldPriceIqd?.toString().orEmpty(),
+                piecesText = listing.pieces?.toString().orEmpty(),
+                collection = listing.collection.orEmpty(),
+                options = listing.options.map { OptionDraft(it.name, it.values.joinToString(", ")) },
                 inStock = listing.inStock,
                 aiGenerated = listing.aiGenerated,
                 section = listing.section,
@@ -267,6 +283,9 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
     fun setHeight(value: String) = editor { it.copy(heightText = value.filter(Char::isDigit).take(3)) }
     fun setPrice(value: String) = editor { it.copy(priceText = value.filter(Char::isDigit).take(9), error = null) }
     fun setInStock(value: Boolean) = editor { it.copy(inStock = value) }
+
+    /** Generic change used by the newer product fields (old price, pieces, collection, options). */
+    fun updateEditor(change: (EditorState) -> EditorState) = editor(change)
 
     /** Picking another section clears a category that belongs to the old one. */
     fun setSection(key: String) = editor { e ->
@@ -355,6 +374,13 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                 ).filterValues { it.isNotEmpty() }
                 val height = e.heightText.toIntOrNull()?.takeIf { it > 0 }
                 val scientific = e.scientificName.trim().takeIf { it.isNotEmpty() }
+                val oldPrice = e.oldPriceText.toIntOrNull()?.takeIf { it > 0 }
+                val pieces = e.piecesText.toIntOrNull()?.takeIf { it > 0 }
+                val collection = e.collection.trim().takeIf { it.isNotEmpty() }
+                val options = e.options.mapNotNull { draft ->
+                    val values = draft.valuesText.split(',', '،').map { it.trim() }.filter { it.isNotEmpty() }.distinct()
+                    if (draft.name.isBlank() || values.isEmpty()) null else ListingOption(draft.name.trim(), values)
+                }
 
                 if (e.listingId == null) {
                     repo.createListing(
@@ -362,6 +388,7 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                             sellerId = shop.id, section = e.section, category = e.category, occasions = e.occasions,
                             plantKey = e.plantKey, name = name, scientificName = scientific,
                             description = description, care = care, heightCm = height, priceIqd = price,
+                            oldPriceIqd = oldPrice, pieces = pieces, options = options, collection = collection,
                             imagePath = imagePath, inStock = e.inStock, aiGenerated = e.aiGenerated,
                         )
                     )
@@ -372,6 +399,7 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                             section = e.section, category = e.category, occasions = e.occasions,
                             plantKey = e.plantKey, name = name, scientificName = scientific,
                             description = description, care = care, heightCm = height, priceIqd = price,
+                            oldPriceIqd = oldPrice, pieces = pieces, options = options, collection = collection,
                             imagePath = imagePath, inStock = e.inStock, aiGenerated = e.aiGenerated,
                         )
                     )

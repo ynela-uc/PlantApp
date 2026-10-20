@@ -202,8 +202,50 @@ struct PlantEditorView: View {
                             AppField(title: lang.t("field_height"), text: Binding(get: { editor.heightText }, set: { model.setHeight($0) }), keyboard: .numberPad)
                         }
                         AppField(title: lang.t("field_price"), text: Binding(get: { editor.priceText }, set: { model.setPrice($0) }), keyboard: .numberPad)
+                        AppField(
+                            title: lang.t("field_old_price"),
+                            text: Binding(get: { editor.oldPriceText }, set: { value in model.updateEditor { $0.oldPriceText = String(value.filter(\.isNumber).prefix(9)) } }),
+                            keyboard: .numberPad
+                        )
+                        AppField(
+                            title: lang.t("field_pieces"),
+                            text: Binding(get: { editor.piecesText }, set: { value in model.updateEditor { $0.piecesText = String(value.filter(\.isNumber).prefix(3)) } }),
+                            keyboard: .numberPad
+                        )
+                        AppField(
+                            title: lang.t("field_collection"),
+                            text: Binding(get: { editor.collection }, set: { value in model.updateEditor { $0.collection = String(value.prefix(40)) } })
+                        )
                     }
                     .padding(.top, 20)
+
+                    // Choices the customer makes (colour, scent, ...)
+                    PickerTitle(lang.t("options_title"))
+                    ForEach(Array(editor.options.enumerated()), id: \.offset) { index, draft in
+                        VStack(spacing: 8) {
+                            AppField(
+                                title: lang.t("option_name_hint"),
+                                text: Binding(get: { draft.name }, set: { value in model.updateEditor { if index < $0.options.count { $0.options[index].name = value } } })
+                            )
+                            AppField(
+                                title: lang.t("option_values_hint"),
+                                text: Binding(get: { draft.valuesText }, set: { value in model.updateEditor { if index < $0.options.count { $0.options[index].valuesText = value } } })
+                            )
+                            Button {
+                                model.updateEditor { if index < $0.options.count { $0.options.remove(at: index) } }
+                            } label: {
+                                Text("🗑  " + lang.t("action_delete")).foregroundStyle(Theme.error)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(.bottom, 8)
+                    }
+                    if editor.options.count < 3 {
+                        Button("＋  " + lang.t("option_add")) {
+                            model.updateEditor { $0.options.append(OptionDraft()) }
+                        }
+                        .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                    }
 
                     Toggle(lang.t("plant_in_stock"), isOn: Binding(get: { editor.inStock }, set: { model.setInStock($0) }))
                         .font(.system(size: 16, weight: .semibold))

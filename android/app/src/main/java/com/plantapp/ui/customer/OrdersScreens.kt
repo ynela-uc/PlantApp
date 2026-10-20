@@ -61,6 +61,12 @@ import com.plantapp.ui.theme.TextMuted
 
 private val CancelledRed = Color(0xFFC62828)
 
+/** "Name (Blue · Large) × 2" */
+internal fun itemLabel(item: com.plantapp.data.OrderItem, lang: String): String {
+    val choices = if (item.options.isEmpty()) "" else " (" + item.options.values.joinToString(" · ") + ")"
+    return "${item.name.localized(lang)}$choices × ${item.qty}"
+}
+
 internal fun statusLabel(status: OrderStatus): Int = when (status) {
     OrderStatus.Placed -> R.string.status_placed
     OrderStatus.Preparing -> R.string.status_preparing
@@ -274,8 +280,14 @@ fun OrderDetailScreen(
             Heading(R.string.order_items)
             order.items.forEach {
                 Row(Modifier.fillMaxWidth().padding(vertical = 3.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("${it.name.localized(lang)} × ${it.qty}", modifier = Modifier.weight(1f))
+                    Text(itemLabel(it, lang), modifier = Modifier.weight(1f))
                     if (it.unitPriceIqd > 0) Text(priceText(it.unitPriceIqd * it.qty))
+                }
+            }
+            if (order.deliveryFeeIqd > 0) {
+                Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(stringResource(R.string.delivery_fee_label), color = TextMuted)
+                    Text(priceText(order.deliveryFeeIqd))
                 }
             }
             if (order.totalIqd > 0) {

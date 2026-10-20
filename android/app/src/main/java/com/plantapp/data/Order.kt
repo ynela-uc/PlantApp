@@ -17,6 +17,8 @@ data class OrderItem(
     val name: Map<String, String> = emptyMap(),
     val qty: Int = 1,
     @SerialName("unit_price_iqd") val unitPriceIqd: Int = 0,
+    /** The customer's choices for this line, option name -> chosen value. */
+    val options: Map<String, String> = emptyMap(),
 )
 
 /** Order progress, in the order a customer sees it. */
@@ -49,6 +51,7 @@ data class Order(
     val address: String = "",
     @SerialName("created_at") val createdAt: String = "",
     @SerialName("total_iqd") val totalIqd: Int = 0,
+    @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 0,
     @SerialName("is_gift") val isGift: Boolean = false,
     @SerialName("recipient_name") val recipientName: String? = null,
     @SerialName("recipient_phone") val recipientPhone: String? = null,
@@ -74,6 +77,7 @@ data class NewOrder(
     val city: String,
     val address: String,
     @SerialName("total_iqd") val totalIqd: Int,
+    @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 0,
     @SerialName("buyer_name") val buyerName: String,
     @SerialName("buyer_phone") val buyerPhone: String,
     @SerialName("is_gift") val isGift: Boolean,

@@ -86,16 +86,30 @@ struct CheckoutView: View {
                         }
 
                         SectionHeading(text: lang.t("checkout_summary"))
-                        ForEach(model.cartLines) { line in
+                        ForEach(model.cartGroups(city)) { group in
+                            Text(lang.t("sold_by", group.shop?.name ?? ""))
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(Theme.muted)
+                                .padding(.top, 8)
+                            ForEach(group.lines) { line in
+                                HStack {
+                                    let choices = line.options.isEmpty ? "" : " (" + line.options.keys.sorted().compactMap { line.options[$0] }.joined(separator: " · ") + ")"
+                                    Text("\(lang.localized(line.listing.name))\(choices) × \(line.qty)")
+                                    Spacer()
+                                    Text(lang.price(line.total))
+                                }
+                                .font(.system(size: 15))
+                                .padding(.vertical, 3)
+                            }
                             HStack {
-                                Text("\(lang.localized(line.listing.name)) × \(line.qty)")
+                                Text(lang.t("delivery_to_city", lang.cityName(city))).foregroundStyle(Theme.muted)
                                 Spacer()
-                                Text(lang.price(line.listing.priceIqd * line.qty))
+                                Text(group.fee == 0 ? lang.t("delivery_free") : lang.price(group.fee))
                             }
                             .font(.system(size: 15))
                             .padding(.vertical, 3)
                         }
-                        TotalRow(label: lang.t("cart_total"), value: lang.price(model.cartTotal), bold: true)
+                        TotalRow(label: lang.t("total_with_delivery"), value: lang.price(model.grandTotal(city)), bold: true)
                             .padding(.top, 8)
                             .padding(.bottom, 16)
                     }
@@ -109,7 +123,7 @@ struct CheckoutView: View {
                 Button {
                     submit()
                 } label: {
-                    BusyLabel(title: lang.t("place_order") + "  ·  " + lang.price(model.cartTotal), busy: model.placing)
+                    BusyLabel(title: lang.t("place_order") + "  ·  " + lang.price(model.grandTotal(city)), busy: model.placing)
                 }
                 .buttonStyle(PrimaryButtonStyle())
                 .disabled(model.placing || model.cartLines.isEmpty)

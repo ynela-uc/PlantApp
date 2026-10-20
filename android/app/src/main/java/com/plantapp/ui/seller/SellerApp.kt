@@ -85,6 +85,7 @@ fun SellerApp(profile: Profile, onSignOut: () -> Unit) {
             onSection = vm::setSection,
             onCategory = vm::setCategory,
             onOccasion = vm::toggleOccasion,
+            onUpdate = vm::updateEditor,
         )
         return
     }

@@ -22,6 +22,8 @@ data class Shop(
     val phone: String = "",
     val bio: String = "",
     @SerialName("shop_types") val shopTypes: List<String> = listOf(Catalog.PLANTS),
+    @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 0,
+    @SerialName("delivery_fees") val deliveryFees: Map<String, Int> = emptyMap(),
 ) {
     val isNationwide: Boolean get() = deliveryScope == "nationwide"
 }
@@ -34,6 +36,8 @@ data class ShopUpdate(
     @SerialName("delivery_scope") val deliveryScope: String,
     @SerialName("delivers_to") val deliversTo: List<String>?,
     @SerialName("shop_types") val shopTypes: List<String>,
+    @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int,
+    @SerialName("delivery_fees") val deliveryFees: Map<String, Int>,
 )
 
 @Serializable
@@ -49,6 +53,10 @@ data class NewListing(
     val care: Map<String, Map<String, String>>,
     @SerialName("height_cm") val heightCm: Int?,
     @SerialName("price_iqd") val priceIqd: Int,
+    @SerialName("old_price_iqd") val oldPriceIqd: Int?,
+    val pieces: Int?,
+    val options: List<ListingOption>,
+    val collection: String?,
     @SerialName("image_path") val imagePath: String?,
     @SerialName("in_stock") val inStock: Boolean,
     @SerialName("ai_generated") val aiGenerated: Boolean,
@@ -66,6 +74,10 @@ data class ListingUpdate(
     val care: Map<String, Map<String, String>>,
     @SerialName("height_cm") val heightCm: Int?,
     @SerialName("price_iqd") val priceIqd: Int,
+    @SerialName("old_price_iqd") val oldPriceIqd: Int?,
+    val pieces: Int?,
+    val options: List<ListingOption>,
+    val collection: String?,
     @SerialName("image_path") val imagePath: String?,
     @SerialName("in_stock") val inStock: Boolean,
     @SerialName("ai_generated") val aiGenerated: Boolean,

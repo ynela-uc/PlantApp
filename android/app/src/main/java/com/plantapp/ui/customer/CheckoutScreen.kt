@@ -158,21 +158,38 @@ fun CheckoutScreen(
 
             // Summary
             SectionTitle(R.string.checkout_summary)
-            state.cartLines.forEach { (listing, qty) ->
+            val groups = state.cartGroups(city)
+            groups.forEach { group ->
+                Text(
+                    text = stringResource(R.string.sold_by, group.shop?.name.orEmpty()),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = TextMuted,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+                group.lines.forEach { line ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        val choices = if (line.options.isEmpty()) "" else " (" + line.options.values.joinToString(" · ") + ")"
+                        Text("${line.listing.name.localized(lang)}$choices × ${line.qty}", modifier = Modifier.weight(1f))
+                        Text(priceText(line.total))
+                    }
+                }
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text("${listing.name.localized(lang)} × $qty", modifier = Modifier.weight(1f))
-                    Text(priceText(listing.priceIqd * qty))
+                    Text(stringResource(R.string.delivery_to_city, cityLabel(city)), color = TextMuted, modifier = Modifier.weight(1f))
+                    Text(if (group.fee == 0) stringResource(R.string.delivery_free) else priceText(group.fee))
                 }
             }
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(stringResource(R.string.cart_total), fontWeight = FontWeight.Bold)
-                Text(priceText(state.cartTotal), fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.total_with_delivery), fontWeight = FontWeight.Bold)
+                Text(priceText(state.grandTotal(city)), fontWeight = FontWeight.Bold)
             }
             Spacer(Modifier.height(16.dp))
         }
@@ -220,7 +237,7 @@ fun CheckoutScreen(
                         CircularProgressIndicator(Modifier.size(22.dp), color = Color.White, strokeWidth = 2.dp)
                     } else {
                         Text(
-                            text = stringResource(R.string.place_order) + "  ·  " + priceText(state.cartTotal),
+                            text = stringResource(R.string.place_order) + "  ·  " + priceText(state.grandTotal(city)),
                             fontWeight = FontWeight.Bold,
                         )
                     }

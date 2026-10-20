@@ -27,6 +27,12 @@ enum AiMessage {
     }
 }
 
+/// One option group being edited: a name ("Colour") and its choices typed as "Blue, Black".
+struct OptionDraft {
+    var name = ""
+    var valuesText = ""
+}
+
 enum EditorError { case required, categoryMissing, saveFailed }
 
 /// Everything in the add/edit plant page. Texts are maps keyed by language code (en / ar / ckb).
@@ -49,6 +55,10 @@ struct EditorState {
     var section: String?
     var category: String?
     var occasions: [String] = []
+    var oldPriceText = ""
+    var piecesText = ""
+    var collection = ""
+    var options: [OptionDraft] = []
     var aiBusy = false
     var aiMessage: AiMessage?
     var saving = false
@@ -203,6 +213,10 @@ final class SellerModel: ObservableObject {
         state.section = listing.section
         state.category = listing.category
         state.occasions = listing.occasions
+        state.oldPriceText = listing.oldPriceIqd.map(String.init) ?? ""
+        state.piecesText = listing.pieces.map(String.init) ?? ""
+        state.collection = listing.collection ?? ""
+        state.options = listing.options.map { OptionDraft(name: $0.name, valuesText: $0.values.joined(separator: ", ")) }
         withAnimation(Theme.slide) { editor = state }
     }
 
@@ -234,6 +248,13 @@ final class SellerModel: ObservableObject {
     func setHeight(_ value: String) { editor?.heightText = String(value.filter(\.isNumber).prefix(3)) }
     func setPrice(_ value: String) { editor?.priceText = String(value.filter(\.isNumber).prefix(9)); editor?.error = nil }
     func setInStock(_ value: Bool) { editor?.inStock = value }
+
+    /// Generic change used by the newer product fields (old price, pieces, collection, options).
+    func updateEditor(_ change: (inout EditorState) -> Void) {
+        guard var current = editor else { return }
+        change(&current)
+        editor = current
+    }
 
     /// Picking another section clears a category that belongs to the old one.
     func setSection(_ key: String) {
@@ -343,6 +364,19 @@ final class SellerModel: ObservableObject {
                 let height = Int(e.heightText).flatMap { $0 > 0 ? $0 : nil }
                 let scientific = e.scientificName.trimmingCharacters(in: .whitespaces)
                 let scientificName: String? = scientific.isEmpty ? nil : scientific
+                let oldPrice = Int(e.oldPriceText).flatMap { $0 > 0 ? $0 : nil }
+                let pieces = Int(e.piecesText).flatMap { $0 > 0 ? $0 : nil }
+                let collectionName = e.collection.trimmingCharacters(in: .whitespaces)
+                let collection: String? = collectionName.isEmpty ? nil : collectionName
+                let options: [ListingOption] = e.options.compactMap { draft in
+                    var values: [String] = []
+                    for part in draft.valuesText.split(whereSeparator: { $0 == "," || $0 == "\u{060C}" }) {
+                        let value = part.trimmingCharacters(in: .whitespaces)
+                        if !value.isEmpty && !values.contains(value) { values.append(value) }
+                    }
+                    let name = draft.name.trimmingCharacters(in: .whitespaces)
+                    return name.isEmpty || values.isEmpty ? nil : ListingOption(name: name, values: values)
+                }
 
                 if let id = e.listingId {
                     try await SellerService.updateListing(
@@ -351,6 +385,7 @@ final class SellerModel: ObservableObject {
                             section: section, category: e.category, occasions: e.occasions,
                             plantKey: e.plantKey, name: name, scientificName: scientificName,
                             description: description, care: care, heightCm: height, priceIqd: price ?? 0,
+                            oldPriceIqd: oldPrice, pieces: pieces, options: options, collection: collection,
                             imagePath: imagePath, inStock: e.inStock, aiGenerated: e.aiGenerated
                         )
                     )
@@ -360,6 +395,7 @@ final class SellerModel: ObservableObject {
                             sellerId: shop.id, section: section, category: e.category, occasions: e.occasions,
                             plantKey: e.plantKey, name: name, scientificName: scientificName,
                             description: description, care: care, heightCm: height, priceIqd: price ?? 0,
+                            oldPriceIqd: oldPrice, pieces: pieces, options: options, collection: collection,
                             imagePath: imagePath, inStock: e.inStock, aiGenerated: e.aiGenerated
                         )
                     )

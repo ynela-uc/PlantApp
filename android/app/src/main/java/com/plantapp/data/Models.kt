@@ -38,6 +38,7 @@ data class NewSeller(
     val bio: String = "",
     @SerialName("plants_offered") val plantsOffered: List<String> = emptyList(),
     @SerialName("shop_types") val shopTypes: List<String> = listOf(Catalog.PLANTS),
+    @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 5000,
 )
 
 /** Everything collected by the create-account form (fields not used by a role stay blank). */

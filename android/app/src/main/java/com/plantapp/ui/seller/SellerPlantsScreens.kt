@@ -203,6 +203,7 @@ fun PlantEditorScreen(
     onSection: (String) -> Unit,
     onCategory: (String) -> Unit,
     onOccasion: (String) -> Unit,
+    onUpdate: ((EditorState) -> EditorState) -> Unit,
 ) {
     val lang = rememberLang()
     val capture = rememberPhotoCapture(onPhoto)
@@ -317,6 +318,46 @@ fun PlantEditorScreen(
                 Field(editor.heightText, onHeight, R.string.field_height, KeyboardType.Number)
             }
             Field(editor.priceText, onPrice, R.string.field_price, KeyboardType.Number)
+            Field(
+                editor.oldPriceText,
+                { value -> onUpdate { it.copy(oldPriceText = value.filter(Char::isDigit).take(9)) } },
+                R.string.field_old_price,
+                KeyboardType.Number,
+            )
+            Field(
+                editor.piecesText,
+                { value -> onUpdate { it.copy(piecesText = value.filter(Char::isDigit).take(3)) } },
+                R.string.field_pieces,
+                KeyboardType.Number,
+            )
+            Field(editor.collection, { value -> onUpdate { it.copy(collection = value.take(40)) } }, R.string.field_collection)
+
+            // Choices the customer makes (colour, scent, ...)
+            PickerTitle(R.string.options_title)
+            editor.options.forEachIndexed { index, draft ->
+                Column(modifier = Modifier.padding(bottom = 8.dp)) {
+                    Field(
+                        draft.name,
+                        { value -> onUpdate { e -> e.copy(options = e.options.mapIndexed { i, d -> if (i == index) d.copy(name = value) else d }) } },
+                        R.string.option_name_hint,
+                    )
+                    Field(
+                        draft.valuesText,
+                        { value -> onUpdate { e -> e.copy(options = e.options.mapIndexed { i, d -> if (i == index) d.copy(valuesText = value) else d }) } },
+                        R.string.option_values_hint,
+                    )
+                    TextButton(onClick = { onUpdate { e -> e.copy(options = e.options.filterIndexed { i, _ -> i != index }) } }) {
+                        Text("🗑  " + stringResource(R.string.action_delete), color = ErrorRed)
+                    }
+                }
+            }
+            if (editor.options.size < 3) {
+                OutlinedButton(
+                    onClick = { onUpdate { it.copy(options = it.options + OptionDraft()) } },
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                ) { Text("＋  " + stringResource(R.string.option_add), color = SellerAmber) }
+            }
 
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 6.dp)) {
                 Switch(checked = editor.inStock, onCheckedChange = onStock)

@@ -17,6 +17,7 @@ struct ShopTab: View {
                     .padding(.bottom, 16)
 
                 InfoRow(label: lang.t("field_phone"), value: shop.phone)
+                InfoRow(label: lang.t("shop_fee_title"), value: lang.price(shop.deliveryFeeIqd))
                 InfoRow(label: lang.t("shop_types_label"), value: shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", "))
                 InfoRow(
                     label: lang.t("shop_delivery"),
@@ -59,6 +60,8 @@ struct ShopEditorView: View {
     @State private var nationwide: Bool
     @State private var cities: Set<String>
     @State private var types: Set<String>
+    @State private var feeText: String
+    @State private var cityFees: [String: String]
     @State private var showError = false
 
     init(shop: Shop) {
@@ -69,6 +72,8 @@ struct ShopEditorView: View {
         _nationwide = State(initialValue: shop.isNationwide)
         _cities = State(initialValue: Set(shop.deliversTo ?? []))
         _types = State(initialValue: Set(shop.shopTypes))
+        _feeText = State(initialValue: String(shop.deliveryFeeIqd))
+        _cityFees = State(initialValue: shop.deliveryFees.mapValues { String($0) })
     }
 
     var body: some View {
@@ -96,6 +101,26 @@ struct ShopEditorView: View {
                                 showError = false
                             }
                         }
+                    }
+
+                    AppField(
+                        title: lang.t("shop_fee_title"),
+                        text: Binding(get: { feeText }, set: { feeText = String($0.filter(\.isNumber).prefix(7)) }),
+                        keyboard: .numberPad
+                    )
+                    .padding(.top, 8)
+                    Text(lang.t("shop_fee_cities"))
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.muted)
+                    ForEach(Cities.codes, id: \.self) { code in
+                        AppField(
+                            title: lang.cityName(code),
+                            text: Binding(
+                                get: { cityFees[code] ?? "" },
+                                set: { cityFees[code] = String($0.filter(\.isNumber).prefix(7)) }
+                            ),
+                            keyboard: .numberPad
+                        )
                     }
 
                     Text(lang.t("shop_delivery"))
@@ -153,7 +178,9 @@ struct ShopEditorView: View {
                 bio: bio.trimmingCharacters(in: .whitespacesAndNewlines),
                 deliveryScope: nationwide ? "nationwide" : "local",
                 deliversTo: nationwide ? nil : Cities.codes.filter { cities.contains($0) },
-                shopTypes: Catalog.sections.map(\.key).filter { types.contains($0) }
+                shopTypes: Catalog.sections.map(\.key).filter { types.contains($0) },
+                deliveryFeeIqd: Int(feeText) ?? 0,
+                deliveryFees: cityFees.compactMapValues { Int($0) }
             )
         )
     }

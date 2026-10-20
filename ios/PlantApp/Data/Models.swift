@@ -61,43 +61,18 @@ struct SellerInfo: Codable, Equatable {
     var deliversTo: [String]?
     var rating: Double
     var phone: String
-
-    enum CodingKeys: String, CodingKey {
-        case id, name, city, rating, phone
-        case deliveryScope = "delivery_scope"
-        case deliversTo = "delivers_to"
-    }
-
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        id = try c.decode(String.self, forKey: .id)
-        name = try c.decode(String.self, forKey: .name)
-        city = try c.decode(String.self, forKey: .city)
-        deliveryScope = try c.decodeIfPresent(String.self, forKey: .deliveryScope) ?? "local"
-        deliversTo = try c.decodeIfPresent([String].self, forKey: .deliversTo)
-        rating = try c.decodeIfPresent(Double.self, forKey: .rating) ?? 0
-        phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
-    }
-
-    var isNationwide: Bool { deliveryScope == "nationwide" }
-}
-
-/// The signed-in seller's own shop row.
-struct Shop: Codable, Equatable {
-    let id: String
-    var name: String
-    var city: String
-    var deliveryScope: String
-    var deliversTo: [String]?
-    var rating: Double
-    var phone: String
     var bio: String
+    var deliveryFeeIqd: Int
+    /// City code -> fee, for cities that cost more or less than `deliveryFeeIqd`.
+    var deliveryFees: [String: Int]
     var shopTypes: [String]
 
     enum CodingKeys: String, CodingKey {
         case id, name, city, rating, phone, bio
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
+        case deliveryFeeIqd = "delivery_fee_iqd"
+        case deliveryFees = "delivery_fees"
         case shopTypes = "shop_types"
     }
 
@@ -111,7 +86,53 @@ struct Shop: Codable, Equatable {
         rating = try c.decodeIfPresent(Double.self, forKey: .rating) ?? 0
         phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
         bio = try c.decodeIfPresent(String.self, forKey: .bio) ?? ""
+        deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
+        deliveryFees = try c.decodeIfPresent([String: Int].self, forKey: .deliveryFees) ?? [:]
+        shopTypes = try c.decodeIfPresent([String].self, forKey: .shopTypes) ?? []
+    }
+
+    var isNationwide: Bool { deliveryScope == "nationwide" }
+
+    /// What this shop charges to deliver to `city`.
+    func feeFor(_ city: String) -> Int { deliveryFees[city] ?? deliveryFeeIqd }
+}
+
+/// The signed-in seller's own shop row.
+struct Shop: Codable, Equatable {
+    let id: String
+    var name: String
+    var city: String
+    var deliveryScope: String
+    var deliversTo: [String]?
+    var rating: Double
+    var phone: String
+    var bio: String
+    var shopTypes: [String]
+    var deliveryFeeIqd: Int
+    var deliveryFees: [String: Int]
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, city, rating, phone, bio
+        case deliveryScope = "delivery_scope"
+        case deliversTo = "delivers_to"
+        case shopTypes = "shop_types"
+        case deliveryFeeIqd = "delivery_fee_iqd"
+        case deliveryFees = "delivery_fees"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        city = try c.decode(String.self, forKey: .city)
+        deliveryScope = try c.decodeIfPresent(String.self, forKey: .deliveryScope) ?? "local"
+        deliversTo = try c.decodeIfPresent([String].self, forKey: .deliversTo)
+        rating = try c.decodeIfPresent(Double.self, forKey: .rating) ?? 0
+        phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
+        bio = try c.decodeIfPresent(String.self, forKey: .bio) ?? ""
         shopTypes = try c.decodeIfPresent([String].self, forKey: .shopTypes) ?? [Catalog.plants]
+        deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
+        deliveryFees = try c.decodeIfPresent([String: Int].self, forKey: .deliveryFees) ?? [:]
     }
 
     var isNationwide: Bool { deliveryScope == "nationwide" }
@@ -124,12 +145,16 @@ struct ShopUpdate: Encodable {
     let deliveryScope: String
     let deliversTo: [String]?
     let shopTypes: [String]
+    let deliveryFeeIqd: Int
+    let deliveryFees: [String: Int]
 
     enum CodingKeys: String, CodingKey {
         case name, phone, bio
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case shopTypes = "shop_types"
+        case deliveryFeeIqd = "delivery_fee_iqd"
+        case deliveryFees = "delivery_fees"
     }
 
     func encode(to encoder: Encoder) throws {
@@ -140,6 +165,8 @@ struct ShopUpdate: Encodable {
         try c.encode(deliveryScope, forKey: .deliveryScope)
         try c.encode(deliversTo, forKey: .deliversTo) // nil is sent as null
         try c.encode(shopTypes, forKey: .shopTypes)
+        try c.encode(deliveryFeeIqd, forKey: .deliveryFeeIqd)
+        try c.encode(deliveryFees, forKey: .deliveryFees)
     }
 }
 
@@ -154,6 +181,7 @@ struct NewSeller: Encodable {
     let bio: String
     let plantsOffered: [String]
     let shopTypes: [String]
+    let deliveryFeeIqd: Int
 
     enum CodingKeys: String, CodingKey {
         case name, city, phone, bio
@@ -162,6 +190,7 @@ struct NewSeller: Encodable {
         case deliversTo = "delivers_to"
         case plantsOffered = "plants_offered"
         case shopTypes = "shop_types"
+        case deliveryFeeIqd = "delivery_fee_iqd"
     }
 }
 
@@ -180,6 +209,13 @@ struct Listing: Codable, Identifiable, Equatable {
     var care: [String: [String: String]]
     var heightCm: Int?
     var priceIqd: Int
+    /// The price before a discount; shown crossed out next to `priceIqd`.
+    var oldPriceIqd: Int?
+    /// How many pieces are in this package, for sets and bundles.
+    var pieces: Int?
+    var options: [ListingOption]
+    /// A named group in the shop (Autumn 2026, Ramadan, ...).
+    var collection: String?
     var inStock: Bool
     var imagePath: String?
     var aiGenerated: Bool
@@ -187,12 +223,13 @@ struct Listing: Codable, Identifiable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case id, name, description, care, sellers
-        case section, category, occasions
+        case section, category, occasions, pieces, options, collection
         case sellerId = "seller_id"
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
         case heightCm = "height_cm"
         case priceIqd = "price_iqd"
+        case oldPriceIqd = "old_price_iqd"
         case inStock = "in_stock"
         case imagePath = "image_path"
         case aiGenerated = "ai_generated"
@@ -212,6 +249,10 @@ struct Listing: Codable, Identifiable, Equatable {
         care = try c.decodeIfPresent([String: [String: String]].self, forKey: .care) ?? [:]
         heightCm = try c.decodeIfPresent(Int.self, forKey: .heightCm)
         priceIqd = try c.decode(Int.self, forKey: .priceIqd)
+        oldPriceIqd = try c.decodeIfPresent(Int.self, forKey: .oldPriceIqd)
+        pieces = try c.decodeIfPresent(Int.self, forKey: .pieces)
+        options = try c.decodeIfPresent([ListingOption].self, forKey: .options) ?? []
+        collection = try c.decodeIfPresent(String.self, forKey: .collection)
         inStock = try c.decodeIfPresent(Bool.self, forKey: .inStock) ?? true
         imagePath = try c.decodeIfPresent(String.self, forKey: .imagePath)
         aiGenerated = try c.decodeIfPresent(Bool.self, forKey: .aiGenerated) ?? false
@@ -222,6 +263,12 @@ struct Listing: Codable, Identifiable, Equatable {
     var imageURL: URL? {
         guard let path = imagePath, !path.isEmpty else { return nil }
         return try? supabase.storage.from("plant-photos").getPublicURL(path: path)
+    }
+
+    /// Percent off when `oldPriceIqd` is above the current price, else nil.
+    var discountPercent: Int? {
+        guard let old = oldPriceIqd, old > priceIqd, old > 0 else { return nil }
+        return (old - priceIqd) * 100 / old
     }
 
     /// Emoji shown as the picture until a shop uploads a photo.
@@ -248,12 +295,17 @@ struct NewListing: Encodable {
     let care: [String: [String: String]]
     let heightCm: Int?
     let priceIqd: Int
+    let oldPriceIqd: Int?
+    let pieces: Int?
+    let options: [ListingOption]
+    let collection: String?
     let imagePath: String?
     let inStock: Bool
     let aiGenerated: Bool
 
     enum CodingKeys: String, CodingKey {
-        case name, description, care, section, category, occasions
+        case name, description, care, section, category, occasions, pieces, options, collection
+        case oldPriceIqd = "old_price_iqd"
         case sellerId = "seller_id"
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
@@ -276,12 +328,17 @@ struct ListingUpdate: Encodable {
     let care: [String: [String: String]]
     let heightCm: Int?
     let priceIqd: Int
+    let oldPriceIqd: Int?
+    let pieces: Int?
+    let options: [ListingOption]
+    let collection: String?
     let imagePath: String?
     let inStock: Bool
     let aiGenerated: Bool
 
     enum CodingKeys: String, CodingKey {
-        case name, description, care, section, category, occasions
+        case name, description, care, section, category, occasions, pieces, options, collection
+        case oldPriceIqd = "old_price_iqd"
         case plantKey = "plant_key"
         case scientificName = "scientific_name"
         case heightCm = "height_cm"
@@ -304,6 +361,10 @@ struct ListingUpdate: Encodable {
         try c.encode(care, forKey: .care)
         try c.encode(heightCm, forKey: .heightCm)
         try c.encode(priceIqd, forKey: .priceIqd)
+        try c.encode(oldPriceIqd, forKey: .oldPriceIqd)
+        try c.encode(pieces, forKey: .pieces)
+        try c.encode(options, forKey: .options)
+        try c.encode(collection, forKey: .collection)
         try c.encode(imagePath, forKey: .imagePath)
         try c.encode(inStock, forKey: .inStock)
         try c.encode(aiGenerated, forKey: .aiGenerated)
@@ -318,18 +379,21 @@ struct OrderItem: Codable, Equatable {
     var name: [String: String]
     var qty: Int
     var unitPriceIqd: Int
+    /// The customer's choices for this line, option name -> chosen value.
+    var options: [String: String]
 
     enum CodingKeys: String, CodingKey {
-        case name, qty
+        case name, qty, options
         case listingId = "listing_id"
         case unitPriceIqd = "unit_price_iqd"
     }
 
-    init(listingId: String, name: [String: String], qty: Int, unitPriceIqd: Int) {
+    init(listingId: String, name: [String: String], qty: Int, unitPriceIqd: Int, options: [String: String] = [:]) {
         self.listingId = listingId
         self.name = name
         self.qty = qty
         self.unitPriceIqd = unitPriceIqd
+        self.options = options
     }
 
     init(from decoder: Decoder) throws {
@@ -338,6 +402,13 @@ struct OrderItem: Codable, Equatable {
         name = (try? c.decodeIfPresent([String: String].self, forKey: .name)) ?? [:]
         qty = try c.decodeIfPresent(Int.self, forKey: .qty) ?? 1
         unitPriceIqd = try c.decodeIfPresent(Int.self, forKey: .unitPriceIqd) ?? 0
+        options = (try? c.decodeIfPresent([String: String].self, forKey: .options)) ?? [:]
+    }
+
+    /// "Name (Blue · Large) × 2"
+    func label(_ name: String) -> String {
+        let choices = options.isEmpty ? "" : " (" + options.keys.sorted().compactMap { options[$0] }.joined(separator: " · ") + ")"
+        return "\(name)\(choices) × \(qty)"
     }
 }
 
@@ -379,6 +450,7 @@ struct Order: Codable, Identifiable, Equatable {
     var address: String
     var createdAt: String
     var totalIqd: Int
+    var deliveryFeeIqd: Int
     var isGift: Bool
     var recipientName: String?
     var recipientPhone: String?
@@ -396,6 +468,7 @@ struct Order: Codable, Identifiable, Equatable {
         case sellerName = "seller_name"
         case createdAt = "created_at"
         case totalIqd = "total_iqd"
+        case deliveryFeeIqd = "delivery_fee_iqd"
         case isGift = "is_gift"
         case recipientName = "recipient_name"
         case recipientPhone = "recipient_phone"
@@ -419,6 +492,7 @@ struct Order: Codable, Identifiable, Equatable {
         address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
         createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt) ?? ""
         totalIqd = try c.decodeIfPresent(Int.self, forKey: .totalIqd) ?? 0
+        deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
         isGift = try c.decodeIfPresent(Bool.self, forKey: .isGift) ?? false
         recipientName = try c.decodeIfPresent(String.self, forKey: .recipientName)
         recipientPhone = try c.decodeIfPresent(String.self, forKey: .recipientPhone)
@@ -445,6 +519,7 @@ struct NewOrder: Encodable {
     let city: String
     let address: String
     let totalIqd: Int
+    let deliveryFeeIqd: Int
     let buyerName: String
     let buyerPhone: String
     let isGift: Bool
@@ -461,6 +536,7 @@ struct NewOrder: Encodable {
         case sellerName = "seller_name"
         case paymentMethod = "payment_method"
         case totalIqd = "total_iqd"
+        case deliveryFeeIqd = "delivery_fee_iqd"
         case buyerName = "buyer_name"
         case buyerPhone = "buyer_phone"
         case isGift = "is_gift"
@@ -564,4 +640,10 @@ struct PlantSuggestion: Codable {
         category = try c.decodeIfPresent(String.self, forKey: .category) ?? ""
         occasions = try c.decodeIfPresent([String].self, forKey: .occasions) ?? []
     }
+}
+
+/// A choice the customer makes before adding a product to the cart, e.g. Colour: Blue / Black.
+struct ListingOption: Codable, Equatable {
+    var name: String
+    var values: [String]
 }

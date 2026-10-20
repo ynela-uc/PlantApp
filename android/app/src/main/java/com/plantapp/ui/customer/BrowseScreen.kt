@@ -282,7 +282,7 @@ private fun Chip(label: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun PlantCard(listing: Listing, lang: String, onClick: () -> Unit) {
+internal fun PlantCard(listing: Listing, lang: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).clickable(onClick = onClick),
         shape = RoundedCornerShape(18.dp),
@@ -308,11 +308,21 @@ private fun PlantCard(listing: Listing, lang: String, onClick: () -> Unit) {
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(Modifier.height(6.dp))
-                Text(
-                    text = priceText(listing.priceIqd),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = priceText(listing.priceIqd),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    listing.discountPercent?.let { percent ->
+                        Text(
+                            text = "-$percent%",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color(0xFFC62828),
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
                 Spacer(Modifier.height(8.dp))
                 DeliveryBadge(listing.sellers)
             }

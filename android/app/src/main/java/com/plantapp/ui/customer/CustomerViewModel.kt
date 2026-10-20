@@ -3,6 +3,7 @@ package com.plantapp.ui.customer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.plantapp.data.Listing
+import com.plantapp.data.SellerInfo
 import com.plantapp.data.ListingsRepository
 import com.plantapp.data.NewOrder
 import com.plantapp.data.Order
@@ -23,6 +24,7 @@ enum class CustomerTab { Browse, Assistant, Cart, Orders, Profile }
 /** Full-screen pages shown on top of the tabs. */
 sealed interface Overlay {
     data class Detail(val listingId: String) : Overlay
+    data class Shop(val sellerId: String) : Overlay
     data object Checkout : Overlay
     data class OrderDetail(val orderId: String) : Overlay
     data class Placed(val count: Int) : Overlay
@@ -48,6 +50,24 @@ data class CheckoutForm(
     val window: String,
 )
 
+/** What is stored for one cart line: which product, the customer's option choices, how many. */
+data class CartEntry(val listingId: String, val options: Map<String, String>, val qty: Int)
+
+/** Same product with different choices (blue vs black) is a different line. */
+fun cartKey(listingId: String, options: Map<String, String>): String =
+    listingId + options.toSortedMap().entries.joinToString("") { "|${it.key}=${it.value}" }
+
+/** One line in the cart, with its product looked up. */
+data class CartLine(val key: String, val listing: Listing, val options: Map<String, String>, val qty: Int) {
+    val total: Int get() = listing.priceIqd * qty
+}
+
+/** The cart lines of one shop: they become one order and carry one delivery fee. */
+data class ShopGroup(val sellerId: String, val shop: SellerInfo?, val lines: List<CartLine>, val fee: Int) {
+    val subtotal: Int get() = lines.sumOf { it.total }
+    val total: Int get() = subtotal + fee
+}
+
 data class CustomerState(
     /** False until the shopper picks what to look at on the entry screen; asked again at every app start. */
     val entered: Boolean = false,
@@ -63,7 +83,7 @@ data class CustomerState(
     /** The entry screen's "show everything": a plain product list with no section chosen. */
     val showAll: Boolean = false,
     /** listing id -> quantity */
-    val cart: Map<String, Int> = emptyMap(),
+    val cart: Map<String, CartEntry> = emptyMap(),
     val tab: CustomerTab = CustomerTab.Browse,
     val overlay: Overlay? = null,
     val orders: List<Order> = emptyList(),
@@ -74,13 +94,23 @@ data class CustomerState(
     /** True while the customer's answer to a preparation photo is being saved. */
     val reviewBusy: Boolean = false,
 ) {
-    val cartCount: Int get() = cart.values.sum()
+    val cartCount: Int get() = cart.values.sumOf { it.qty }
 
-    /** Cart contents as (listing, quantity), skipping listings that no longer exist. */
-    val cartLines: List<Pair<Listing, Int>>
-        get() = cart.mapNotNull { (id, qty) -> listings.firstOrNull { it.id == id }?.let { it to qty } }
+    /** Cart contents, skipping listings that no longer exist. */
+    val cartLines: List<CartLine>
+        get() = cart.mapNotNull { (key, entry) ->
+            listings.firstOrNull { it.id == entry.listingId }?.let { CartLine(key, it, entry.options, entry.qty) }
+        }
 
-    val cartTotal: Int get() = cartLines.sumOf { (listing, qty) -> listing.priceIqd * qty }
+    /** The cart split by shop, each with the delivery fee for [city]. */
+    fun cartGroups(city: String): List<ShopGroup> =
+        cartLines.groupBy { it.listing.sellerId }.map { (sellerId, lines) ->
+            val shop = lines.first().listing.sellers
+            ShopGroup(sellerId, shop, lines, shop?.feeFor(city) ?: 0)
+        }
+
+    /** Everything to pay in cash: items plus every shop's delivery fee. */
+    fun grandTotal(city: String): Int = cartGroups(city).sumOf { it.total }
 
     fun listing(id: String): Listing? = listings.firstOrNull { it.id == id }
     fun order(id: String): Order? = orders.firstOrNull { it.id == id }
@@ -177,6 +207,7 @@ class CustomerViewModel(private val profile: Profile) : ViewModel() {
     }
 
     fun openListing(id: String) = _state.update { it.copy(overlay = Overlay.Detail(id)) }
+    fun openShop(sellerId: String) = _state.update { it.copy(overlay = Overlay.Shop(sellerId)) }
     fun openCheckout() = _state.update { it.copy(overlay = Overlay.Checkout, checkoutError = null) }
     fun openOrder(id: String) = _state.update { it.copy(overlay = Overlay.OrderDetail(id)) }
     fun closeOverlay() = _state.update { it.copy(overlay = null) }
@@ -184,18 +215,25 @@ class CustomerViewModel(private val profile: Profile) : ViewModel() {
     /** Leaves the "order placed" page and shows the orders tab. */
     fun finishPlaced() = _state.update { it.copy(overlay = null, tab = CustomerTab.Orders) }
 
-    fun changeQuantity(listingId: String, delta: Int) = _state.update { s ->
-        val next = (s.cart[listingId] ?: 0) + delta
-        s.copy(cart = if (next <= 0) s.cart - listingId else s.cart + (listingId to next))
+    fun addToCart(listingId: String, options: Map<String, String>) = _state.update { s ->
+        val key = cartKey(listingId, options)
+        val current = s.cart[key]
+        s.copy(cart = s.cart + (key to CartEntry(listingId, options, (current?.qty ?: 0) + 1)))
     }
 
-    /** Creates one order per shop in the cart (cash on delivery). */
-    fun placeOrders(form: CheckoutForm) {
-        val lines = _state.value.cartLines
-        if (lines.isEmpty()) return
+    fun changeQuantity(key: String, delta: Int) = _state.update { s ->
+        val entry = s.cart[key] ?: return@update s
+        val next = entry.qty + delta
+        s.copy(cart = if (next <= 0) s.cart - key else s.cart + (key to entry.copy(qty = next)))
+    }
 
-        val blocked = lines.filter { !it.first.deliversTo(form.city) }
-            .mapNotNull { it.first.sellers?.name }
+    /** Creates one order per shop in the cart (cash on delivery); each carries that shop's delivery fee. */
+    fun placeOrders(form: CheckoutForm) {
+        val groups = _state.value.cartGroups(form.city)
+        if (groups.isEmpty()) return
+
+        val blocked = groups.filter { group -> group.lines.any { !it.listing.deliversTo(form.city) } }
+            .mapNotNull { it.shop?.name }
             .distinct()
         if (blocked.isNotEmpty()) {
             _state.update { it.copy(checkoutError = CheckoutError.NotDeliverable(blocked)) }
@@ -206,20 +244,21 @@ class CustomerViewModel(private val profile: Profile) : ViewModel() {
         viewModelScope.launch {
             var created = 0
             var error: CheckoutError? = null
-            for ((sellerId, group) in lines.groupBy { it.first.sellerId }) {
-                val items = group.map { (listing, qty) ->
-                    OrderItem(listing.id, listing.name, qty, listing.priceIqd)
+            for (group in groups) {
+                val items = group.lines.map { line ->
+                    OrderItem(line.listing.id, line.listing.name, line.qty, line.listing.priceIqd, line.options)
                 }
                 try {
                     ordersRepo.create(
                         NewOrder(
                             buyerId = profile.id,
-                            sellerId = sellerId,
-                            sellerName = group.first().first.sellers?.name.orEmpty(),
+                            sellerId = group.sellerId,
+                            sellerName = group.shop?.name.orEmpty(),
                             items = items,
                             city = form.city,
                             address = form.address,
-                            totalIqd = items.sumOf { it.qty * it.unitPriceIqd },
+                            totalIqd = group.total,
+                            deliveryFeeIqd = group.fee,
                             buyerName = "${profile.firstName} ${profile.lastName}".trim(),
                             buyerPhone = profile.phone,
                             isGift = form.isGift,
@@ -230,8 +269,8 @@ class CustomerViewModel(private val profile: Profile) : ViewModel() {
                             deliveryWindow = form.window,
                         )
                     )
-                    val ids = group.map { it.first.id }.toSet()
-                    _state.update { it.copy(cart = it.cart - ids) }
+                    val keys = group.lines.map { it.key }.toSet()
+                    _state.update { it.copy(cart = it.cart - keys) }
                     created++
                 } catch (e: Exception) {
                     error = if (e is IOException) CheckoutError.Network else CheckoutError.Generic

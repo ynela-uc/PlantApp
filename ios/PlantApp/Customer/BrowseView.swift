@@ -188,7 +188,7 @@ struct SectionTile: View {
     }
 }
 
-private struct PlantCard: View {
+struct PlantCard: View {
     @EnvironmentObject var lang: LanguageStore
     let listing: Listing
     let action: () -> Void
@@ -208,10 +208,17 @@ private struct PlantCard: View {
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.muted)
                         .lineLimit(1)
-                    Text(lang.price(listing.priceIqd))
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(.black)
-                        .padding(.top, 4)
+                    HStack(spacing: 6) {
+                        Text(lang.price(listing.priceIqd))
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundStyle(.black)
+                        if let percent = listing.discountPercent {
+                            Text("-\(percent)%")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(Theme.error)
+                        }
+                    }
+                    .padding(.top, 4)
                     DeliveryBadge(shop: listing.sellers)
                         .padding(.top, 6)
                 }

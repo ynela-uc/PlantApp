@@ -62,6 +62,10 @@ struct CustomerRoot: View {
             if let listing = model.listing(id) {
                 ListingDetailView(listing: listing)
             }
+        case .shop(let sellerId):
+            if let shop = model.listings.first(where: { $0.sellerId == sellerId })?.sellers {
+                ShopPageView(shop: shop)
+            }
         case .checkout:
             CheckoutView(profile: profile)
         case .orderDetail(let id):

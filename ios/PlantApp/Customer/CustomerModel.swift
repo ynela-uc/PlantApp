@@ -5,6 +5,7 @@ enum CustomerTab: Hashable { case browse, assistant, cart, orders, profile }
 /// Full-screen pages shown on top of the tabs.
 enum Overlay: Equatable {
     case detail(String)
+    case shop(String)
     case checkout
     case orderDetail(String)
     case placed(Int)
@@ -16,10 +17,37 @@ enum CheckoutError: Equatable {
     case generic
 }
 
-struct CartEntry: Identifiable {
+/// What is stored for one cart line: which product, the customer's option choices, how many.
+struct CartItem {
+    let listingId: String
+    let options: [String: String]
+    var qty: Int
+}
+
+/// Same product with different choices (blue vs black) is a different line.
+func cartKey(_ listingId: String, _ options: [String: String]) -> String {
+    listingId + options.keys.sorted().map { "|\($0)=\(options[$0] ?? "")" }.joined()
+}
+
+/// One line in the cart, with its product looked up.
+struct CartLine: Identifiable {
+    let key: String
     let listing: Listing
+    let options: [String: String]
     let qty: Int
-    var id: String { listing.id }
+    var id: String { key }
+    var total: Int { listing.priceIqd * qty }
+}
+
+/// The cart lines of one shop: they become one order and carry one delivery fee.
+struct ShopGroup: Identifiable {
+    let sellerId: String
+    let shop: SellerInfo?
+    let lines: [CartLine]
+    let fee: Int
+    var id: String { sellerId }
+    var subtotal: Int { lines.reduce(0) { $0 + $1.total } }
+    var total: Int { subtotal + fee }
 }
 
 @MainActor
@@ -40,7 +68,7 @@ final class CustomerModel: ObservableObject {
     /// False until the shopper picks what to look at on the entry screen; asked again at every app start.
     @Published var entered = false
     /// listing id -> quantity
-    @Published var cart: [String: Int] = [:]
+    @Published var cart: [String: CartItem] = [:]
     @Published var tab: CustomerTab = .browse
     @Published var overlay: Overlay?
     @Published var orders: [Order] = []
@@ -60,18 +88,36 @@ final class CustomerModel: ObservableObject {
 
     // MARK: Derived
 
-    var cartCount: Int { cart.values.reduce(0, +) }
+    var cartCount: Int { cart.values.reduce(0) { $0 + $1.qty } }
 
-    /// Cart contents as (listing, quantity), skipping listings that no longer exist.
-    var cartLines: [CartEntry] {
-        cart.compactMap { id, qty in
-            guard let listing = listings.first(where: { $0.id == id }) else { return nil }
-            return CartEntry(listing: listing, qty: qty)
+    /// Cart contents in the order they were added, skipping listings that no longer exist.
+    private(set) var cartOrder: [String] = []
+
+    var cartLines: [CartLine] {
+        cartOrder.compactMap { key in
+            guard let item = cart[key], let listing = listings.first(where: { $0.id == item.listingId }) else { return nil }
+            return CartLine(key: key, listing: listing, options: item.options, qty: item.qty)
         }
-        .sorted { $0.listing.id < $1.listing.id }
     }
 
-    var cartTotal: Int { cartLines.reduce(0) { $0 + $1.listing.priceIqd * $1.qty } }
+    /// The cart split by shop, each with the delivery fee for `city`.
+    func cartGroups(_ city: String) -> [ShopGroup] {
+        var order: [String] = []
+        var byShop: [String: [CartLine]] = [:]
+        for line in cartLines {
+            let id = line.listing.sellerId
+            if byShop[id] == nil { order.append(id) }
+            byShop[id, default: []].append(line)
+        }
+        return order.map { id in
+            let lines = byShop[id] ?? []
+            let shop = lines.first?.listing.sellers
+            return ShopGroup(sellerId: id, shop: shop, lines: lines, fee: shop?.feeFor(city) ?? 0)
+        }
+    }
+
+    /// Everything to pay in cash: items plus every shop's delivery fee.
+    func grandTotal(_ city: String) -> Int { cartGroups(city).reduce(0) { $0 + $1.total } }
 
     func listing(_ id: String) -> Listing? { listings.first { $0.id == id } }
     func order(_ id: String) -> Order? { orders.first { $0.id == id } }
@@ -184,6 +230,7 @@ final class CustomerModel: ObservableObject {
     }
 
     func openListing(_ id: String) { withAnimation(Theme.slide) { overlay = .detail(id) } }
+    func openShop(_ sellerId: String) { withAnimation(Theme.slide) { overlay = .shop(sellerId) } }
     func openCheckout() { checkoutError = nil; withAnimation(Theme.slide) { overlay = .checkout } }
     func openOrder(_ id: String) { withAnimation(Theme.slide) { overlay = .orderDetail(id) } }
     func closeOverlay() { withAnimation(Theme.slide) { overlay = nil } }
@@ -191,21 +238,38 @@ final class CustomerModel: ObservableObject {
     /// Leaves the "order placed" page and shows the orders tab.
     func finishPlaced() { withAnimation(Theme.slide) { overlay = nil; tab = .orders } }
 
-    func changeQuantity(_ listingId: String, _ delta: Int) {
-        let next = (cart[listingId] ?? 0) + delta
-        if next <= 0 { cart.removeValue(forKey: listingId) } else { cart[listingId] = next }
+    func addToCart(_ listingId: String, options: [String: String]) {
+        let key = cartKey(listingId, options)
+        if var item = cart[key] {
+            item.qty += 1
+            cart[key] = item
+        } else {
+            cart[key] = CartItem(listingId: listingId, options: options, qty: 1)
+            cartOrder.append(key)
+        }
+    }
+
+    func changeQuantity(_ key: String, _ delta: Int) {
+        guard var item = cart[key] else { return }
+        item.qty += delta
+        if item.qty <= 0 {
+            cart.removeValue(forKey: key)
+            cartOrder.removeAll { $0 == key }
+        } else {
+            cart[key] = item
+        }
     }
 
     // MARK: Checkout
 
-    /// Creates one order per shop in the cart (cash on delivery).
+    /// Creates one order per shop in the cart (cash on delivery); each carries that shop's delivery fee.
     func placeOrders(_ form: CheckoutForm) {
-        let lines = cartLines
-        if lines.isEmpty { return }
+        let groups = cartGroups(form.city)
+        if groups.isEmpty { return }
 
         var blocked: [String] = []
-        for line in lines where !line.listing.delivers(to: form.city) {
-            if let name = line.listing.sellers?.name, !blocked.contains(name) { blocked.append(name) }
+        for group in groups where group.lines.contains(where: { !$0.listing.delivers(to: form.city) }) {
+            if let name = group.shop?.name, !blocked.contains(name) { blocked.append(name) }
         }
         if !blocked.isEmpty {
             checkoutError = .notDeliverable(blocked)
@@ -217,10 +281,9 @@ final class CustomerModel: ObservableObject {
         Task {
             var created = 0
             var failure: CheckoutError?
-            let groups = Dictionary(grouping: lines, by: { $0.listing.sellerId })
-            for (sellerId, group) in groups {
-                let items = group.map {
-                    OrderItem(listingId: $0.listing.id, name: $0.listing.name, qty: $0.qty, unitPriceIqd: $0.listing.priceIqd)
+            for group in groups {
+                let items = group.lines.map {
+                    OrderItem(listingId: $0.listing.id, name: $0.listing.name, qty: $0.qty, unitPriceIqd: $0.listing.priceIqd, options: $0.options)
                 }
                 let gift = form.isGift
                 func optional(_ text: String) -> String? {
@@ -229,12 +292,13 @@ final class CustomerModel: ObservableObject {
                 }
                 let order = NewOrder(
                     buyerId: profile.id,
-                    sellerId: sellerId,
-                    sellerName: group.first?.listing.sellers?.name ?? "",
+                    sellerId: group.sellerId,
+                    sellerName: group.shop?.name ?? "",
                     items: items,
                     city: form.city,
                     address: form.address,
-                    totalIqd: items.reduce(0) { $0 + $1.qty * $1.unitPriceIqd },
+                    totalIqd: group.total,
+                    deliveryFeeIqd: group.fee,
                     buyerName: profile.fullName,
                     buyerPhone: profile.phone,
                     isGift: gift,
@@ -246,7 +310,10 @@ final class CustomerModel: ObservableObject {
                 )
                 do {
                     try await OrdersService.create(order)
-                    for line in group { cart.removeValue(forKey: line.listing.id) }
+                    for line in group.lines {
+                        cart.removeValue(forKey: line.key)
+                        cartOrder.removeAll { $0 == line.key }
+                    }
                     created += 1
                 } catch {
                     failure = (error is URLError) ? .network : .generic

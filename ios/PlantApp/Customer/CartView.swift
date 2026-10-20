@@ -5,7 +5,7 @@ struct CartView: View {
     @EnvironmentObject var model: CustomerModel
 
     var body: some View {
-        let lines = model.cartLines
+        let groups = model.cartGroups(model.city)
         VStack(alignment: .leading, spacing: 0) {
             Text(lang.t("cart_title"))
                 .font(.system(size: 24, weight: .bold))
@@ -13,27 +13,35 @@ struct CartView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
 
-            if lines.isEmpty {
+            if groups.isEmpty {
                 MessageState(emoji: "🛒", title: lang.t("cart_empty"), detail: lang.t("cart_empty_hint"))
             } else {
-                let shops = shopNames(lines)
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 10) {
-                        ForEach(shops, id: \.self) { shop in
-                            Text(lang.t("sold_by", shop))
+                        ForEach(groups) { group in
+                            Text(lang.t("sold_by", group.shop?.name ?? ""))
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundStyle(Theme.muted)
                                 .padding(.top, 6)
-                            ForEach(lines.filter { ($0.listing.sellers?.name ?? "") == shop }) { line in
-                                CartLine(listing: line.listing, qty: line.qty)
+                            ForEach(group.lines) { line in
+                                CartLineRow(line: line)
                             }
+                            HStack {
+                                Text(lang.t("delivery_to_city", lang.cityName(model.city)))
+                                    .foregroundStyle(Theme.muted)
+                                Spacer()
+                                Text(group.fee == 0 ? lang.t("delivery_free") : lang.price(group.fee))
+                                    .fontWeight(.semibold)
+                            }
+                            .font(.system(size: 14))
+                            .padding(.horizontal, 4)
                         }
                     }
                     .padding(.horizontal, 16)
                 }
 
                 VStack(spacing: 10) {
-                    TotalRow(label: lang.t("cart_total"), value: lang.price(model.cartTotal), bold: true)
+                    TotalRow(label: lang.t("total_with_delivery"), value: lang.price(model.grandTotal(model.city)), bold: true)
                     Button(lang.t("cart_checkout")) { model.openCheckout() }
                         .buttonStyle(PrimaryButtonStyle())
                 }
@@ -43,37 +51,32 @@ struct CartView: View {
         }
         .background(AppBackground())
     }
-
-    private func shopNames(_ lines: [CartEntry]) -> [String] {
-        var seen: [String] = []
-        for line in lines {
-            let name = line.listing.sellers?.name ?? ""
-            if !seen.contains(name) { seen.append(name) }
-        }
-        return seen
-    }
 }
 
-private struct CartLine: View {
+private struct CartLineRow: View {
     @EnvironmentObject var lang: LanguageStore
     @EnvironmentObject var model: CustomerModel
-    let listing: Listing
-    let qty: Int
+    let line: CartLine
 
     var body: some View {
         HStack(spacing: 12) {
             Button {
-                model.openListing(listing.id)
+                model.openListing(line.listing.id)
             } label: {
                 HStack(spacing: 12) {
-                    PlantPicture(listing: listing, emojiSize: 28)
+                    PlantPicture(listing: line.listing, emojiSize: 28)
                         .frame(width: 56, height: 56)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(lang.localized(listing.name))
+                        Text(lang.localized(line.listing.name))
                             .font(.system(size: 16, weight: .bold))
                             .foregroundStyle(Theme.greenDark)
-                        Text(lang.price(listing.priceIqd * qty))
+                        if !line.options.isEmpty {
+                            Text(line.options.keys.sorted().compactMap { line.options[$0] }.joined(separator: " · "))
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.muted)
+                        }
+                        Text(lang.price(line.total))
                             .font(.system(size: 14))
                             .foregroundStyle(.black)
                     }
@@ -83,9 +86,9 @@ private struct CartLine: View {
             .buttonStyle(.plain)
 
             HStack(spacing: 10) {
-                StepButton(symbol: "minus") { model.changeQuantity(listing.id, -1) }
-                Text("\(qty)").font(.system(size: 16, weight: .bold))
-                StepButton(symbol: "plus") { model.changeQuantity(listing.id, 1) }
+                StepButton(symbol: "minus") { model.changeQuantity(line.key, -1) }
+                Text("\(line.qty)").font(.system(size: 16, weight: .bold))
+                StepButton(symbol: "plus") { model.changeQuantity(line.key, 1) }
             }
         }
         .padding(12)

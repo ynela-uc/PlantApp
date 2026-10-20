@@ -70,5 +70,14 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Seller: photograph a candle, a bouquet or a pot with the AI button: the AI picks the section and category and fills the name and description in three languages.
 - [ ] The new product shows up for customers under its section and category.
 
+## 11. Delivery fee, packages, discounts, shop pages (shops like Whites & Wicks)
+- [ ] Seller -> Shop tab -> Edit: set the delivery fee (for example 5000) and a different fee for one city (for example Erbil 4000). Save. The Shop tab shows the fee.
+- [ ] Seller -> add a product: fill price 27000, "price before discount" 33000, number of pieces 9, collection "Autumn 2026", and add a choice "Colour" with "Blue, Black". Save.
+- [ ] Customer -> open that product: you see the price, the old price crossed out with "18% off", "9 pieces", the Colour choices, and a box with "Delivery to <your city>" and "Total with delivery". Tap Add to cart without choosing a colour: it asks you to choose.
+- [ ] Choose Blue, add to cart, then choose Black and add again: the cart has two separate lines. The cart shows the delivery fee per shop and "Total with delivery".
+- [ ] Checkout: change the delivery city: the delivery fee and total change (Erbil should use its own fee). Place the order.
+- [ ] Order details (customer and seller): each line shows its choice (Blue), the delivery fee row, and the total. The seller's "collect in cash" amount includes delivery.
+- [ ] On the product page tap "Visit the shop": the shop page shows its name, types, delivery fee, and Collections chips; tapping "Autumn 2026" shows only those products.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

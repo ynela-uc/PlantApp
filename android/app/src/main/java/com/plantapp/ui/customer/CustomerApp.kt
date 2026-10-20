@@ -48,8 +48,24 @@ fun CustomerApp(profile: Profile, onSignOut: () -> Unit) {
                 BackHandler { vm.closeOverlay() }
                 ListingDetailScreen(
                     listing = listing,
-                    inCart = state.cart[listing.id] ?: 0,
-                    onAdd = { vm.changeQuantity(listing.id, 1) },
+                    inCart = state.cart.values.filter { it.listingId == listing.id }.sumOf { it.qty },
+                    city = state.city,
+                    onAdd = { options -> vm.addToCart(listing.id, options) },
+                    onOpenShop = vm::openShop,
+                    onBack = vm::closeOverlay,
+                )
+                return
+            }
+        }
+        is Overlay.Shop -> {
+            val shop = state.listings.firstOrNull { it.sellerId == overlay.sellerId }?.sellers
+            if (shop != null) {
+                BackHandler { vm.closeOverlay() }
+                ShopPageScreen(
+                    shop = shop,
+                    listings = state.listings.filter { it.sellerId == shop.id && it.inStock },
+                    city = state.city,
+                    onOpen = vm::openListing,
                     onBack = vm::closeOverlay,
                 )
                 return

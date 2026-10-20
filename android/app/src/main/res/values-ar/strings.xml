@@ -309,4 +309,25 @@
     <string name="shop_types_label">نوع المتجر</string>
     <string name="err_shop_types">اختر نوعًا واحدًا على الأقل.</string>
     <string name="editor_error_category">يرجى اختيار النوع والقسم.</string>
+
+    <string name="pieces_count">%1$d قطع</string>
+    <string name="discount_off">خصم %1$d%%</string>
+    <string name="field_old_price">السعر قبل الخصم (اختياري)</string>
+    <string name="field_pieces">عدد القطع (للبكجات)</string>
+    <string name="field_collection">المجموعة (مثل: خريف ٢٠٢٦)</string>
+    <string name="options_title">خيارات للزبون</string>
+    <string name="option_name_hint">اسم الخيار (مثل: اللون)</string>
+    <string name="option_values_hint">الخيارات، مفصولة بفواصل</string>
+    <string name="option_add">إضافة خيار</string>
+    <string name="err_choose_options">يرجى اختيار كل الخيارات أولًا.</string>
+    <string name="delivery_fee_label">التوصيل</string>
+    <string name="delivery_to_city">التوصيل إلى %1$s</string>
+    <string name="delivery_free">مجاني</string>
+    <string name="items_label">المنتجات</string>
+    <string name="total_with_delivery">المجموع مع التوصيل</string>
+    <string name="shop_fee_title">سعر التوصيل (د.ع)</string>
+    <string name="shop_fee_cities">سعر توصيل مختلف لبعض المدن (اتركه فارغًا لاستخدام السعر العادي)</string>
+    <string name="shop_collections">المجموعات</string>
+    <string name="shop_visit">زيارة المتجر</string>
+    <string name="shop_products">المنتجات</string>
 </resources>

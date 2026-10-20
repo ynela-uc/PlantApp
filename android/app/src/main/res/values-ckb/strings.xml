@@ -310,4 +310,25 @@
     <string name="shop_types_label">جۆری فرۆشگا</string>
     <string name="err_shop_types">لانیکەم یەکێک هەڵبژێرە.</string>
     <string name="editor_error_category">تکایە بەش و پۆل هەڵبژێرە.</string>
+
+    <string name="pieces_count">%1$d پارچە</string>
+    <string name="discount_off">%1$d%% داشکاندن</string>
+    <string name="field_old_price">نرخی پێش داشکاندن (ئارەزوومەندانە)</string>
+    <string name="field_pieces">ژمارەی پارچەکان (بۆ پاکێج)</string>
+    <string name="field_collection">کۆمەڵە (بۆ نموونە: پایزی ٢٠٢٦)</string>
+    <string name="options_title">هەڵبژاردەکان بۆ کڕیار</string>
+    <string name="option_name_hint">ناوی هەڵبژاردە (وەک ڕەنگ)</string>
+    <string name="option_values_hint">هەڵبژاردەکان، بە کۆما جیا بکرێنەوە</string>
+    <string name="option_add">زیادکردنی هەڵبژاردە</string>
+    <string name="err_choose_options">تکایە هەموو هەڵبژاردەکان هەڵبژێرە.</string>
+    <string name="delivery_fee_label">گەیاندن</string>
+    <string name="delivery_to_city">گەیاندن بۆ %1$s</string>
+    <string name="delivery_free">بێ بەرامبەر</string>
+    <string name="items_label">بەرهەمەکان</string>
+    <string name="total_with_delivery">کۆی گشتی لەگەڵ گەیاندن</string>
+    <string name="shop_fee_title">نرخی گەیاندن (دینار)</string>
+    <string name="shop_fee_cities">نرخی جیاواز بۆ هەندێ شار (بەتاڵی بهێڵەرەوە بۆ نرخی ئاسایی)</string>
+    <string name="shop_collections">کۆمەڵەکان</string>
+    <string name="shop_visit">سەردانی فرۆشگا</string>
+    <string name="shop_products">بەرهەمەکان</string>
 </resources>

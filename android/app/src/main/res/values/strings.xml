@@ -309,4 +309,25 @@
     <string name="shop_types_label">Shop type</string>
     <string name="err_shop_types">Choose at least one.</string>
     <string name="editor_error_category">Please choose a section and a category.</string>
+
+    <string name="pieces_count">%1$d pieces</string>
+    <string name="discount_off">%1$d%% off</string>
+    <string name="field_old_price">Price before discount (optional)</string>
+    <string name="field_pieces">Number of pieces (for packages)</string>
+    <string name="field_collection">Collection (e.g. Autumn 2026)</string>
+    <string name="options_title">Choices for the customer</string>
+    <string name="option_name_hint">Option name (e.g. Colour)</string>
+    <string name="option_values_hint">Choices, separated by commas</string>
+    <string name="option_add">Add a choice</string>
+    <string name="err_choose_options">Please choose every option first.</string>
+    <string name="delivery_fee_label">Delivery</string>
+    <string name="delivery_to_city">Delivery to %1$s</string>
+    <string name="delivery_free">Free</string>
+    <string name="items_label">Items</string>
+    <string name="total_with_delivery">Total with delivery</string>
+    <string name="shop_fee_title">Delivery fee (IQD)</string>
+    <string name="shop_fee_cities">Different fee for some cities (leave empty to use the normal fee)</string>
+    <string name="shop_collections">Collections</string>
+    <string name="shop_visit">Visit the shop</string>
+    <string name="shop_products">Products</string>
 </resources>

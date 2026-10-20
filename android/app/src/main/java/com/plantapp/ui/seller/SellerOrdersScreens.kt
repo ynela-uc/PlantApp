@@ -151,7 +151,7 @@ private fun SellerOrderCard(order: Order, lang: String, onClick: () -> Unit) {
             }
             Spacer(Modifier.height(4.dp))
             Text(
-                text = order.items.joinToString(", ") { "${it.name.localized(lang)} × ${it.qty}" },
+                text = order.items.joinToString(", ") { com.plantapp.ui.customer.itemLabel(it, lang) },
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextMuted,
             )
@@ -213,8 +213,14 @@ fun SellerOrderDetailScreen(
             Heading(R.string.order_items)
             order.items.forEach {
                 Row(Modifier.fillMaxWidth().padding(vertical = 3.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("${it.name.localized(lang)} × ${it.qty}", modifier = Modifier.weight(1f))
+                    Text(com.plantapp.ui.customer.itemLabel(it, lang), modifier = Modifier.weight(1f))
                     if (it.unitPriceIqd > 0) Text(priceText(it.unitPriceIqd * it.qty))
+                }
+            }
+            if (order.deliveryFeeIqd > 0) {
+                Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(stringResource(R.string.delivery_fee_label), color = TextMuted)
+                    Text(priceText(order.deliveryFeeIqd))
                 }
             }
             if (order.totalIqd > 0) {

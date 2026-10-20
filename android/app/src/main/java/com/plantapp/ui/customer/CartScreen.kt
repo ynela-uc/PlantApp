@@ -31,9 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.plantapp.R
-import com.plantapp.data.Listing
 import com.plantapp.data.localized
-import com.plantapp.data.plantEmoji
+import com.plantapp.ui.cityLabel
 import com.plantapp.ui.theme.CardBorder
 import com.plantapp.ui.theme.PlantGreen
 import com.plantapp.ui.theme.PlantGreenDark
@@ -42,13 +41,13 @@ import com.plantapp.ui.theme.TextMuted
 @Composable
 fun CartScreen(
     state: CustomerState,
-    onChangeQuantity: (listingId: String, delta: Int) -> Unit,
+    onChangeQuantity: (key: String, delta: Int) -> Unit,
     onOpen: (String) -> Unit,
     onCheckout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lang = rememberLang()
-    val lines = state.cartLines
+    val groups = state.cartGroups(state.city)
 
     Column(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Spacer(Modifier.height(12.dp))
@@ -60,7 +59,7 @@ fun CartScreen(
         )
         Spacer(Modifier.height(12.dp))
 
-        if (lines.isEmpty()) {
+        if (groups.isEmpty()) {
             Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("🛒", fontSize = 56.sp)
@@ -76,37 +75,48 @@ fun CartScreen(
             return@Column
         }
 
-        val bySeller = lines.groupBy { it.first.sellers?.name.orEmpty() }
         LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            bySeller.forEach { (shopName, shopLines) ->
-                item(key = "shop-$shopName") {
+            groups.forEach { group ->
+                item(key = "shop-${group.sellerId}") {
                     Text(
-                        text = stringResource(R.string.sold_by, shopName),
+                        text = stringResource(R.string.sold_by, group.shop?.name.orEmpty()),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = TextMuted,
                         modifier = Modifier.padding(top = 6.dp),
                     )
                 }
-                items(shopLines.size, key = { shopLines[it].first.id }) { index ->
-                    val (listing, qty) = shopLines[index]
-                    CartLine(listing, qty, lang, onChangeQuantity) { onOpen(listing.id) }
+                items(group.lines.size, key = { group.lines[it].key }) { index ->
+                    val line = group.lines[index]
+                    CartLineRow(line, lang, onChangeQuantity) { onOpen(line.listing.id) }
+                }
+                item(key = "fee-${group.sellerId}") {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(stringResource(R.string.delivery_to_city, cityLabel(state.city)), color = TextMuted, style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            if (group.fee == 0) stringResource(R.string.delivery_free) else priceText(group.fee),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                 }
             }
         }
 
-        val total = lines.sumOf { (listing, qty) -> listing.priceIqd * qty }
         Surface(color = Color.White, shadowElevation = 6.dp, shape = RoundedCornerShape(16.dp)) {
             Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(stringResource(R.string.cart_total), fontWeight = FontWeight.Bold)
-                    Text(priceText(total), fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.total_with_delivery), fontWeight = FontWeight.Bold)
+                    Text(priceText(state.grandTotal(state.city)), fontWeight = FontWeight.Bold)
                 }
                 Spacer(Modifier.height(10.dp))
                 Button(
@@ -123,13 +133,13 @@ fun CartScreen(
 }
 
 @Composable
-private fun CartLine(
-    listing: Listing,
-    qty: Int,
+private fun CartLineRow(
+    line: CartLine,
     lang: String,
     onChangeQuantity: (String, Int) -> Unit,
     onOpen: () -> Unit,
 ) {
+    val listing = line.listing
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = Color.White,
@@ -144,9 +154,16 @@ private fun CartLine(
             PlantPicture(listing, Modifier.size(56.dp).clip(RoundedCornerShape(12.dp)), 28.sp)
             Column(modifier = Modifier.weight(1f)) {
                 Text(listing.name.localized(lang), fontWeight = FontWeight.Bold, color = PlantGreenDark)
-                Text(priceText(listing.priceIqd * qty), style = MaterialTheme.typography.bodyMedium)
+                if (line.options.isNotEmpty()) {
+                    Text(
+                        text = line.options.values.joinToString(" · "),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextMuted,
+                    )
+                }
+                Text(priceText(line.total), style = MaterialTheme.typography.bodyMedium)
             }
-            Stepper(qty) { delta -> onChangeQuantity(listing.id, delta) }
+            Stepper(line.qty) { delta -> onChangeQuantity(line.key, delta) }
         }
     }
 }
