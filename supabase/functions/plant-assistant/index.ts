@@ -28,9 +28,9 @@ const MODEL = Deno.env.get("AI_MODEL") ?? "claude-haiku-5-5";
 
 // Keys of the marketplace catalog (see docs/categories.md).
 const CATEGORIES = {
-  flowers: ["bouquets", "roses", "flower_boxes", "baskets", "weddings_events", "condolence", "dried_preserved", "artificial_flowers"],
-  plants: ["indoor", "outdoor", "succulents_cacti", "flowering", "trees_palms", "herbs", "bonsai_orchids", "soil", "fertilizer", "pots", "tools", "pest_care", "seeds_bulbs"],
-  gifts: ["gift_sets", "chocolate_sweets", "cakes", "personalised", "home_decor", "candles_fragrance", "cards_wrapping", "plush_toys", "accessories_jewelry", "balloons_party"],
+  flowers: ["bouquets", "roses", "flower_boxes", "baskets", "weddings_events", "wreaths", "dried_preserved", "artificial_flowers"],
+  plants: ["indoor", "outdoor", "succulents_cacti", "flowering", "trees_palms", "herbs", "bonsai", "soil", "fertilizer", "pots", "tools", "seeds_bulbs"],
+  gifts: ["gift_sets", "chocolate_sweets", "personalised", "home_decor", "candles_fragrance", "cards_wrapping", "plush_toys", "accessories_jewelry", "balloons_party"],
 };
 const ALL_CATEGORIES = [...CATEGORIES.flowers, ...CATEGORIES.plants, ...CATEGORIES.gifts];
 const OCCASIONS = [

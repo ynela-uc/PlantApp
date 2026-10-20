@@ -12,11 +12,16 @@ Adding a category = add the key here, the three string files, `Catalog.kt`, `Cat
 
 | Section (`section`) | Categories (`category`) |
 |---|---|
-| `flowers` 🌸 | `bouquets`, `roses`, `flower_boxes`, `baskets`, `weddings_events`, `condolence`, `dried_preserved`, `artificial_flowers` |
-| `plants` 🪴 | `indoor`, `outdoor`, `succulents_cacti`, `flowering`, `trees_palms`, `herbs`, `bonsai_orchids`, and plant supplies: `soil`, `fertilizer`, `pots`, `tools`, `pest_care`, `seeds_bulbs` |
-| `gifts` 🎁 | `gift_sets`, `chocolate_sweets`, `cakes`, `personalised`, `home_decor`, `candles_fragrance`, `cards_wrapping`, `plush_toys`, `accessories_jewelry`, `balloons_party` |
+| `flowers` 🌸 | `bouquets`, `roses`, `flower_boxes`, `baskets`, `weddings_events` (bridal bouquets, wedding decor), `wreaths` (wreaths and stands for sympathy or openings), `dried_preserved`, `artificial_flowers` |
+| `plants` 🪴 | `indoor`, `outdoor`, `succulents_cacti`, `flowering`, `trees_palms`, `herbs`, `bonsai` (orchids go under `flowering`), and plant supplies: `soil`, `fertilizer` (includes pest control), `pots`, `tools`, `seeds_bulbs` |
+| `gifts` 🎁 | `gift_sets`, `chocolate_sweets`, `personalised`, `home_decor`, `candles_fragrance`, `cards_wrapping`, `plush_toys`, `accessories_jewelry`, `balloons_party` |
 
 Occasions (`occasions`, any number per product): `birthday`, `anniversary`, `love`, `new_baby`, `get_well`,
 `congratulations`, `new_home`, `graduation`, `wedding`, `condolence`, `mothers_day`, `eid`, `thank_you`.
 
 Plant-only product fields (`plant_key`, `scientific_name`, `care`, `height_cm`) stay empty for other sections.
+
+Rules for the list: a category is a *kind of product*, an occasion is a *reason to buy*, so nothing is both (sympathy is an
+occasion; wreaths are a category). Categories do not overlap, so a seller always knows where a product goes. Fresh food
+(cakes, bakery) is deliberately not sold: it needs same-day baking, food licences and cold delivery, which the app does not handle.
+Names follow how Iraqi shops write them (checked against hazalgifts.com and tookiegifts.com).
