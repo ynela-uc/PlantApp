@@ -1,8 +1,11 @@
 package com.plantapp
 
+import android.app.Activity
+import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.os.Bundle
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.plantapp.data.Backend
@@ -31,8 +34,23 @@ object Push {
 
     private lateinit var app: Context
 
+    /** True while one of our screens is visible: the seller's in-app banner covers new orders then. */
+    @Volatile
+    var inForeground = false
+        private set
+
     fun init(context: Context) {
         app = context.applicationContext
+        (app as Application).registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            private var started = 0
+            override fun onActivityStarted(activity: Activity) { started++; inForeground = true }
+            override fun onActivityStopped(activity: Activity) { started--; inForeground = started > 0 }
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+            override fun onActivityResumed(activity: Activity) = Unit
+            override fun onActivityPaused(activity: Activity) = Unit
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+            override fun onActivityDestroyed(activity: Activity) = Unit
+        })
     }
 
     fun createChannels(context: Context) {

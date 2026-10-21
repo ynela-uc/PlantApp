@@ -119,6 +119,8 @@ data class SellerState(
     val busyOrderId: String? = null,
     val actionFailed: Boolean = false,
     val savingShop: Boolean = false,
+    /** New orders that arrived while the app was open and are shown in the banner. */
+    val alertOrders: List<Order> = emptyList(),
 ) {
     val newOrderCount: Int get() = orders.count { it.statusEnum == OrderStatus.Placed }
     fun order(id: String): Order? = orders.firstOrNull { it.id == id }
@@ -128,6 +130,8 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
     private val repo = SellerRepository()
     private val ai = AiRepository()
     private val _state = MutableStateFlow(SellerState())
+    /** Ids of orders that were waiting when we last looked; null until the first load (so old orders do not ring). */
+    private var knownPlaced: Set<String>? = null
     val state: StateFlow<SellerState> = _state.asStateFlow()
 
     init {
@@ -145,6 +149,7 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
                 }
                 val listings = repo.fetchListings(shop.id)
                 val orders = repo.fetchOrders(shop.id)
+                knownPlaced = orders.filter { it.statusEnum == OrderStatus.Placed }.map { it.id }.toSet()
                 _state.update { it.copy(loading = false, shop = shop, listings = listings, orders = orders) }
             } catch (_: Exception) {
                 _state.update { it.copy(loading = false, failed = true) }
@@ -156,8 +161,7 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
         val shop = _state.value.shop ?: return
         viewModelScope.launch {
             try {
-                val orders = repo.fetchOrders(shop.id)
-                _state.update { it.copy(orders = orders) }
+                applyOrders(repo.fetchOrders(shop.id))
             } catch (_: Exception) { }
         }
     }
@@ -211,8 +215,25 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
 
     private suspend fun reloadOrdersNow() {
         val shop = _state.value.shop ?: return
-        val orders = repo.fetchOrders(shop.id)
-        _state.update { it.copy(orders = orders) }
+        applyOrders(repo.fetchOrders(shop.id))
+    }
+
+    /** Stores the orders and, when some are new since the last look, raises the in-app alert. */
+    private fun applyOrders(orders: List<Order>) {
+        val placed = orders.filter { it.statusEnum == OrderStatus.Placed }.map { it.id }.toSet()
+        val known = knownPlaced
+        val fresh = if (known == null) emptyList() else orders.filter { it.id in placed && it.id !in known }
+        knownPlaced = placed
+        _state.update { it.copy(orders = orders, alertOrders = if (fresh.isNotEmpty()) fresh else it.alertOrders) }
+    }
+
+    fun dismissAlert() = _state.update { it.copy(alertOrders = emptyList()) }
+
+    /** Tap on the banner: one new order opens it, several open the orders list. */
+    fun openAlert() = _state.update { s ->
+        val only = s.alertOrders.singleOrNull()
+        if (only != null) s.copy(alertOrders = emptyList(), tab = SellerTab.Orders, overlay = SellerOverlay.OrderDetail(only.id), actionFailed = false)
+        else s.copy(alertOrders = emptyList(), tab = SellerTab.Orders, overlay = null)
     }
 
     // ------------------------------------------------------------------ plants

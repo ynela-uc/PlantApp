@@ -1,4 +1,6 @@
+import AudioToolbox
 import SwiftUI
+import UIKit
 
 enum SellerTab: Hashable { case orders, plants, shop }
 
@@ -83,6 +85,10 @@ final class SellerModel: ObservableObject {
     @Published var busyOrderId: String?
     @Published var actionFailed = false
     @Published var savingShop = false
+    /// New orders that arrived while the app was open; shown in a banner.
+    @Published var alertOrders: [Order] = []
+    /// Ids of orders waiting when we last looked; nil until the first load (so old orders do not ring).
+    private var knownPlaced: Set<String>?
 
     init(profile: Profile) {
         self.profile = profile
@@ -109,6 +115,7 @@ final class SellerModel: ObservableObject {
                 self.shop = shop
                 self.listings = listings
                 self.orders = orders
+                knownPlaced = Set(orders.filter { $0.statusEnum == .placed }.map { $0.id })
                 loading = false
             } catch {
                 loading = false
@@ -123,7 +130,35 @@ final class SellerModel: ObservableObject {
 
     private func reloadOrders() async {
         guard let shop else { return }
-        if let fresh = try? await SellerService.fetchOrders(shopId: shop.id) { orders = fresh }
+        if let fresh = try? await SellerService.fetchOrders(shopId: shop.id) { apply(fresh) }
+    }
+
+    /// Stores the orders and, when some are new since the last look, raises the in-app alert (banner, sound, vibration).
+    private func apply(_ fresh: [Order]) {
+        let placed = Set(fresh.filter { $0.statusEnum == .placed }.map { $0.id })
+        let newOnes = knownPlaced.map { known in fresh.filter { placed.contains($0.id) && !known.contains($0.id) } } ?? []
+        knownPlaced = placed
+        orders = fresh
+        if !newOnes.isEmpty {
+            withAnimation(Theme.slide) { alertOrders = newOnes }
+            AudioServicesPlaySystemSound(1007)
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        }
+    }
+
+    func dismissAlert() { withAnimation(Theme.slide) { alertOrders = [] } }
+
+    /// Tap on the banner: one new order opens it, several open the orders list.
+    func openAlert() {
+        let only = alertOrders.count == 1 ? alertOrders.first : nil
+        alertOrders = []
+        tab = .orders
+        if let only {
+            actionFailed = false
+            withAnimation(Theme.slide) { overlay = .orderDetail(only.id) }
+        } else {
+            withAnimation(Theme.slide) { overlay = nil }
+        }
     }
 
     private func reloadListings() async {

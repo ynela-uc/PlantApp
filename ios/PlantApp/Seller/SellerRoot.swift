@@ -4,6 +4,7 @@ import SwiftUI
 struct SellerRoot: View {
     @EnvironmentObject var lang: LanguageStore
     @EnvironmentObject var app: AppModel
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var model: SellerModel
     let profile: Profile
 
@@ -65,6 +66,22 @@ struct SellerRoot: View {
                     .transition(.move(edge: .trailing).combined(with: .opacity))
                     .zIndex(1)
             }
+
+            if !model.alertOrders.isEmpty {
+                NewOrderBanner()
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .zIndex(2)
+            }
+        }
+        // While the app is on screen, look for new orders every 30 seconds (pushes cover the app being closed).
+        .task {
+            while !Task.isCancelled {
+                model.refreshOrders()
+                try? await Task.sleep(nanoseconds: 30_000_000_000)
+            }
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase == .active { model.refreshOrders() }
         }
     }
 
@@ -77,6 +94,46 @@ struct SellerRoot: View {
             }
         case .shopEditor:
             ShopEditorView(shop: shop)
+        }
+    }
+}
+
+/// A banner on top of every seller screen when a new order arrives while the app is open.
+/// Tap to open it; it fades after 12 seconds.
+struct NewOrderBanner: View {
+    @EnvironmentObject var lang: LanguageStore
+    @EnvironmentObject var model: SellerModel
+
+    var body: some View {
+        let orders = model.alertOrders
+        let name = orders.first.map { $0.buyerName.isEmpty ? "#" + $0.shortId : $0.buyerName } ?? ""
+        VStack {
+            Button {
+                model.openAlert()
+            } label: {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("🛍  " + (orders.count > 1 ? lang.t("banner_new_orders", orders.count) : lang.t("banner_new_order", name)))
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(Theme.greenDark)
+                    Text(lang.t("banner_tap_to_open"))
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.amber)
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Theme.amberSoft)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.amber, lineWidth: 2))
+                .shadow(color: .black.opacity(0.15), radius: 8, y: 3)
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
+            Spacer()
+        }
+        .task(id: orders.map { $0.id }.joined()) {
+            try? await Task.sleep(nanoseconds: 12_000_000_000)
+            if !Task.isCancelled { model.dismissAlert() }
         }
     }
 }

@@ -94,5 +94,12 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Product set to "Always": checkout says the shop will send a photo (no checkbox). The customer sees "If you do not answer within 60 minutes, the shop will continue" under the photo.
 - [ ] After a photo is sent, the seller sees "Waiting for the customer"; after 60 minutes the text changes and a "Continue (no answer after 60 minutes)" button appears.
 
+## 14. New-order alerts
+- [ ] Seller phone: sign in, allow notifications, leave the app (Home button). A customer places an order: the phone shows a "طلب جديد" notification with a sound. Tapping it opens the app.
+- [ ] Seller phone with the app OPEN (any screen, even the product editor): a customer places an order. Within 30 seconds an amber banner appears at the top ("New order from ..."), with a sound and vibration. Tapping it opens that order. It disappears by itself after about 12 seconds.
+- [ ] The same new order does not ring twice (no system notification while the app is open).
+- [ ] Leave a new order unopened for 10 minutes: one reminder notification arrives ("An order is waiting").
+- [ ] Customer phone: when the shop sends the photo, a "Your order photo is ready" notification arrives; when the order goes out for delivery, "Your order is on its way".
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

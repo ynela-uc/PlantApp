@@ -19,6 +19,12 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +51,30 @@ fun SellerApp(profile: Profile, onSignOut: () -> Unit) {
         factory = viewModelFactory { initializer { SellerViewModel(profile) } }
     )
     val state by vm.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    // While the app is on screen, look for new orders every 30 seconds (pushes cover the app being closed).
+    LaunchedEffect(lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (true) {
+                vm.refreshOrders()
+                delay(30_000)
+            }
+        }
+    }
+    LaunchedEffect(state.alertOrders.joinToString { it.id }) {
+        if (state.alertOrders.isNotEmpty()) playNewOrderAlert(context)
+    }
+
+    Box(Modifier.fillMaxSize()) {
+        SellerScreens(vm, state, profile, onSignOut)
+        NewOrderBanner(state.alertOrders, onOpen = vm::openAlert, onDismiss = vm::dismissAlert, modifier = Modifier.align(Alignment.TopCenter))
+    }
+}
+
+@Composable
+private fun SellerScreens(vm: SellerViewModel, state: SellerState, profile: Profile, onSignOut: () -> Unit) {
 
     if (state.loading) {
         Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = SellerAmber) }
