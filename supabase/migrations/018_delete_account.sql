@@ -23,6 +23,26 @@ begin
   alter table orders add constraint orders_buyer_id_fkey foreign key (buyer_id) references auth.users(id) on delete set null;
 end $$;
 
+-- The approval guard (migration 016) stops apps from changing `approved`. Deleting an account must be able to hide the shop,
+-- so the guard lets the change through while delete_my_account() sets a transaction-local flag (clients cannot set it).
+create or replace function public.sellers_guard_approval() returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  if coalesce(auth.role(), 'service_role') = 'authenticated'
+     and coalesce(current_setting('app.deleting_account', true), '') <> 'on' then
+    if tg_op = 'INSERT' then
+      new.approved := false;
+      new.approved_at := null;
+    else
+      new.approved := old.approved;
+      new.approved_at := old.approved_at;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
 create or replace function public.delete_my_account() returns void
 language plpgsql security definer set search_path = public
 as $$
@@ -57,6 +77,7 @@ begin
   where buyer_id = uid;
 
   -- a shop is emptied and hidden
+  perform set_config('app.deleting_account', 'on', true);
   delete from listings where seller_id = any(my_shops);
   update sellers set owner_id = null, approved = false, name = 'Deleted shop', phone = '', bio = '', delivers_to = null
   where id = any(my_shops);
