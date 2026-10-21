@@ -1,19 +1,23 @@
 package com.plantapp.ui
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -52,28 +56,42 @@ data class AddressDraft(
     }
 }
 
-/** Governorate chips and the address fields, one below the other. */
-@OptIn(ExperimentalLayoutApi::class)
+/** The governorate drop-down and the address fields, one below the other. */
 @Composable
 fun AddressFields(draft: AddressDraft, onChange: (AddressDraft) -> Unit, accent: Color = PlantGreen) {
     Column {
-        Text(
-            text = stringResource(R.string.field_city),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
-        )
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CityCodes.forEach { code ->
-                PickChip(cityLabel(code), draft.city == code, accent = accent) { onChange(draft.copy(city = code)) }
-            }
-        }
-        Spacer(Modifier.height(12.dp))
+        GovernorateDropdown(draft.city) { onChange(draft.copy(city = it)) }
+        Spacer(Modifier.height(2.dp))
         AddressInput(draft.district, R.string.field_district) { onChange(draft.copy(district = it.take(100))) }
         AddressInput(draft.neighborhood, R.string.field_neighborhood) { onChange(draft.copy(neighborhood = it.take(100))) }
         AddressInput(draft.street, R.string.field_address) { onChange(draft.copy(street = it.take(300))) }
         AddressInput(draft.landmark, R.string.field_landmark) { onChange(draft.copy(landmark = it.take(200))) }
         AddressInput(draft.notes, R.string.field_address_notes, singleLine = false) { onChange(draft.copy(notes = it.take(300))) }
+    }
+}
+
+/** The governorate as a drop-down list, sorted by name in the app language. */
+@Composable
+private fun GovernorateDropdown(selected: String, onSelect: (String) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    val options = CityCodes.map { it to cityLabel(it) }.sortedBy { it.second }
+    Box(modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)) {
+        OutlinedTextField(
+            value = if (selected.isBlank()) "" else cityLabel(selected),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.field_city)) },
+            trailingIcon = { Text("▾") },
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        // A readOnly field does not react to taps by itself: an invisible layer on top opens the list.
+        Box(Modifier.matchParentSize().clickable { open = true })
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            options.forEach { (code, label) ->
+                DropdownMenuItem(text = { Text(label) }, onClick = { onSelect(code); open = false })
+            }
+        }
     }
 }
 

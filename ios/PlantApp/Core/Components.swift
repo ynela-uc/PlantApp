@@ -369,12 +369,26 @@ struct AddressFields: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(lang.t("field_city"))
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Theme.muted)
-            FlowLayout(spacing: 8) {
-                ForEach(Cities.codes, id: \.self) { code in
-                    Pill(label: lang.cityName(code), selected: draft.city == code, accent: accent) { draft.city = code }
+            // The governorate as a drop-down list, sorted by name in the app language.
+            VStack(alignment: .leading, spacing: 6) {
+                Text(lang.t("field_city"))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Theme.muted)
+                Menu {
+                    ForEach(Cities.codes.sorted { lang.cityName($0).localizedCompare(lang.cityName($1)) == .orderedAscending }, id: \.self) { code in
+                        Button(lang.cityName(code)) { draft.city = code }
+                    }
+                } label: {
+                    HStack {
+                        Text(draft.city.isEmpty ? " " : lang.cityName(draft.city))
+                            .foregroundStyle(Color.primary)
+                        Spacer()
+                        Image(systemName: "chevron.down").foregroundStyle(Theme.muted)
+                    }
+                    .padding(12)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.border, lineWidth: 1))
                 }
             }
             AppField(title: lang.t("field_district"), text: $draft.district)

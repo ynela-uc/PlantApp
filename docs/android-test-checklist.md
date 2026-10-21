@@ -161,7 +161,8 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] A normal customer or shop account never sees any of this.
 
 ## 23. Structured addresses
-- [ ] Create a new customer account: after the governorate chips there are City / district, Neighborhood, Street / building, Nearest landmark and Delivery notes (optional). Governorate, district, neighborhood and a street or a landmark are required.
+- [ ] The governorate is a drop-down list (tap the field, pick one; the list is sorted by name in the app language) in sign-up, profile, checkout and the shop address.
+- [ ] Create a new customer account: after the governorate drop-down there are City / district, Neighborhood, Street / building, Nearest landmark and Delivery notes (optional). Governorate, district, neighborhood and a street or a landmark are required.
 - [ ] Create a new shop account: the same address fields are asked (this is the shop address).
 - [ ] My account (customer): the profile shows every filled field; Edit saves them. An old account must fill district and neighborhood before it can save.
 - [ ] Checkout: the delivery address fields are filled from the profile and can be changed for this order (also for a gift). The order saves them.
