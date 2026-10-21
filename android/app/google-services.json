@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1038172592778",
+    "project_id": "plantapp-9f7f6",
+    "storage_bucket": "plantapp-9f7f6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038172592778:android:c9703f0e30f9d83a13ab73",
+        "android_client_info": {
+          "package_name": "com.plantapp.iraq"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZCYsWmPxp3YP1mnhFqAGd2BCBRWhlxUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
