@@ -43,8 +43,6 @@ struct ShopTab: View {
                         .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
                         .padding(.top, 16)
 
-                    AdminEntry(accent: Theme.amber)
-
                     LanguageSelector().padding(.top, 28)
 
                     Button(lang.t("action_signout")) { app.signOut() }

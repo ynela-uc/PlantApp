@@ -9,6 +9,8 @@ enum Screen: Equatable {
     /// Shown after the user opens the reset link from the email.
     case setNewPassword
     case home(Profile)
+    /// The admin account: it gets the admin home instead of the customer or shop home.
+    case admin(Profile)
 }
 
 enum AuthError {
@@ -48,7 +50,7 @@ final class AppModel: ObservableObject {
     private func restoreSession() async {
         if await AuthService.hasSession(), !recoveryPending {
             if let profile = try? await AuthService.profile() {
-                screen = .home(profile)
+                screen = await homeScreen(profile)
                 return
             }
         }
@@ -146,7 +148,13 @@ final class AppModel: ObservableObject {
     /// After any successful sign-in: load the profile and open the home that matches the chosen role.
     private func finishSignIn(_ role: Role) async throws {
         guard let profile = try await AuthService.profile() else { throw AppError.failed }
-        if profile.roleEnum != role {
+        // The admin account is neither a customer nor a shop: it goes to the admin home from either sign-in page.
+        let home = await homeScreen(profile)
+        if case .admin = home {
+            busy = false
+            error = nil
+            screen = home
+        } else if profile.roleEnum != role {
             try? await AuthService.signOut()
             busy = false
             error = profile.roleEnum == .customer ? .wrongRoleIsCustomer : .wrongRoleIsSeller
@@ -154,8 +162,13 @@ final class AppModel: ObservableObject {
         } else {
             busy = false
             error = nil
-            screen = .home(profile)
+            screen = home
         }
+    }
+
+    private func homeScreen(_ profile: Profile) async -> Screen {
+        let admin = (try? await AdminService.isAdmin()) ?? false
+        return admin ? .admin(profile) : .home(profile)
     }
 
     func sendResetLink(email: String) {
@@ -183,7 +196,7 @@ final class AppModel: ObservableObject {
                 guard let profile = try await AuthService.profile() else { throw AppError.failed }
                 recoveryPending = false
                 busy = false
-                screen = .home(profile)
+                screen = await homeScreen(profile)
             } catch {
                 busy = false
                 self.error = classify(error)

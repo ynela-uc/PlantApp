@@ -25,6 +25,9 @@ data class PendingShop(
     @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 0,
     @SerialName("delivery_fees") val deliveryFees: Map<String, Int> = emptyMap(),
     @SerialName("product_count") val productCount: Int = 0,
+    val approved: Boolean = false,
+    val rating: Double = 0.0,
+    @SerialName("rating_count") val ratingCount: Int = 0,
 )
 
 /** The three things the admin can do with a shop. */
@@ -36,11 +39,36 @@ object AdminRepository {
         Backend.client.postgrest.rpc("is_admin").decodeAs<Boolean>()
 
     suspend fun shops(): List<PendingShop> =
-        Backend.client.postgrest.rpc("admin_pending_shops").decodeList<PendingShop>()
+        Backend.client.postgrest.rpc("admin_shops").decodeList<PendingShop>()
 
     /** All products of a shop, including shops that are not approved yet. */
     suspend fun listings(shopId: String): List<Listing> =
         Backend.client.postgrest.rpc("admin_shop_listings", buildJsonObject { put("p_shop_id", shopId) }).decodeList<Listing>()
+
+    /** The reviews of a shop (customers only see them for approved shops). */
+    suspend fun ratings(shopId: String): List<Rating> =
+        Backend.client.postgrest.rpc("admin_shop_ratings", buildJsonObject { put("p_shop_id", shopId) }).decodeList<Rating>()
+
+    /** Removes a product that breaks the rules; the shop owner is told. */
+    suspend fun deleteListing(listingId: String, reason: String) {
+        Backend.client.postgrest.rpc(
+            "admin_delete_listing",
+            buildJsonObject {
+                put("p_listing_id", listingId)
+                put("p_reason", reason)
+            },
+        )
+    }
+
+    suspend fun deleteRating(ratingId: String, reason: String) {
+        Backend.client.postgrest.rpc(
+            "admin_delete_rating",
+            buildJsonObject {
+                put("p_rating_id", ratingId)
+                put("p_reason", reason)
+            },
+        )
+    }
 
     suspend fun review(shopId: String, decision: ShopDecision, note: String?) {
         Backend.client.postgrest.rpc(

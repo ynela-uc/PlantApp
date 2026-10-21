@@ -76,6 +76,11 @@ const TEXTS: Record<string, Record<Lang, Text>> = {
     ckb: { title: "داواکارییەکەت گەیشت", body: "داواکارییەکەت لە {shop} چۆن بوو؟ ئێستا هەڵیبسەنگێنە" },
     en: { title: "Your order was delivered", body: "How was your order from {shop}? Rate it now" },
   },
+  product_removed: {
+    ar: { title: "تمت إزالة منتج من متجرك", body: "أزال فريق التطبيق منتجًا من {shop} لمخالفته القواعد" },
+    ckb: { title: "بەرهەمێک لە فرۆشگاکەت لابرا", body: "تیمی ئەپەکە بەرهەمێکی لە {shop} لابرد چونکە ڕێساکانی پێشێل کردبوو" },
+    en: { title: "A product was removed from your shop", body: "The app team removed a product from {shop} because it did not follow the rules" },
+  },
   new_shop: {
     ar: { title: "متجر جديد ينتظر الموافقة", body: "{shop}" },
     ckb: { title: "فرۆشگایەکی نوێ چاوەڕێی پەسەندکردنە", body: "{shop}" },
@@ -98,7 +103,7 @@ const TEXTS: Record<string, Record<Lang, Text>> = {
   },
 };
 
-const SHOP_EVENTS = new Set(["new_shop", "shop_approved", "shop_changes_requested", "shop_rejected"]);
+const SHOP_EVENTS = new Set(["new_shop", "shop_approved", "shop_changes_requested", "shop_rejected", "product_removed"]);
 const FOR_SHOP = new Set(["new_order", "order_reminder", "photo_approved", "photo_change", "customer_cancelled"]);
 
 const NOTIFY_SECRET = Deno.env.get("NOTIFY_SECRET");

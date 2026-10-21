@@ -100,6 +100,17 @@
     <string name="approvals_changes_hint">فرۆشگا چی زیاد بکات یان بگۆڕێت؟</string>
     <string name="approvals_reject_hint">بۆچی فرۆشگاکە گونجاو نییە؟</string>
     <string name="approvals_send">ناردن</string>
+    <string name="admin_home_title">بەڕێوەبەر</string>
+    <string name="approvals_filter_waiting">چاوەڕێ</string>
+    <string name="approvals_filter_approved">پەسەندکراو</string>
+    <string name="approvals_filter_changes">گەڕێندراوە</string>
+    <string name="approvals_filter_rejected">ڕەتکراو</string>
+    <string name="approvals_delete_product">لابردنی ئەم بەرهەمە</string>
+    <string name="approvals_delete_hint">بۆچی لادەبرێت؟ (لە تۆماری بەڕێوەبەر دەمێنێتەوە)</string>
+    <string name="approvals_reviews">هەڵسەنگاندنەکان (%1$d)</string>
+    <string name="approvals_no_reviews">هێشتا هیچ هەڵسەنگاندنێک نییە</string>
+    <string name="approvals_delete_review">لابردنی هەڵسەنگاندن</string>
+    <string name="approvals_delete_review_hint">بۆچی ئەم هەڵسەنگاندنە لادەبرێت؟</string>
     <string name="approvals_view">بینینی فرۆشگا و بەرهەمەکان (%1$d)</string>
     <string name="approvals_products">بەرهەمەکان (%1$d)</string>
     <string name="approvals_no_products">ئەم فرۆشگایە هێشتا هیچ بەرهەمێکی زیاد نەکردووە</string>

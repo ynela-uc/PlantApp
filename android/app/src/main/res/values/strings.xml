@@ -99,6 +99,17 @@
     <string name="approvals_changes_hint">What should the shop add or change?</string>
     <string name="approvals_reject_hint">Why is the shop not suitable?</string>
     <string name="approvals_send">Send</string>
+    <string name="admin_home_title">Admin</string>
+    <string name="approvals_filter_waiting">Waiting</string>
+    <string name="approvals_filter_approved">Approved</string>
+    <string name="approvals_filter_changes">Returned</string>
+    <string name="approvals_filter_rejected">Rejected</string>
+    <string name="approvals_delete_product">Remove this product</string>
+    <string name="approvals_delete_hint">Why is it removed? (kept in the admin log)</string>
+    <string name="approvals_reviews">Reviews (%1$d)</string>
+    <string name="approvals_no_reviews">No reviews yet</string>
+    <string name="approvals_delete_review">Remove review</string>
+    <string name="approvals_delete_review_hint">Why remove this review?</string>
     <string name="approvals_view">View shop and products (%1$d)</string>
     <string name="approvals_products">Products (%1$d)</string>
     <string name="approvals_no_products">This shop has not added any products yet</string>

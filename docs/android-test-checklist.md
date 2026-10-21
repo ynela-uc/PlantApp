@@ -154,5 +154,11 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Tap any of these photos: it opens full screen on black. Pinch to zoom, drag to move, double tap to zoom in or out, tap the picture or the cross to close.
 - [ ] A product without a photo still shows its emoji. Product cards in the browse grid stay as before (cropped squares).
 
+## 22. Admin home (admin-only account)
+- [ ] Sign in with the admin account from either the customer or the shop sign-in page: the app opens the Admin home (title, your name, four filters Waiting / Approved / Returned / Rejected with counts, the shop cards, language selector and Sign out). No cart, orders or shop tabs.
+- [ ] Waiting shops show Approve, Return for changes, Reject. Approved shops show Return for changes and Reject (the shop disappears from customers until fixed or re-approved, and the owner is notified). Returned shops show Approve and Reject. Rejected shops show Approve.
+- [ ] Open a shop (View shop and products): products with photos, and a Reviews list. Remove this product asks for a reason, deletes it and the shop owner gets a notification. Remove review asks for a reason, deletes it, and the shop rating and count update.
+- [ ] A normal customer or shop account never sees any of this.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

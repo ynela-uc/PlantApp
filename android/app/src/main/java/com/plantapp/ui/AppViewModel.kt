@@ -3,6 +3,7 @@ package com.plantapp.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.plantapp.Push
+import com.plantapp.data.AdminRepository
 import com.plantapp.data.AuthRepository
 import com.plantapp.data.Profile
 import com.plantapp.data.ProfileUpdate
@@ -21,7 +22,8 @@ sealed interface Screen {
     data class ResetPassword(val role: Role) : Screen
     /** Shown after the user opens the reset link from the email. */
     data object SetNewPassword : Screen
-    data class Home(val profile: Profile) : Screen
+    /** [admin]: this account is the admin of the app and gets the admin home instead of the customer or shop home. */
+    data class Home(val profile: Profile, val admin: Boolean = false) : Screen
 }
 
 enum class AuthError {
@@ -80,7 +82,7 @@ class AppViewModel : ViewModel() {
             if (repo.hasSession()) {
                 val profile = repo.profile()
                 if (profile != null) {
-                    _state.value = UiState(Screen.Home(profile))
+                    _state.value = UiState(homeFor(profile))
                     return
                 }
             }
@@ -140,7 +142,7 @@ class AppViewModel : ViewModel() {
                 repo.setNewPassword(newPassword)
                 val profile = repo.profile() ?: throw IllegalStateException("Profile missing")
                 recoveryPending = false
-                _state.value = UiState(Screen.Home(profile))
+                _state.value = UiState(homeFor(profile))
             } catch (e: Exception) {
                 _state.value = _state.value.copy(busy = false, error = classify(e))
             }
@@ -153,7 +155,7 @@ class AppViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val fresh = repo.updateProfile(update)
-                _state.value = UiState(Screen.Home(fresh))
+                _state.value = UiState(homeFor(fresh))
             } catch (e: Exception) {
                 _state.value = _state.value.copy(busy = false, error = classify(e))
             }
@@ -183,7 +185,11 @@ class AppViewModel : ViewModel() {
     /** After any successful sign-in: load the profile and open the home that matches the chosen role. */
     private suspend fun finishSignIn(role: Role) {
         val profile = repo.profile() ?: throw IllegalStateException("Profile missing after sign-in")
-        if (profile.roleEnum != role) {
+        // The admin account is neither a customer nor a shop: it goes to the admin home from either sign-in page.
+        val home = homeFor(profile)
+        if (home.admin) {
+            _state.value = UiState(home)
+        } else if (profile.roleEnum != role) {
             repo.signOut()
             _state.value = UiState(
                 screen = Screen.Auth(role),
@@ -191,9 +197,12 @@ class AppViewModel : ViewModel() {
                 else AuthError.WrongRoleIsSeller,
             )
         } else {
-            _state.value = UiState(Screen.Home(profile))
+            _state.value = UiState(home)
         }
     }
+
+    private suspend fun homeFor(profile: Profile): Screen.Home =
+        Screen.Home(profile, admin = runCatching { AdminRepository.isAdmin() }.getOrDefault(false))
 
     private fun classify(e: Exception): AuthError {
         val message = (e.message ?: "").lowercase()

@@ -99,6 +99,17 @@
     <string name="approvals_changes_hint">ما الذي يجب أن يضيفه المتجر أو يعدّله؟</string>
     <string name="approvals_reject_hint">لماذا لا يناسب المتجر التطبيق؟</string>
     <string name="approvals_send">إرسال</string>
+    <string name="admin_home_title">الإدارة</string>
+    <string name="approvals_filter_waiting">بالانتظار</string>
+    <string name="approvals_filter_approved">موافق عليها</string>
+    <string name="approvals_filter_changes">معادة للتعديل</string>
+    <string name="approvals_filter_rejected">مرفوضة</string>
+    <string name="approvals_delete_product">إزالة هذا المنتج</string>
+    <string name="approvals_delete_hint">لماذا أُزيل؟ (يُحفظ في سجل الإدارة)</string>
+    <string name="approvals_reviews">التقييمات (%1$d)</string>
+    <string name="approvals_no_reviews">لا توجد تقييمات بعد</string>
+    <string name="approvals_delete_review">إزالة التقييم</string>
+    <string name="approvals_delete_review_hint">لماذا تُزال هذه المراجعة؟</string>
     <string name="approvals_view">عرض المتجر والمنتجات (%1$d)</string>
     <string name="approvals_products">المنتجات (%1$d)</string>
     <string name="approvals_no_products">لم يضف هذا المتجر أي منتج بعد</string>

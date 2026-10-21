@@ -59,7 +59,9 @@ fun PlantAppRoot(viewModel: AppViewModel = viewModel()) {
         )
         is Screen.Home -> {
             PushSetup(screen.profile.id)
-            if (screen.profile.roleEnum == Role.Customer) {
+            if (screen.admin) {
+                AdminApp(profile = screen.profile, onSignOut = viewModel::signOut)
+            } else if (screen.profile.roleEnum == Role.Customer) {
                 CustomerApp(
                     profile = screen.profile,
                     saving = state.busy,

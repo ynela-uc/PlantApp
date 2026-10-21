@@ -467,37 +467,15 @@ struct RateOrderSection: View {
     }
 }
 
-// MARK: - Shop approvals (admin only)
+// MARK: - Admin home
 
-/// Shown on the account page of the admin only: a button that opens the shop approvals.
-/// Everyone else sees nothing (and the database refuses their calls anyway).
-struct AdminEntry: View {
-    @EnvironmentObject var lang: LanguageStore
-    let accent: Color
-
-    @State private var isAdmin = false
-    @State private var waiting = 0
-    @State private var open = false
-
-    var body: some View {
-        Group {
-            if isAdmin {
-                Button {
-                    open = true
-                } label: {
-                    Text(waiting > 0 ? "\(lang.t("approvals_title")) (\(waiting))" : lang.t("approvals_title"))
-                }
-                .buttonStyle(PrimaryButtonStyle(color: accent))
-                .padding(.top, 16)
-            }
-        }
-        .task(id: open) {
-            isAdmin = (try? await AdminService.isAdmin()) ?? false
-            if isAdmin {
-                waiting = ((try? await AdminService.shops()) ?? []).filter { $0.reviewStatus == "pending" }.count
-            }
-        }
-        .fullScreenCover(isPresented: $open) { ApprovalsView { open = false } }
+/// What the admin may decide for a shop in each state.
+private func allowedDecisions(_ status: String) -> [ShopDecision] {
+    switch status {
+    case "pending": return [.approve, .changes, .reject]
+    case "approved": return [.changes, .reject]
+    case "changes_requested": return [.approve, .reject]
+    default: return [.approve]
     }
 }
 
@@ -507,58 +485,79 @@ private struct ReviewAsk: Identifiable {
     var id: String { shop.id + decision.rawValue }
 }
 
-private struct ApprovalsView: View {
+/// The home of the admin account: every shop, with the decisions and the moderation tools. No shop, cart or orders.
+struct AdminRoot: View {
     @EnvironmentObject var lang: LanguageStore
-    let onClose: () -> Void
+    @EnvironmentObject var app: AppModel
+    let profile: Profile
 
     @State private var shops: [PendingShop]?
     @State private var failed = false
     @State private var busyId: String?
+    @State private var filter = "pending"
     @State private var ask: ReviewAsk?
     @State private var previewing: PendingShop?
 
-    private let groups: [(status: String, titleKey: String)] = [
-        ("pending", "approvals_section_waiting"),
-        ("changes_requested", "approvals_section_changes"),
-        ("rejected", "approvals_section_rejected"),
+    private let filters: [(status: String, key: String)] = [
+        ("pending", "approvals_filter_waiting"),
+        ("approved", "approvals_filter_approved"),
+        ("changes_requested", "approvals_filter_changes"),
+        ("rejected", "approvals_filter_rejected"),
     ]
+
+    private func count(_ status: String) -> Int { (shops ?? []).filter { $0.reviewStatus == status }.count }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text(lang.t("approvals_title"))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(lang.t("admin_home_title"))
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(Theme.greenDark)
-                Spacer()
-                Button(lang.t("approvals_close"), action: onClose)
+                Text(profile.fullName).foregroundStyle(Theme.muted)
             }
             .padding(16)
 
-            if let shops {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 8) {
-                        if failed { ErrorText(message: lang.t("approvals_failed")) }
-                        if shops.isEmpty {
-                            Text(lang.t("approvals_empty")).foregroundStyle(Theme.muted)
-                        }
-                        ForEach(groups, id: \.status) { group in
-                            sectionView(group.titleKey, shops.filter { $0.reviewStatus == group.status })
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(filters, id: \.status) { item in
+                        Pill(label: lang.t(item.key) + (shops == nil ? "" : " (\(count(item.status)))"), selected: filter == item.status) {
+                            filter = item.status
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 24)
                 }
-            } else if failed {
-                ErrorText(message: lang.t("approvals_failed")).padding(16)
-            } else {
-                ProgressView().tint(Theme.green).frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 16)
             }
-            Spacer(minLength: 0)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    if let shops {
+                        if failed { ErrorText(message: lang.t("approvals_failed")) }
+                        let shown = shops.filter { $0.reviewStatus == filter }
+                        if shown.isEmpty { Text(lang.t("approvals_empty")).foregroundStyle(Theme.muted).padding(.top, 12) }
+                        ForEach(shown) { shop in card(shop) }
+                    } else if failed {
+                        ErrorText(message: lang.t("approvals_failed")).padding(.top, 12)
+                    } else {
+                        ProgressView().tint(Theme.green).frame(maxWidth: .infinity).padding(24)
+                    }
+                    LanguageSelector().padding(.top, 24)
+                    Button(lang.t("action_signout")) { app.signOut() }
+                        .buttonStyle(PrimaryButtonStyle(filled: false))
+                        .padding(.top, 16)
+                        .padding(.bottom, 24)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+            }
+            .refreshable { await load() }
         }
         .background(AppBackground())
         .task { await load() }
         .sheet(item: $ask) { item in
-            ReviewNoteSheet(ask: item) { note in decide(item.shop, item.decision, note) }
+            ReviewNoteSheet(
+                title: lang.t(item.decision == .changes ? "approvals_changes" : "approvals_reject"),
+                hint: lang.t(item.decision == .changes ? "approvals_changes_hint" : "approvals_reject_hint")
+            ) { note in decide(item.shop, item.decision, note) }
         }
         .fullScreenCover(item: $previewing) { shop in
             ShopPreviewView(shop: shop, busy: busyId == shop.id, onClose: { previewing = nil }) { decision in
@@ -568,21 +567,11 @@ private struct ApprovalsView: View {
         }
     }
 
-    @ViewBuilder
-    private func sectionView(_ titleKey: String, _ group: [PendingShop]) -> some View {
-        if !group.isEmpty {
-            Text(lang.t(titleKey))
-                .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(Theme.greenDark)
-                .padding(.top, 10)
-            ForEach(group) { shop in card(shop) }
-        }
-    }
-
     private func card(_ shop: PendingShop) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(shop.name).font(.system(size: 17, weight: .bold)).foregroundStyle(Theme.greenDark)
-            Text(lang.cityName(shop.city)).foregroundStyle(Theme.muted)
+            Text(lang.cityName(shop.city) + (shop.approved ? "  ·  " + ratingLabel(lang, rating: shop.rating, count: shop.ratingCount) : ""))
+                .foregroundStyle(Theme.muted)
             Text(lang.t("approvals_owner", shop.ownerName.isEmpty ? "-" : shop.ownerName, shop.ownerEmail))
             if !shop.phone.isEmpty { Text(shop.phone) }
             if !shop.shopTypes.isEmpty {
@@ -595,9 +584,7 @@ private struct ApprovalsView: View {
             Button(lang.t("approvals_view", shop.productCount)) { previewing = shop }
                 .buttonStyle(PrimaryButtonStyle())
                 .padding(.top, 8)
-            if shop.reviewStatus == "pending" {
-                DecisionButtons(busy: busyId == shop.id) { choose(shop, $0) }
-            }
+            DecisionButtons(busy: busyId == shop.id, allowed: allowedDecisions(shop.reviewStatus)) { choose(shop, $0) }
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -631,10 +618,12 @@ private struct ApprovalsView: View {
     }
 }
 
+/// A short reason typed by the admin (at least 3 characters).
 private struct ReviewNoteSheet: View {
     @EnvironmentObject var lang: LanguageStore
     @Environment(\.dismiss) private var dismiss
-    let ask: ReviewAsk
+    let title: String
+    let hint: String
     let onSend: (String) -> Void
 
     @State private var note = ""
@@ -642,12 +631,11 @@ private struct ReviewNoteSheet: View {
     private var trimmed: String { note.trimmingCharacters(in: .whitespacesAndNewlines) }
 
     var body: some View {
-        let changes = ask.decision == .changes
         VStack(alignment: .leading, spacing: 12) {
-            Text(lang.t(changes ? "approvals_changes" : "approvals_reject"))
+            Text(title)
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(Theme.greenDark)
-            AppField(title: lang.t(changes ? "approvals_changes_hint" : "approvals_reject_hint"), text: $note, multiline: true)
+            AppField(title: hint, text: $note, multiline: true)
                 .onChange(of: note) { value in
                     if value.count > 500 { note = String(value.prefix(500)) }
                 }
@@ -669,6 +657,7 @@ private struct ReviewNoteSheet: View {
 private struct DecisionButtons: View {
     @EnvironmentObject var lang: LanguageStore
     let busy: Bool
+    let allowed: [ShopDecision]
     let onDecide: (ShopDecision) -> Void
 
     var body: some View {
@@ -676,19 +665,26 @@ private struct DecisionButtons: View {
             if busy {
                 ProgressView().tint(Theme.green)
             } else {
-                Button(lang.t("approvals_approve")) { onDecide(.approve) }
-                    .buttonStyle(PrimaryButtonStyle())
-                Button(lang.t("approvals_changes")) { onDecide(.changes) }
-                    .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
-                Button(lang.t("approvals_reject")) { onDecide(.reject) }
-                    .buttonStyle(PrimaryButtonStyle(color: Theme.error, filled: false))
+                ForEach(allowed, id: \.rawValue) { decision in
+                    switch decision {
+                    case .approve:
+                        Button(lang.t("approvals_approve")) { onDecide(decision) }
+                            .buttonStyle(PrimaryButtonStyle())
+                    case .changes:
+                        Button(lang.t("approvals_changes")) { onDecide(decision) }
+                            .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                    case .reject:
+                        Button(lang.t("approvals_reject")) { onDecide(decision) }
+                            .buttonStyle(PrimaryButtonStyle(color: Theme.error, filled: false))
+                    }
+                }
             }
         }
         .padding(.top, 8)
     }
 }
 
-/// Everything a customer would see about the shop, so the admin can decide: details, delivery and every product with its photo.
+/// Everything a customer would see about the shop, so the admin can decide: details, delivery, every product and the reviews.
 private struct ShopPreviewView: View {
     @EnvironmentObject var lang: LanguageStore
     let shop: PendingShop
@@ -697,7 +693,10 @@ private struct ShopPreviewView: View {
     let onDecide: (ShopDecision) -> Void
 
     @State private var products: [Listing]?
+    @State private var ratings: [Rating] = []
     @State private var failed = false
+    @State private var removingProduct: Listing?
+    @State private var removingRating: Rating?
 
     var body: some View {
         ScrollView {
@@ -710,7 +709,8 @@ private struct ShopPreviewView: View {
                         Spacer()
                         Button(lang.t("approvals_close"), action: onClose)
                     }
-                    Text(lang.cityName(shop.city)).foregroundStyle(Theme.muted)
+                    Text(lang.cityName(shop.city) + (shop.approved ? "  ·  " + ratingLabel(lang, rating: shop.rating, count: shop.ratingCount) : ""))
+                        .foregroundStyle(Theme.muted)
                     Text(lang.t("approvals_owner", shop.ownerName.isEmpty ? "-" : shop.ownerName, shop.ownerEmail)).padding(.top, 6)
                     if !shop.phone.isEmpty { Text(shop.phone) }
                     if !shop.shopTypes.isEmpty {
@@ -748,16 +748,58 @@ private struct ShopPreviewView: View {
                 } else {
                     ProgressView().tint(Theme.green).padding()
                 }
-                if shop.reviewStatus == "pending" {
-                    DecisionButtons(busy: busy, onDecide: onDecide).padding(.top, 12)
-                }
+                Text(lang.t("approvals_reviews", ratings.count))
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(Theme.greenDark)
+                    .padding(.top, 14)
+                if ratings.isEmpty && products != nil { Text(lang.t("approvals_no_reviews")).foregroundStyle(Theme.muted) }
+                ForEach(ratings) { rating in reviewRow(rating) }
+                DecisionButtons(busy: busy, allowed: allowedDecisions(shop.reviewStatus), onDecide: onDecide).padding(.top, 12)
             }
             .padding(16)
         }
         .background(AppBackground())
-        .task {
-            do { products = try await AdminService.listings(shopId: shop.id) } catch { failed = true }
+        .task { await load() }
+        .sheet(item: $removingProduct) { listing in
+            ReviewNoteSheet(title: lang.t("approvals_delete_product"), hint: lang.t("approvals_delete_hint")) { note in
+                Task {
+                    do { try await AdminService.deleteListing(id: listing.id, reason: note); await load() } catch { failed = true }
+                }
+            }
         }
+        .sheet(item: $removingRating) { rating in
+            ReviewNoteSheet(title: lang.t("approvals_delete_review"), hint: lang.t("approvals_delete_review_hint")) { note in
+                Task {
+                    do { try await AdminService.deleteRating(id: rating.id, reason: note); await load() } catch { failed = true }
+                }
+            }
+        }
+    }
+
+    private func load() async {
+        do {
+            products = try await AdminService.listings(shopId: shop.id)
+            ratings = try await AdminService.ratings(shopId: shop.id)
+            failed = false
+        } catch {
+            failed = true
+        }
+    }
+
+    private func reviewRow(_ rating: Rating) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 8) {
+                StarsRow(stars: rating.stars)
+                Text(rating.reviewerName.isEmpty ? lang.t("reviewer_anonymous") : rating.reviewerName)
+                    .font(.system(size: 14, weight: .semibold))
+                Text(String(rating.createdAt.prefix(10))).font(.system(size: 12)).foregroundStyle(Theme.muted)
+            }
+            if let comment = rating.comment, !comment.isEmpty { Text(comment).font(.system(size: 14)) }
+            Button(lang.t("approvals_delete_review")) { removingRating = rating }
+                .font(.system(size: 14))
+                .foregroundStyle(Theme.error)
+        }
+        .padding(.vertical, 4)
     }
 
     private func productCard(_ listing: Listing) -> some View {
@@ -782,6 +824,9 @@ private struct ShopPreviewView: View {
                 ForEach(Array(listing.options.enumerated()), id: \.offset) { _, option in
                     Text(option.name + ": " + option.values.joined(separator: ", ")).font(.system(size: 12)).foregroundStyle(Theme.muted)
                 }
+                Button(lang.t("approvals_delete_product")) { removingProduct = listing }
+                    .font(.system(size: 14))
+                    .foregroundStyle(Theme.error)
             }
             .padding(12)
         }

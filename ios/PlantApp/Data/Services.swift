@@ -256,6 +256,18 @@ private struct ShopIdParams: Encodable {
     enum CodingKeys: String, CodingKey { case pShopId = "p_shop_id" }
 }
 
+private struct RemoveParams: Encodable {
+    let pListingId: String?
+    let pRatingId: String?
+    let pReason: String
+
+    enum CodingKeys: String, CodingKey {
+        case pListingId = "p_listing_id"
+        case pRatingId = "p_rating_id"
+        case pReason = "p_reason"
+    }
+}
+
 private struct ReviewShopParams: Encodable {
     let pShopId: String
     let pDecision: String
@@ -275,12 +287,26 @@ enum AdminService {
     }
 
     static func shops() async throws -> [PendingShop] {
-        try await supabase.rpc("admin_pending_shops", params: NoParams()).execute().value
+        try await supabase.rpc("admin_shops", params: NoParams()).execute().value
     }
 
     /// All products of a shop, including shops that are not approved yet.
     static func listings(shopId: String) async throws -> [Listing] {
         try await supabase.rpc("admin_shop_listings", params: ShopIdParams(pShopId: shopId)).execute().value
+    }
+
+    /// The reviews of a shop (customers only see them for approved shops).
+    static func ratings(shopId: String) async throws -> [Rating] {
+        try await supabase.rpc("admin_shop_ratings", params: ShopIdParams(pShopId: shopId)).execute().value
+    }
+
+    /// Removes a product that breaks the rules; the shop owner is told.
+    static func deleteListing(id: String, reason: String) async throws {
+        try await supabase.rpc("admin_delete_listing", params: RemoveParams(pListingId: id, pRatingId: nil, pReason: reason)).execute()
+    }
+
+    static func deleteRating(id: String, reason: String) async throws {
+        try await supabase.rpc("admin_delete_rating", params: RemoveParams(pListingId: nil, pRatingId: id, pReason: reason)).execute()
     }
 
     static func review(shopId: String, decision: ShopDecision, note: String?) async throws {

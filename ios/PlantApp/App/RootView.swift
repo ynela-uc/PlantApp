@@ -18,6 +18,8 @@ struct RootView: View {
                 ResetPasswordView(role: role)
             case .setNewPassword:
                 SetNewPasswordView()
+            case .admin(let profile):
+                AdminRoot(profile: profile)
             case .home(let profile):
                 if profile.roleEnum == .customer {
                     CustomerRoot(profile: profile)
