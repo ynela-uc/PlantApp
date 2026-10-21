@@ -19,9 +19,7 @@ struct ListingDetailView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
 
-                    PlantPicture(listing: listing, emojiSize: 96)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 240)
+                    ListingPhoto(listing: listing, emojiSize: 96, emptyHeight: 240)
 
                     VStack(alignment: .leading, spacing: 0) {
                         Text(lang.localized(listing.name))

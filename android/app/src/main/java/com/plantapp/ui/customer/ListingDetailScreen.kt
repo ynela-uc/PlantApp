@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.plantapp.R
+import com.plantapp.ui.TapToZoomImage
 import com.plantapp.data.Listing
 import com.plantapp.data.localized
 import com.plantapp.ui.PickChip
@@ -74,7 +75,9 @@ fun ListingDetailScreen(
             TextButton(onClick = onBack, modifier = Modifier.padding(horizontal = 8.dp)) {
                 Text("$backArrow  ${stringResource(R.string.back)}", color = PlantGreen)
             }
-            PlantPicture(listing, Modifier.fillMaxWidth().height(240.dp), 96.sp)
+            val photo = listing.imageUrl
+            if (photo != null) TapToZoomImage(photo, shape = RoundedCornerShape(0.dp))
+            else PlantPicture(listing, Modifier.fillMaxWidth().height(240.dp), 96.sp)
 
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(

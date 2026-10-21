@@ -138,6 +138,7 @@ struct SignedImage: View {
     let path: String
     @State private var url: URL?
     @State private var failed = false
+    @State private var zoomed = false
 
     // Shows the WHOLE photo (fit, not crop) at its own proportions, so the customer
     // sees exactly what the shop prepared.
@@ -162,6 +163,11 @@ struct SignedImage: View {
         }
         .frame(maxWidth: .infinity)
         .background(Theme.picture)
+        .contentShape(Rectangle())
+        .onTapGesture { if url != nil { zoomed = true } }
+        .fullScreenCover(isPresented: $zoomed) {
+            if let url { ImageZoomView(url: url) { zoomed = false } }
+        }
         .task(id: path) {
             do { url = try await OrdersService.signedPhotoURL(path: path) } catch { failed = true }
         }
@@ -756,9 +762,7 @@ private struct ShopPreviewView: View {
 
     private func productCard(_ listing: Listing) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            PlantPicture(listing: listing, emojiSize: 64)
-                .frame(height: 220)
-                .frame(maxWidth: .infinity)
+            ListingPhoto(listing: listing, emojiSize: 64)
             VStack(alignment: .leading, spacing: 4) {
                 Text(lang.localized(listing.name))
                     .font(.system(size: 17, weight: .bold))
@@ -791,5 +795,106 @@ private struct ShopPreviewView: View {
         if let category = listing.category { parts.append(lang.t("cat_" + category)) }
         if let collection = listing.collection, !collection.isEmpty { parts.append(collection) }
         return parts.joined(separator: "  ·  ")
+    }
+}
+
+// MARK: - Photos shown whole, tap to open full screen
+
+/// A product photo shown whole (never cropped), at its own proportions. Tap it to open it full screen.
+/// Without a photo it shows the product's emoji.
+struct ListingPhoto: View {
+    let listing: Listing
+    var emojiSize: CGFloat = 96
+    var emptyHeight: CGFloat = 160
+    @State private var zoomed = false
+
+    var body: some View {
+        if let url = listing.imageURL {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFit()
+                case .failure:
+                    Text(listing.placeholderEmoji).font(.system(size: emojiSize)).frame(height: emptyHeight)
+                default:
+                    ProgressView().frame(height: emptyHeight)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(maxHeight: 420)
+            .background(Theme.picture)
+            .contentShape(Rectangle())
+            .onTapGesture { zoomed = true }
+            .fullScreenCover(isPresented: $zoomed) { ImageZoomView(url: url) { zoomed = false } }
+        } else {
+            PlantPicture(listing: listing, emojiSize: emojiSize)
+                .frame(maxWidth: .infinity)
+                .frame(height: emptyHeight)
+        }
+    }
+}
+
+/// Full-screen viewer: pinch to zoom, drag to move, double tap to zoom in or out, tap to close.
+struct ImageZoomView: View {
+    let url: URL
+    let onClose: () -> Void
+
+    @State private var scale: CGFloat = 1
+    @State private var baseScale: CGFloat = 1
+    @State private var offset: CGSize = .zero
+    @State private var baseOffset: CGSize = .zero
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Color.black.ignoresSafeArea()
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFit()
+                        .scaleEffect(scale)
+                        .offset(offset)
+                        .onTapGesture(count: 2) { toggleZoom() }
+                        .onTapGesture { if scale == 1 { onClose() } }
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { value in scale = max(1, min(5, baseScale * value)) }
+                                .onEnded { _ in
+                                    baseScale = scale
+                                    if scale == 1 { resetOffset() }
+                                }
+                        )
+                        .simultaneousGesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    if scale > 1 {
+                                        offset = CGSize(width: baseOffset.width + value.translation.width, height: baseOffset.height + value.translation.height)
+                                    }
+                                }
+                                .onEnded { _ in baseOffset = offset }
+                        )
+                default:
+                    ProgressView().tint(.white).frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+            Button(action: onClose) {
+                Text("✕")
+                    .font(.system(size: 26))
+                    .foregroundStyle(.white)
+                    .padding(16)
+            }
+        }
+    }
+
+    private func toggleZoom() {
+        withAnimation {
+            scale = scale > 1 ? 1 : 2.5
+            baseScale = scale
+            resetOffset()
+        }
+    }
+
+    private func resetOffset() {
+        offset = .zero
+        baseOffset = .zero
     }
 }

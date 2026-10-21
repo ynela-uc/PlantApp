@@ -149,5 +149,10 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Reject: write a reason. The shop owner gets a notification and sees a full-screen "Your shop was not approved" with the reason, Sign out and Delete account. Customers never see the shop.
 - [ ] The admin list also shows the shops sent back (waiting for the shop) and the rejected ones, with the admin's note.
 
+## 21. Photos shown whole, tap to enlarge
+- [ ] Admin shop preview, product page (customer) and the photo the shop sends for approval (customer and shop order screens): the photo is shown whole, not cropped, at its own proportions.
+- [ ] Tap any of these photos: it opens full screen on black. Pinch to zoom, drag to move, double tap to zoom in or out, tap the picture or the cross to close.
+- [ ] A product without a photo still shows its emoji. Product cards in the browse grid stay as before (cropped squares).
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

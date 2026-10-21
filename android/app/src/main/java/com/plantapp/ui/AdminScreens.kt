@@ -340,7 +340,9 @@ private fun ProductPreview(listing: Listing, lang: String) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
     ) {
         Column {
-            PlantPicture(listing, Modifier.fillMaxWidth().height(220.dp), 64.sp)
+            val photo = listing.imageUrl
+            if (photo != null) TapToZoomImage(photo, shape = RoundedCornerShape(0.dp))
+            else PlantPicture(listing, Modifier.fillMaxWidth().height(160.dp), 64.sp)
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(listing.name.localized(lang), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = PlantGreenDark)
                 Text(

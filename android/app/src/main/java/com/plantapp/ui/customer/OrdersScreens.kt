@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
+import com.plantapp.ui.TapToZoomImage
 import com.plantapp.ui.rememberSignedPhotoUrl
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -223,12 +224,7 @@ fun OrderDetailScreen(
                         Text(stringResource(R.string.review_timeout_note), color = TextMuted, style = MaterialTheme.typography.bodySmall)
                         Spacer(Modifier.height(10.dp))
                         if (photoUrl != null) {
-                            AsyncImage(
-                                model = photoUrl,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxWidth().height(240.dp).clip(RoundedCornerShape(14.dp)),
-                            )
+                            TapToZoomImage(photoUrl, shape = RoundedCornerShape(14.dp))
                         } else {
                             Box(Modifier.fillMaxWidth().height(120.dp), Alignment.Center) {
                                 CircularProgressIndicator(color = PlantGreen)

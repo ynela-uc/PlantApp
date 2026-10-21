@@ -63,6 +63,7 @@ import com.plantapp.ui.customer.rememberLang
 import com.plantapp.ui.customer.statusLabel
 import com.plantapp.ui.customer.windowLabel
 import com.plantapp.ui.rememberPhotoCapture
+import com.plantapp.ui.TapToZoomImage
 import com.plantapp.ui.rememberSignedPhotoUrl
 import com.plantapp.ui.theme.CardBorder
 import com.plantapp.ui.theme.PlantGreen
@@ -269,12 +270,7 @@ fun SellerOrderDetailScreen(
             if (photoUrl != null) {
                 Spacer(Modifier.height(20.dp))
                 Heading(R.string.seller_photo_sent)
-                AsyncImage(
-                    model = photoUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxWidth().height(220.dp).clip(RoundedCornerShape(16.dp)),
-                )
+                TapToZoomImage(photoUrl, shape = RoundedCornerShape(16.dp))
             }
 
             // What the customer asked to change
