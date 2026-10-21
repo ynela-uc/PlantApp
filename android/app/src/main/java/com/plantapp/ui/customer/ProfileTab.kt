@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.plantapp.R
 import com.plantapp.data.Profile
 import com.plantapp.data.ProfileUpdate
+import com.plantapp.data.SavedAddress
 import com.plantapp.ui.AddressDraft
-import com.plantapp.ui.AddressFields
 import com.plantapp.ui.CityCodes
 import com.plantapp.ui.LanguageSelector
 import com.plantapp.ui.PickChip
@@ -54,11 +54,34 @@ fun ProfileTab(
     saveFailed: Boolean,
     onSave: (ProfileUpdate) -> Unit,
     onSignOut: () -> Unit,
+    addresses: List<SavedAddress>,
+    addressBusy: Boolean,
+    addressFailed: Boolean,
+    onSaveAddress: (id: String?, label: String, draft: AddressDraft, makeDefault: Boolean, onDone: () -> Unit) -> Unit,
+    onDeleteAddress: (id: String, onDone: () -> Unit) -> Unit,
+    onDefaultAddress: (id: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var editing by rememberSaveable { mutableStateOf(false) }
+    var addressOpen by rememberSaveable { mutableStateOf(false) }
+    var addressId by rememberSaveable { mutableStateOf<String?>(null) }
     // A saved profile comes back as a new Profile: close the form.
     LaunchedEffect(profile) { editing = false }
+
+    if (addressOpen) {
+        val initial = addresses.firstOrNull { it.id == addressId }
+        AddressEditor(
+            initial = initial,
+            isFirst = addresses.isEmpty(),
+            busy = addressBusy,
+            failed = addressFailed,
+            onSave = { label, draft, makeDefault -> onSaveAddress(addressId, label, draft, makeDefault) { addressOpen = false } },
+            onDelete = initial?.let { saved -> { onDeleteAddress(saved.id) { addressOpen = false } } },
+            onCancel = { addressOpen = false },
+            modifier = modifier,
+        )
+        return
+    }
 
     if (editing) {
         ProfileEditor(
@@ -86,12 +109,6 @@ fun ProfileTab(
         )
         Spacer(Modifier.height(16.dp))
         InfoRow(R.string.field_phone, profile.phone)
-        InfoRow(R.string.field_city, if (profile.city.isBlank()) "" else cityLabel(profile.city))
-        InfoRow(R.string.field_district, profile.district)
-        InfoRow(R.string.field_neighborhood, profile.neighborhood)
-        InfoRow(R.string.field_address, profile.address)
-        InfoRow(R.string.field_landmark, profile.landmark)
-        InfoRow(R.string.field_address_notes, profile.addressNotes)
 
         Spacer(Modifier.height(16.dp))
         OutlinedButton(
@@ -99,6 +116,15 @@ fun ProfileTab(
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(14.dp),
         ) { Text(stringResource(R.string.profile_edit), color = PlantGreen, fontWeight = FontWeight.SemiBold) }
+
+        Spacer(Modifier.height(24.dp))
+        AddressBookSection(
+            addresses = addresses,
+            busy = addressBusy,
+            onAdd = { addressId = null; addressOpen = true },
+            onEdit = { addressId = it.id; addressOpen = true },
+            onDefault = { onDefaultAddress(it.id) },
+        )
 
         Spacer(Modifier.height(28.dp))
         LanguageSelector()
@@ -128,9 +154,6 @@ private fun ProfileEditor(
     var firstName by rememberSaveable { mutableStateOf(profile.firstName) }
     var lastName by rememberSaveable { mutableStateOf(profile.lastName) }
     var phone by rememberSaveable { mutableStateOf(profile.phone) }
-    var addr by rememberSaveable(stateSaver = AddressDraft.Saver) {
-        mutableStateOf(AddressDraft(profile.city, profile.district, profile.neighborhood, profile.address, profile.landmark, profile.addressNotes))
-    }
     var missing by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -149,7 +172,6 @@ private fun ProfileEditor(
         Input(firstName, { firstName = it; missing = false }, R.string.field_first_name)
         Input(lastName, { lastName = it; missing = false }, R.string.field_last_name)
         Input(phone, { phone = it; missing = false }, R.string.field_phone, KeyboardType.Phone)
-        AddressFields(addr, { addr = it; missing = false }, PlantGreen)
 
         if (missing) {
             Text(stringResource(R.string.err_required), color = Color(0xFFC62828), style = MaterialTheme.typography.bodyMedium)
@@ -159,11 +181,10 @@ private fun ProfileEditor(
         Spacer(Modifier.height(12.dp))
         Button(
             onClick = {
-                if (firstName.isBlank() || lastName.isBlank() || phone.isBlank() || !addr.isComplete) {
+                if (firstName.isBlank() || lastName.isBlank() || phone.isBlank()) {
                     missing = true
                 } else {
-                    val a = addr.trimmed()
-                    onSave(ProfileUpdate(firstName.trim(), lastName.trim(), phone.trim(), a.city, a.street, a.district, a.neighborhood, a.landmark, a.notes))
+                    onSave(ProfileUpdate(firstName.trim(), lastName.trim(), phone.trim()))
                 }
             },
             enabled = !saving,

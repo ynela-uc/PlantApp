@@ -260,6 +260,41 @@ private struct StockUpdate: Encodable {
     enum CodingKeys: String, CodingKey { case inStock = "in_stock" }
 }
 
+private struct DefaultFlag: Encodable {
+    let isDefault = true
+    enum CodingKeys: String, CodingKey { case isDefault = "is_default" }
+}
+
+/// The customer's saved addresses (only their own rows are visible).
+enum AddressService {
+    /// The default address first.
+    static func list() async throws -> [SavedAddress] {
+        try await supabase.from("addresses")
+            .select()
+            .order("is_default", ascending: false)
+            .order("created_at", ascending: true)
+            .execute()
+            .value
+    }
+
+    static func add(_ input: AddressInput) async throws {
+        try await supabase.from("addresses").insert(input).execute()
+    }
+
+    static func update(id: String, input: AddressInput) async throws {
+        try await supabase.from("addresses").update(input).eq("id", value: id).execute()
+    }
+
+    /// Making an address the default clears the old default (the database does that).
+    static func makeDefault(id: String) async throws {
+        try await supabase.from("addresses").update(DefaultFlag()).eq("id", value: id).execute()
+    }
+
+    static func delete(id: String) async throws {
+        try await supabase.from("addresses").delete().eq("id", value: id).execute()
+    }
+}
+
 private struct ShopIdParams: Encodable {
     let pShopId: String
     enum CodingKeys: String, CodingKey { case pShopId = "p_shop_id" }

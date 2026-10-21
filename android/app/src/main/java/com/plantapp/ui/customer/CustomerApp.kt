@@ -189,6 +189,12 @@ fun CustomerApp(
                 saveFailed = saveFailed,
                 onSave = onSaveProfile,
                 onSignOut = onSignOut,
+                addresses = state.addresses,
+                addressBusy = state.addressBusy,
+                addressFailed = state.addressFailed,
+                onSaveAddress = vm::saveAddress,
+                onDeleteAddress = vm::deleteAddress,
+                onDefaultAddress = vm::setDefaultAddress,
                 modifier = content,
             )
         }

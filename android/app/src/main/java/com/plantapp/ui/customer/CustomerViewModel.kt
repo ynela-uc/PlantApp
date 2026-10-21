@@ -2,6 +2,10 @@ package com.plantapp.ui.customer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plantapp.data.AddressInput
+import com.plantapp.data.AddressRepository
+import com.plantapp.data.SavedAddress
+import com.plantapp.ui.AddressDraft
 import com.plantapp.data.Catalog
 import com.plantapp.data.Listing
 import com.plantapp.data.SellerInfo
@@ -59,6 +63,8 @@ data class CheckoutForm(
     val window: String,
     /** The customer asked to approve a photo first (only counts for products where the shop offers it). */
     val photoRequested: Boolean = false,
+    /** The address was typed for this order: also keep it in the address book. */
+    val saveAsAddress: Boolean = false,
 )
 
 /** What is stored for one cart line: which product, the customer's option choices, how many. */
@@ -104,6 +110,10 @@ data class CustomerState(
     val checkoutError: CheckoutError? = null,
     /** True while the customer's answer to a preparation photo is being saved. */
     val reviewBusy: Boolean = false,
+    /** The customer's saved addresses, the default first. */
+    val addresses: List<SavedAddress> = emptyList(),
+    val addressBusy: Boolean = false,
+    val addressFailed: Boolean = false,
 ) {
     val cartCount: Int get() = cart.values.sumOf { it.qty }
 
@@ -155,12 +165,64 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
 
     private val listingsRepo = ListingsRepository()
     private val ordersRepo = OrdersRepository()
+    private val addressRepo = AddressRepository()
     private val _state = MutableStateFlow(CustomerState(city = initialProfile.city.ifBlank { "Baghdad" }))
     val state: StateFlow<CustomerState> = _state.asStateFlow()
 
     init {
         load()
         loadOrders()
+        loadAddresses()
+    }
+
+    fun loadAddresses() {
+        viewModelScope.launch {
+            try {
+                val list = addressRepo.list()
+                _state.update { it.copy(addresses = list) }
+            } catch (_: Exception) { }
+        }
+    }
+
+    /** Adds a new address ([id] null) or changes a saved one; [onDone] runs after it was saved. */
+    fun saveAddress(id: String?, label: String, draft: AddressDraft, makeDefault: Boolean, onDone: () -> Unit) {
+        _state.update { it.copy(addressBusy = true, addressFailed = false) }
+        viewModelScope.launch {
+            try {
+                val input = AddressInput(profile.id, label, draft.city, draft.district, draft.neighborhood, draft.street, draft.landmark, draft.notes, makeDefault)
+                if (id == null) addressRepo.add(input) else addressRepo.update(id, input)
+                loadAddresses()
+                _state.update { it.copy(addressBusy = false) }
+                onDone()
+            } catch (_: Exception) {
+                _state.update { it.copy(addressBusy = false, addressFailed = true) }
+            }
+        }
+    }
+
+    fun deleteAddress(id: String, onDone: () -> Unit) {
+        _state.update { it.copy(addressBusy = true, addressFailed = false) }
+        viewModelScope.launch {
+            try {
+                addressRepo.delete(id)
+                loadAddresses()
+                _state.update { it.copy(addressBusy = false) }
+                onDone()
+            } catch (_: Exception) {
+                _state.update { it.copy(addressBusy = false, addressFailed = true) }
+            }
+        }
+    }
+
+    fun setDefaultAddress(id: String) {
+        _state.update { it.copy(addressBusy = true, addressFailed = false) }
+        viewModelScope.launch {
+            try {
+                addressRepo.makeDefault(id)
+                loadAddresses()
+            } catch (_: Exception) { }
+            _state.update { it.copy(addressBusy = false) }
+        }
     }
 
     fun load() {
@@ -328,6 +390,12 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
                 }
             }
             if (created > 0) loadOrders()
+            if (created > 0 && form.saveAsAddress) {
+                try {
+                    addressRepo.add(AddressInput(profile.id, "", form.city, form.district, form.neighborhood, form.address, form.landmark, form.addressNotes, false))
+                    loadAddresses()
+                } catch (_: Exception) { }
+            }
             // Prices or stock changed: reload the products so the cart shows what the shop charges now.
             if (error == CheckoutError.PriceChanged || error == CheckoutError.Unavailable) load()
             _state.update {

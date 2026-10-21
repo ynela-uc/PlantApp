@@ -416,6 +416,248 @@ extension LanguageStore {
     }
 }
 
+// MARK: - Address book
+
+let addressLabelKeys = ["home", "work", "apartment"]
+
+extension SavedAddress {
+    var draft: AddressDraft { AddressDraft(city: city, district: district, neighborhood: neighborhood, street: street, landmark: landmark, notes: notes) }
+}
+
+extension LanguageStore {
+    /// The name of an address: home / work / apartment in the app language, or the customer's own text.
+    func addressLabel(_ label: String) -> String {
+        switch label {
+        case "home": return t("addr_label_home")
+        case "work": return t("addr_label_work")
+        case "apartment": return t("addr_label_apartment")
+        case "": return t("addr_label_other")
+        default: return label
+        }
+    }
+}
+
+/// What the editor sheet opens for: a new address (`address` nil) or a saved one.
+struct AddressEditTarget: Identifiable {
+    let address: SavedAddress?
+    var id: String { address?.id ?? "new" }
+}
+
+/// The saved addresses on the account page, with the buttons to add, edit and choose the default.
+struct AddressBookSection: View {
+    @EnvironmentObject var lang: LanguageStore
+    @EnvironmentObject var model: CustomerModel
+    @State private var editing: AddressEditTarget?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(lang.t("addr_book_title"))
+                .font(.system(size: 17, weight: .bold))
+                .foregroundStyle(Theme.greenDark)
+            if model.addresses.isEmpty { Text(lang.t("addr_empty")).foregroundStyle(Theme.muted) }
+            ForEach(model.addresses) { address in card(address) }
+            if model.addresses.count < maxAddresses {
+                Button("+  " + lang.t("addr_add")) { editing = AddressEditTarget(address: nil) }
+                    .buttonStyle(PrimaryButtonStyle(filled: false))
+            } else {
+                Text(lang.t("addr_max")).font(.system(size: 12)).foregroundStyle(Theme.muted)
+            }
+        }
+        .sheet(item: $editing) { target in
+            AddressEditorSheet(initial: target.address, isFirst: model.addresses.isEmpty)
+        }
+    }
+
+    private func card(_ address: SavedAddress) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                Text(lang.addressLabel(address.label)).font(.system(size: 16, weight: .bold)).foregroundStyle(Theme.greenDark)
+                if address.isDefault {
+                    Text(lang.t("addr_default"))
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(Theme.greenDark)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(Theme.greenSoft)
+                        .clipShape(Capsule())
+                }
+            }
+            Text(lang.addressText(city: address.city, district: address.district, neighborhood: address.neighborhood, street: address.street, landmark: address.landmark))
+            if !address.notes.isEmpty { Text(address.notes).font(.system(size: 13)).foregroundStyle(Theme.muted) }
+            HStack(spacing: 16) {
+                Button(lang.t("addr_edit")) { editing = AddressEditTarget(address: address) }
+                if !address.isDefault {
+                    Button(lang.t("addr_set_default")) { model.setDefaultAddress(address.id) }.disabled(model.addressBusy)
+                }
+            }
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(Theme.green)
+            .padding(.top, 2)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .card()
+    }
+}
+
+/// Add a new address, or edit (and delete) a saved one.
+struct AddressEditorSheet: View {
+    @EnvironmentObject var lang: LanguageStore
+    @EnvironmentObject var model: CustomerModel
+    @Environment(\.dismiss) private var dismiss
+    let initial: SavedAddress?
+    /// True when no address exists yet: the new one becomes the default.
+    let isFirst: Bool
+
+    @State private var labelKey: String
+    @State private var custom: String
+    @State private var addr: AddressDraft
+    @State private var makeDefault: Bool
+    @State private var missing = false
+    @State private var confirmDelete = false
+
+    init(initial: SavedAddress?, isFirst: Bool) {
+        self.initial = initial
+        self.isFirst = isFirst
+        let startKey: String
+        if let initial {
+            startKey = addressLabelKeys.contains(initial.label) ? initial.label : "other"
+        } else {
+            startKey = isFirst ? "home" : "other"
+        }
+        _labelKey = State(initialValue: startKey)
+        _custom = State(initialValue: (initial != nil && !addressLabelKeys.contains(initial?.label ?? "")) ? (initial?.label ?? "") : "")
+        _addr = State(initialValue: initial?.draft ?? AddressDraft())
+        _makeDefault = State(initialValue: initial?.isDefault ?? isFirst)
+    }
+
+    private var lockedDefault: Bool { isFirst || initial?.isDefault == true }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(lang.t(initial == nil ? "addr_new_title" : "addr_edit_title"))
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(Theme.greenDark)
+                Group {
+                    Text(lang.t("addr_label_title"))
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Theme.muted)
+                    FlowLayout(spacing: 8) {
+                        ForEach(addressLabelKeys + ["other"], id: \.self) { key in
+                            Pill(label: lang.addressLabel(key == "other" ? "" : key), selected: labelKey == key) { labelKey = key }
+                        }
+                    }
+                    if labelKey == "other" {
+                        AppField(title: lang.t("addr_label_custom_hint"), text: $custom)
+                            .onChange(of: custom) { value in
+                                if value.count > 40 { custom = String(value.prefix(40)) }
+                            }
+                    }
+                }
+                AddressFields(draft: $addr)
+                Toggle(lang.t("addr_make_default"), isOn: $makeDefault)
+                    .tint(Theme.green)
+                    .disabled(lockedDefault)
+                if missing {
+                    ErrorText(message: lang.t("err_required"))
+                } else if model.addressFailed {
+                    ErrorText(message: lang.t("addr_save_failed"))
+                }
+                Button(action: save) {
+                    BusyLabel(title: lang.t("action_save"), busy: model.addressBusy)
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .disabled(model.addressBusy)
+                Button(lang.t("action_cancel")) { dismiss() }
+                    .buttonStyle(PrimaryButtonStyle(filled: false))
+                    .disabled(model.addressBusy)
+                if let initial {
+                    Button(lang.t("addr_delete")) { confirmDelete = true }
+                        .foregroundStyle(Theme.error)
+                        .disabled(model.addressBusy)
+                        .alert(lang.t("addr_delete_title"), isPresented: $confirmDelete) {
+                            Button(lang.t("addr_delete"), role: .destructive) {
+                                model.deleteAddress(id: initial.id) { dismiss() }
+                            }
+                            Button(lang.t("action_cancel"), role: .cancel) { }
+                        } message: {
+                            Text(lang.t("addr_delete_body"))
+                        }
+                }
+            }
+            .padding(20)
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .background(AppBackground())
+        .onAppear { model.addressFailed = false }
+    }
+
+    private func save() {
+        if !addr.isComplete {
+            missing = true
+            return
+        }
+        missing = false
+        let label = labelKey == "other" ? custom.trimmingCharacters(in: .whitespacesAndNewlines) : labelKey
+        model.saveAddress(id: initial?.id, label: label, draft: addr.trimmed, makeDefault: makeDefault || lockedDefault) { dismiss() }
+    }
+}
+
+/// Checkout: choose one of the saved addresses, or type another one for this order only.
+struct AddressPicker: View {
+    @EnvironmentObject var lang: LanguageStore
+    @EnvironmentObject var model: CustomerModel
+    @Binding var selectedId: String?
+    @Binding var choseOther: Bool
+    @Binding var draft: AddressDraft
+    @Binding var saveNew: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if !model.addresses.isEmpty {
+                ForEach(model.addresses) { address in
+                    choice(
+                        title: lang.addressLabel(address.label),
+                        detail: lang.addressText(city: address.city, district: address.district, neighborhood: address.neighborhood, street: address.street, landmark: address.landmark),
+                        selected: selectedId == address.id
+                    ) {
+                        selectedId = address.id
+                        choseOther = false
+                        draft = address.draft
+                    }
+                }
+                choice(title: lang.t("checkout_use_other"), detail: nil, selected: selectedId == nil) {
+                    selectedId = nil
+                    choseOther = true
+                }
+            }
+            if selectedId == nil {
+                AddressFields(draft: $draft)
+                    .padding(.top, 4)
+                if model.addresses.count < maxAddresses {
+                    Toggle(lang.t("checkout_save_address"), isOn: $saveNew).tint(Theme.green)
+                }
+            }
+        }
+    }
+
+    private func choice(title: String, detail: String?, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.system(size: 16, weight: .bold)).foregroundStyle(Theme.greenDark)
+                if let detail { Text(detail).font(.system(size: 14)).foregroundStyle(Color.primary).multilineTextAlignment(.leading) }
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(selected ? Theme.greenSoft : Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(selected ? Theme.green : Theme.border, lineWidth: selected ? 2 : 1))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 // MARK: - Ratings
 
 /// A shop shows stars only after this many ratings; before that it is "New".

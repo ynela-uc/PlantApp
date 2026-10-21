@@ -9,6 +9,9 @@ struct CheckoutView: View {
     @State private var recipientName = ""
     @State private var recipientPhone = ""
     @State private var addr = AddressDraft()
+    @State private var selectedId: String?
+    @State private var choseOther = false
+    @State private var saveNew = false
     @State private var note = ""
     @State private var dayOffset = 0
     @State private var window = "any"
@@ -48,7 +51,7 @@ struct CheckoutView: View {
                         }
 
                         SectionHeading(text: lang.t("checkout_delivery"))
-                        AddressFields(draft: $addr)
+                        AddressPicker(selectedId: $selectedId, choseOther: $choseOther, draft: $addr, saveNew: $saveNew)
                             .padding(.top, 6)
 
                         Caption(lang.t("delivery_date")).padding(.top, 12)
@@ -134,7 +137,10 @@ struct CheckoutView: View {
             if addr.city.isEmpty {
                 addr = AddressDraft(city: model.city, district: profile.district, neighborhood: profile.neighborhood, street: profile.address, landmark: profile.landmark, notes: profile.addressNotes)
             }
+            selectDefaultAddress()
         }
+        // The saved addresses arrive a moment after the page opens: start with the default one.
+        .onChange(of: model.addresses) { _ in selectDefaultAddress() }
     }
 
     /// Photo approval: shown only when something in the cart offers or needs it.
@@ -187,6 +193,13 @@ struct CheckoutView: View {
         Calendar.current.date(byAdding: .day, value: offset, to: Date()) ?? Date()
     }
 
+    private func selectDefaultAddress() {
+        guard !choseOther, selectedId == nil,
+              let first = model.addresses.first(where: { $0.isDefault }) ?? model.addresses.first else { return }
+        selectedId = first.id
+        addr = first.draft
+    }
+
     private func submit() {
         let blank: (String) -> Bool = { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
         let missing = !addr.isComplete || (isGift && (blank(recipientName) || blank(recipientPhone)))
@@ -212,7 +225,8 @@ struct CheckoutView: View {
                 giftNote: String(note.trimmingCharacters(in: .whitespacesAndNewlines).prefix(200)),
                 deliveryDate: iso.string(from: date(dayOffset)),
                 window: window,
-                photoRequested: photoRequested
+                photoRequested: photoRequested,
+                saveAsAddress: selectedId == nil && saveNew && model.addresses.count < maxAddresses
             )
         )
     }

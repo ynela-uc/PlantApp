@@ -81,12 +81,69 @@ final class CustomerModel: ObservableObject {
     @Published var checkoutError: CheckoutError?
     /// True while the customer's answer to a preparation photo is being saved.
     @Published var reviewBusy = false
+    /// The customer's saved addresses, the default first.
+    @Published var addresses: [SavedAddress] = []
+    @Published var addressBusy = false
+    @Published var addressFailed = false
 
     init(profile: Profile) {
         self.profile = profile
         self.city = profile.city.isEmpty ? "Baghdad" : profile.city
         load()
         loadOrders()
+        loadAddresses()
+    }
+
+    // MARK: Address book
+
+    func loadAddresses() {
+        Task { if let list = try? await AddressService.list() { addresses = list } }
+    }
+
+    /// Adds a new address (`id` nil) or changes a saved one; `onDone` runs after it was saved.
+    func saveAddress(id: String?, label: String, draft: AddressDraft, makeDefault: Bool, onDone: @escaping () -> Void) {
+        addressBusy = true
+        addressFailed = false
+        Task {
+            do {
+                let input = AddressInput(
+                    userId: profile.id, label: label, city: draft.city, district: draft.district, neighborhood: draft.neighborhood,
+                    street: draft.street, landmark: draft.landmark, notes: draft.notes, isDefault: makeDefault
+                )
+                if let id { try await AddressService.update(id: id, input: input) } else { try await AddressService.add(input) }
+                addresses = (try? await AddressService.list()) ?? addresses
+                addressBusy = false
+                onDone()
+            } catch {
+                addressBusy = false
+                addressFailed = true
+            }
+        }
+    }
+
+    func deleteAddress(id: String, onDone: @escaping () -> Void) {
+        addressBusy = true
+        addressFailed = false
+        Task {
+            do {
+                try await AddressService.delete(id: id)
+                addresses = (try? await AddressService.list()) ?? addresses
+                addressBusy = false
+                onDone()
+            } catch {
+                addressBusy = false
+                addressFailed = true
+            }
+        }
+    }
+
+    func setDefaultAddress(_ id: String) {
+        addressBusy = true
+        Task {
+            try? await AddressService.makeDefault(id: id)
+            addresses = (try? await AddressService.list()) ?? addresses
+            addressBusy = false
+        }
     }
 
     // MARK: Derived
@@ -367,6 +424,14 @@ final class CustomerModel: ObservableObject {
                 }
             }
             if created > 0 { loadOrders() }
+            if created > 0 && form.saveAsAddress {
+                let input = AddressInput(
+                    userId: profile.id, label: "", city: form.city, district: form.district, neighborhood: form.neighborhood,
+                    street: form.address, landmark: form.landmark, notes: form.addressNotes, isDefault: false
+                )
+                try? await AddressService.add(input)
+                loadAddresses()
+            }
             // Prices or stock changed: reload the products so the cart shows what the shop charges now.
             if failure == .priceChanged || failure == .unavailable { load() }
             placing = false

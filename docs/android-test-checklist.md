@@ -171,5 +171,14 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Shop tab shows the shop address; Edit shop has the address fields (governorate can be changed). Customers never see the shop address, only its governorate.
 - [ ] Admin: shop cards and the preview show the shop address.
 
+## 24. Address book
+- [ ] My account (customer): under the name and phone there is a "My addresses" list. An existing account has one address named Home, marked Default (it was made from the old profile address).
+- [ ] Add address: pick a name (Home / Work / Apartment / Other with your own name), fill the fields, optionally switch on "Use as my default address". The first address is always the default.
+- [ ] Edit an address, make another one the default (the old Default badge moves), delete one (asks to confirm; if it was the default, the oldest remaining one becomes the default). After 10 addresses the Add button is replaced by a note.
+- [ ] Edit profile now changes only the name and phone.
+- [ ] Checkout: the saved addresses are listed, the default is selected; tapping another one selects it; "Use another address" shows the fields and a switch "Save this address in my addresses". A gift order can use any of them. The order shows the chosen address.
+- [ ] Changing or deleting a saved address does not change an order that was already placed.
+- [ ] A new customer account gets its sign-up address as the first address (Home, Default). A shop account has no address book.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.plantapp.R
+import com.plantapp.data.MAX_ADDRESSES
 import com.plantapp.data.Profile
 import com.plantapp.data.localized
 import com.plantapp.ui.AddressDraft
@@ -73,10 +75,22 @@ fun CheckoutScreen(
         mutableStateOf(AddressDraft(state.city, profile.district, profile.neighborhood, profile.address, profile.landmark, profile.addressNotes))
     }
     var note by rememberSaveable { mutableStateOf("") }
+    var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
+    var choseOther by rememberSaveable { mutableStateOf(false) }
+    var saveNew by rememberSaveable { mutableStateOf(false) }
     var dayOffset by rememberSaveable { mutableIntStateOf(0) }
     var window by rememberSaveable { mutableStateOf("any") }
     var fieldsError by rememberSaveable { mutableStateOf(false) }
     var photoRequested by rememberSaveable { mutableStateOf(false) }
+
+    // The saved addresses arrive a moment after the page opens: start with the default one.
+    LaunchedEffect(state.addresses) {
+        if (!choseOther && selectedId == null && state.addresses.isNotEmpty()) {
+            val first = state.addresses.firstOrNull { it.isDefault } ?: state.addresses.first()
+            selectedId = first.id
+            addr = first.toDraft()
+        }
+    }
 
     val today = LocalDate.now()
     val dateFormat = DateTimeFormatter.ofPattern("d MMM", Locale.getDefault())
@@ -109,7 +123,16 @@ fun CheckoutScreen(
 
             // Delivery
             SectionTitle(R.string.checkout_delivery)
-            AddressFields(addr, { addr = it; fieldsError = false }, PlantGreen)
+            AddressPicker(
+                addresses = state.addresses,
+                selectedId = selectedId,
+                draft = addr,
+                saveNew = saveNew,
+                onSelect = { selectedId = it.id; choseOther = false; addr = it.toDraft(); fieldsError = false },
+                onOther = { selectedId = null; choseOther = true; fieldsError = false },
+                onDraft = { addr = it; fieldsError = false },
+                onSaveNew = { saveNew = it },
+            )
 
             Text(stringResource(R.string.delivery_date), style = MaterialTheme.typography.labelLarge, color = TextMuted)
             Spacer(Modifier.height(6.dp))
@@ -249,6 +272,7 @@ fun CheckoutScreen(
                                     deliveryDate = today.plusDays(dayOffset.toLong()).toString(),
                                     window = window,
                                     photoRequested = photoRequested,
+                                    saveAsAddress = selectedId == null && saveNew && state.addresses.size < MAX_ADDRESSES,
                                 )
                             )
                         }

@@ -47,21 +47,14 @@ struct Profile: Codable, Identifiable, Equatable {
     var fullName: String { "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces) }
 }
 
-/// The fields a customer can change on their own profile.
+/// The fields a customer can change on their own profile (addresses live in the address book).
 struct ProfileUpdate: Encodable {
     let firstName: String
     let lastName: String
     let phone: String
-    let city: String
-    let address: String
-    let district: String
-    let neighborhood: String
-    let landmark: String
-    let addressNotes: String
 
     enum CodingKeys: String, CodingKey {
-        case phone, city, address, district, neighborhood, landmark
-        case addressNotes = "address_notes"
+        case phone
         case firstName = "first_name"
         case lastName = "last_name"
     }
@@ -719,6 +712,8 @@ struct CheckoutForm {
     var window = "any"
     /// The customer asked to approve a photo first (only counts for products where the shop offers it).
     var photoRequested = false
+    /// The address was typed for this order: also keep it in the address book.
+    var saveAsAddress = false
 }
 
 // MARK: - AI suggestions
@@ -912,3 +907,58 @@ struct PendingShop: Decodable, Identifiable {
 enum ShopDecision: String {
     case approve, changes, reject
 }
+
+// MARK: - Address book
+
+/// One address saved by a customer. `label` is home / work / apartment (shown in the app language) or the customer's own text.
+struct SavedAddress: Decodable, Identifiable, Equatable {
+    let id: String
+    let label: String
+    let city: String
+    let district: String
+    let neighborhood: String
+    let street: String
+    let landmark: String
+    let notes: String
+    let isDefault: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id, label, city, district, neighborhood, street, landmark, notes
+        case isDefault = "is_default"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        label = try c.decodeIfPresent(String.self, forKey: .label) ?? ""
+        city = try c.decodeIfPresent(String.self, forKey: .city) ?? ""
+        district = try c.decodeIfPresent(String.self, forKey: .district) ?? ""
+        neighborhood = try c.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
+        street = try c.decodeIfPresent(String.self, forKey: .street) ?? ""
+        landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
+        notes = try c.decodeIfPresent(String.self, forKey: .notes) ?? ""
+        isDefault = try c.decodeIfPresent(Bool.self, forKey: .isDefault) ?? false
+    }
+}
+
+/// What is sent to the database when an address is saved.
+struct AddressInput: Encodable {
+    let userId: String
+    let label: String
+    let city: String
+    let district: String
+    let neighborhood: String
+    let street: String
+    let landmark: String
+    let notes: String
+    let isDefault: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case label, city, district, neighborhood, street, landmark, notes
+        case userId = "user_id"
+        case isDefault = "is_default"
+    }
+}
+
+/// A customer can save this many addresses (the database enforces it too).
+let maxAddresses = 10
