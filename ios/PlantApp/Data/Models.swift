@@ -125,9 +125,11 @@ struct Shop: Codable, Equatable {
     var shopTypes: [String]
     var deliveryFeeIqd: Int
     var deliveryFees: [String: Int]
+    /// False until the owner of the app approves the shop; customers cannot see it before.
+    var approved: Bool
 
     enum CodingKeys: String, CodingKey {
-        case id, name, city, rating, phone, bio
+        case id, name, city, rating, phone, bio, approved
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case shopTypes = "shop_types"
@@ -148,6 +150,7 @@ struct Shop: Codable, Equatable {
         shopTypes = try c.decodeIfPresent([String].self, forKey: .shopTypes) ?? [Catalog.plants]
         deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
         deliveryFees = try c.decodeIfPresent([String: Int].self, forKey: .deliveryFees) ?? [:]
+        approved = try c.decodeIfPresent(Bool.self, forKey: .approved) ?? true
     }
 
     var isNationwide: Bool { deliveryScope == "nationwide" }

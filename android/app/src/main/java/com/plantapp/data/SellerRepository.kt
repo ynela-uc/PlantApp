@@ -24,6 +24,8 @@ data class Shop(
     @SerialName("shop_types") val shopTypes: List<String> = listOf(Catalog.PLANTS),
     @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 0,
     @SerialName("delivery_fees") val deliveryFees: Map<String, Int> = emptyMap(),
+    /** False until the owner of the app approves the shop; customers cannot see it before. */
+    val approved: Boolean = true,
 ) {
     val isNationwide: Boolean get() = deliveryScope == "nationwide"
 }

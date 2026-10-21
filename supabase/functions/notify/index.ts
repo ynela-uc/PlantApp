@@ -3,9 +3,10 @@
 // Sends a push notification (Firebase Cloud Messaging) about an order event. Called only by the database
 // (see migration 015) with a shared secret; never by the apps.
 //
-// Input  (POST JSON, header x-notify-secret): { event: string, order_id: string }
+// Input  (POST JSON, header x-notify-secret): { event: string, order_id?: string, seller_id?: string }
 // Events: new_order, order_reminder, photo_approved, photo_change (to the shop);
-//         photo_ready, out_for_delivery, order_cancelled (to the customer).
+//         photo_ready, out_for_delivery, order_cancelled (to the customer);
+//         new_shop (to the admin, internal_config 'admin_user_id'), shop_approved (to the shop owner), sent with { seller_id }.
 //
 // Secrets (Supabase -> Edge Functions -> Secrets):
 //   NOTIFY_SECRET        same value as internal_config.notify_secret in the database
@@ -53,6 +54,16 @@ const TEXTS: Record<string, Record<Lang, Text>> = {
     ar: { title: "تعذّر تنفيذ طلبك", body: "اعتذر {shop} عن تنفيذ طلبك" },
     ckb: { title: "داواکارییەکەت جێبەجێ نەکرا", body: "{shop} ببورە لە جێبەجێکردنی داواکارییەکەت" },
     en: { title: "Your order could not be fulfilled", body: "{shop} had to cancel your order" },
+  },
+  new_shop: {
+    ar: { title: "متجر جديد ينتظر الموافقة", body: "{shop}" },
+    ckb: { title: "فرۆشگایەکی نوێ چاوەڕێی پەسەندکردنە", body: "{shop}" },
+    en: { title: "A new shop is waiting for approval", body: "{shop}" },
+  },
+  shop_approved: {
+    ar: { title: "تمت الموافقة على متجرك", body: "يمكن للزبائن الآن رؤية {shop} ومنتجاتك" },
+    ckb: { title: "فرۆشگاکەت پەسەند کرا", body: "ئێستا کڕیاران دەتوانن {shop} و بەرهەمەکانت ببینن" },
+    en: { title: "Your shop was approved", body: "Customers can now see {shop} and your products" },
   },
 };
 
@@ -102,23 +113,44 @@ Deno.serve(async (request) => {
   if (!NOTIFY_SECRET || request.headers.get("x-notify-secret") !== NOTIFY_SECRET) return json({ error: "unauthorized" }, 401);
   if (!SERVICE_ACCOUNT) return json({ error: "fcm_not_configured" }, 503);
 
-  let payload: { event?: string; order_id?: string };
+  let payload: { event?: string; order_id?: string; seller_id?: string };
   try { payload = await request.json(); } catch { return json({ error: "bad_request" }, 400); }
   const event = payload.event ?? "";
   const texts = TEXTS[event];
-  if (!texts || !payload.order_id) return json({ error: "bad_request" }, 400);
+  const shopEvent = event === "new_shop" || event === "shop_approved";
+  if (!texts || !(shopEvent ? payload.seller_id : payload.order_id)) return json({ error: "bad_request" }, 400);
 
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data: order } = await db
-    .from("orders")
-    .select("id, buyer_id, buyer_name, seller_name, sellers(owner_id)")
-    .eq("id", payload.order_id)
-    .maybeSingle();
-  if (!order) return json({ error: "order_not_found" }, 404);
+  let recipient: string | null = null;
+  let customerName = "";
+  let shopName = "";
+  let refId = "";
 
-  // deno-lint-ignore no-explicit-any
-  const ownerId = (order as any).sellers?.owner_id as string | null;
-  const recipient = FOR_SHOP.has(event) ? ownerId : order.buyer_id;
+  if (shopEvent) {
+    const { data: shop } = await db.from("sellers").select("id, name, owner_id").eq("id", payload.seller_id).maybeSingle();
+    if (!shop) return json({ error: "shop_not_found" }, 404);
+    shopName = shop.name;
+    refId = shop.id;
+    if (event === "new_shop") {
+      const { data: admin } = await db.from("internal_config").select("value").eq("key", "admin_user_id").maybeSingle();
+      recipient = admin?.value ?? null;
+    } else {
+      recipient = shop.owner_id;
+    }
+  } else {
+    const { data: order } = await db
+      .from("orders")
+      .select("id, buyer_id, buyer_name, seller_name, sellers(owner_id)")
+      .eq("id", payload.order_id)
+      .maybeSingle();
+    if (!order) return json({ error: "order_not_found" }, 404);
+    customerName = order.buyer_name || "";
+    shopName = order.seller_name || "";
+    refId = order.id;
+    // deno-lint-ignore no-explicit-any
+    const ownerId = (order as any).sellers?.owner_id as string | null;
+    recipient = FOR_SHOP.has(event) ? ownerId : order.buyer_id;
+  }
   if (!recipient) return json({ sent: 0, reason: "no_recipient" });
 
   const { data: devices } = await db.from("device_tokens").select("token, platform, language").eq("user_id", recipient);
@@ -126,13 +158,13 @@ Deno.serve(async (request) => {
 
   const account = JSON.parse(SERVICE_ACCOUNT);
   const token = await accessToken(account);
-  const channel = FOR_SHOP.has(event) ? "new_orders" : "order_updates";
+  const channel = FOR_SHOP.has(event) || event === "new_shop" ? "new_orders" : "order_updates";
   let sent = 0;
 
   for (const device of devices) {
     const lang: Lang = (["ar", "ckb", "en"].includes(device.language) ? device.language : "ar") as Lang;
     const text = texts[lang];
-    const fill = (s: string) => s.replace("{name}", order.buyer_name || "").replace("{shop}", order.seller_name || "");
+    const fill = (s: string) => s.replace("{name}", customerName).replace("{shop}", shopName);
     const response = await fetch(`https://fcm.googleapis.com/v1/projects/${account.project_id}/messages:send`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -140,7 +172,7 @@ Deno.serve(async (request) => {
         message: {
           token: device.token,
           notification: { title: fill(text.title), body: fill(text.body) },
-          data: { event, order_id: order.id },
+          data: { event, order_id: refId },
           android: { priority: "HIGH", notification: { channel_id: channel, sound: "default" } },
           apns: { headers: { "apns-priority": "10" }, payload: { aps: { sound: "default" } } },
         },

@@ -40,7 +40,7 @@ Notes and suggested shape (a starting point, to decide together before building)
 
 ## Must-have before real customers
 - Seller order alerts (above).
-- Seller approval: the owner can approve or block shops before customers see them (check what exists).
+- Seller approval: built (migration 016, apply it first). Owner approves in the Supabase Table Editor; an in-app admin screen can come later.
 - Cancel and problem rules: what happens when a customer cancels or a shop rejects an order.
 - Privacy policy and terms (the stores require them).
 - Real data: demo flower and gift products, and a real trial with Whites & Wicks.

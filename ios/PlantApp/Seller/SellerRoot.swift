@@ -39,6 +39,8 @@ struct SellerRoot: View {
     @ViewBuilder
     private func content(_ shop: Shop) -> some View {
         ZStack {
+            VStack(spacing: 0) {
+                if !shop.approved { PendingApprovalNotice() }
             TabView(selection: Binding(get: { model.tab }, set: { model.setTab($0) })) {
                 SellerOrdersTab()
                     .tabItem { Label(lang.t("nav_seller_orders"), systemImage: "shippingbox") }
@@ -52,6 +54,7 @@ struct SellerRoot: View {
                     .tag(SellerTab.shop)
             }
             .glassTabBar()
+            }
 
             if let editor = model.editor {
                 PlantEditorView(editor: editor)
@@ -135,5 +138,25 @@ struct NewOrderBanner: View {
             try? await Task.sleep(nanoseconds: 12_000_000_000)
             if !Task.isCancelled { model.dismissAlert() }
         }
+    }
+}
+
+/// Shown at the top while the shop waits for the owner of the app to approve it.
+struct PendingApprovalNotice: View {
+    @EnvironmentObject var lang: LanguageStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(lang.t("shop_pending_title"))
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(Theme.amber)
+            Text(lang.t("shop_pending_body"))
+                .font(.system(size: 13))
+                .foregroundStyle(Theme.muted)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.amberSoft)
     }
 }

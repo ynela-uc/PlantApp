@@ -131,6 +131,8 @@ final class SellerModel: ObservableObject {
     private func reloadOrders() async {
         guard let shop else { return }
         if let fresh = try? await SellerService.fetchOrders(shopId: shop.id) { apply(fresh) }
+        // Waiting for approval: look again, so the notice disappears once the shop is approved.
+        if !shop.approved, let updated = try? await SellerService.fetchShop(ownerId: profile.id) { self.shop = updated }
     }
 
     /// Stores the orders and, when some are new since the last look, raises the in-app alert (banner, sound, vibration).

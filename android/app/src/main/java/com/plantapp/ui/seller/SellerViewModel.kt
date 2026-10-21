@@ -162,6 +162,8 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
         viewModelScope.launch {
             try {
                 applyOrders(repo.fetchOrders(shop.id))
+                // Waiting for approval: look again, so the notice disappears once the shop is approved.
+                if (!shop.approved) repo.fetchShop(profile.id)?.let { fresh -> _state.update { it.copy(shop = fresh) } }
             } catch (_: Exception) { }
         }
     }

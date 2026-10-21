@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Badge
@@ -16,7 +18,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -145,6 +150,7 @@ private fun SellerScreens(vm: SellerViewModel, state: SellerState, profile: Prof
 
     Scaffold(
         containerColor = ScreenBackground,
+        topBar = { if (!shop.approved) PendingApprovalNotice() },
         bottomBar = {
             NavigationBar(containerColor = Color.White) {
                 NavigationBarItem(
@@ -173,6 +179,17 @@ private fun SellerScreens(vm: SellerViewModel, state: SellerState, profile: Prof
                 modifier = content,
             )
             SellerTab.Shop -> ShopTab(shop = shop, profile = profile, onEdit = vm::openShopEditor, onSignOut = onSignOut, modifier = content)
+        }
+    }
+}
+
+/** Shown at the top while the shop waits for the owner of the app to approve it. */
+@Composable
+private fun PendingApprovalNotice() {
+    Surface(color = SellerAmberSoft, modifier = Modifier.fillMaxWidth().systemBarsPadding()) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
+            Text(stringResource(R.string.shop_pending_title), fontWeight = FontWeight.Bold, color = SellerAmber)
+            Text(stringResource(R.string.shop_pending_body), style = MaterialTheme.typography.bodySmall, color = TextMuted)
         }
     }
 }

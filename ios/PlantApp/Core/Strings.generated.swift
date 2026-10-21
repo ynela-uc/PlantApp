@@ -318,6 +318,8 @@ enum GeneratedStrings {
         "shop_fee_cities": ["en": "Different fee for some cities (leave empty to use the normal fee)", "ar": "أجرة مختلفة لبعض المحافظات (اتركها فارغة لاستخدام الأجرة العادية)", "ckb": "نرخی جیاواز بۆ هەندێ شار (بەتاڵی بهێڵەرەوە بۆ نرخی ئاسایی)"],
         "shop_fee_title": ["en": "Delivery fee (IQD)", "ar": "أجرة التوصيل (د.ع)", "ckb": "نرخی گەیاندن (دینار)"],
         "shop_owner": ["en": "Owner: %1$@", "ar": "صاحب المتجر: %1$@", "ckb": "خاوەن: %1$@"],
+        "shop_pending_body": ["en": "You can add your products now. Customers will see your shop once it is approved.", "ar": "يمكنك إضافة منتجاتك الآن. سيظهر متجرك للزبائن بعد الموافقة عليه.", "ckb": "ئێستا دەتوانیت بەرهەمەکانت زیاد بکەیت. فرۆشگاکەت دوای پەسەندکردن بۆ کڕیاران دەردەکەوێت."],
+        "shop_pending_title": ["en": "Your shop is waiting for approval", "ar": "متجرك بانتظار الموافقة", "ckb": "فرۆشگاکەت چاوەڕێی پەسەندکردنە"],
         "shop_products": ["en": "Products", "ar": "المنتجات", "ckb": "بەرهەمەکان"],
         "shop_scope_local": ["en": "Local only", "ar": "محافظات محددة", "ckb": "ناوخۆیی"],
         "shop_scope_nationwide": ["en": "Nationwide", "ar": "جميع المحافظات", "ckb": "هەموو شارەکان"],

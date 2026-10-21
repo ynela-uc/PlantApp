@@ -40,6 +40,8 @@
     <string name="err_generic">Something went wrong. Please try again.</string>
     <string name="err_price_changed">Something changed: a price or a delivery fee is different now. We refreshed the prices, so please check your cart and try again.</string>
     <string name="err_unavailable">One of the products is no longer available or its choices changed. We refreshed the list, so please check your cart.</string>
+    <string name="shop_pending_title">Your shop is waiting for approval</string>
+    <string name="shop_pending_body">You can add your products now. Customers will see your shop once it is approved.</string>
     <string name="banner_new_order">New order from %1$s</string>
     <string name="banner_new_orders">%1$d new orders</string>
     <string name="banner_tap_to_open">Tap to open</string>

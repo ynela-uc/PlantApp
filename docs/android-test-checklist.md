@@ -101,5 +101,12 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Leave a new order unopened for 10 minutes: one reminder notification arrives ("An order is waiting").
 - [ ] Customer phone: when the shop sends the photo, a "Your order photo is ready" notification arrives; when the order goes out for delivery, "Your order is on its way".
 
+## 15. Shop approval
+- [ ] Create a NEW seller account and shop. The shop owner sees an amber notice at the top: "Your shop is waiting for approval". They can still add products.
+- [ ] A customer account does NOT see that shop or its products anywhere (home, search, assistant).
+- [ ] The admin's phone gets a push: "A new shop is waiting for approval" with the shop name.
+- [ ] In Supabase -> Table Editor -> sellers, tick `approved` for the new shop. Within about 30 seconds the notice disappears on the owner's phone (the owner also gets a push "Your shop was approved"), and customers now see the shop.
+- [ ] The existing shops (your test shop and the five demo shops) are still visible to customers.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).
