@@ -57,12 +57,11 @@ import com.plantapp.ui.theme.TextMuted
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun EntryScreen(profile: Profile, onChoose: (section: String?, occasion: String?) -> Unit) {
+fun EntryScreen(profile: Profile, onChoose: (section: String?, occasion: String?) -> Unit, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(ScreenBackground)
-            .systemBarsPadding()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 24.dp),
     ) {

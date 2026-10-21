@@ -44,11 +44,6 @@ fun CustomerApp(
     val assistantState by assistant.state.collectAsStateWithLifecycle()
     val language = rememberLang()
 
-    if (!state.entered) {
-        EntryScreen(profile = profile, onChoose = vm::enter)
-        return
-    }
-
     when (val overlay = state.overlay) {
         is Overlay.Detail -> {
             val listing = state.listing(overlay.listingId)
@@ -148,7 +143,10 @@ fun CustomerApp(
     ) { padding ->
         val content = Modifier.padding(padding)
         when (state.tab) {
-            CustomerTab.Browse -> BrowseScreen(
+            // The first page after opening the app asks what to look for; the bottom bar stays available.
+            CustomerTab.Browse -> if (!state.entered) {
+                EntryScreen(profile = profile, onChoose = vm::enter, modifier = content)
+            } else BrowseScreen(
                 profile = profile,
                 state = state,
                 onCity = vm::setCity,

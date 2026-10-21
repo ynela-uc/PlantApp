@@ -12,19 +12,19 @@ struct CustomerRoot: View {
         _model = StateObject(wrappedValue: CustomerModel(profile: profile))
     }
 
-    var body: some View {
-        if model.entered {
-            tabs
-        } else {
-            EntryView(profile: profile)
-                .environmentObject(model)
-        }
-    }
+    var body: some View { tabs }
 
     private var tabs: some View {
         ZStack {
             TabView(selection: Binding(get: { model.tab }, set: { model.setTab($0) })) {
-                BrowseView(profile: profile)
+                // The first page after opening the app asks what to look for; the tab bar stays available.
+                Group {
+                    if model.entered {
+                        BrowseView(profile: profile)
+                    } else {
+                        EntryView(profile: profile)
+                    }
+                }
                     .tabItem { Label(lang.t("nav_browse"), systemImage: "leaf") }
                     .tag(CustomerTab.browse)
                 AssistantView()
