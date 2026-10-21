@@ -179,6 +179,16 @@ final class CustomerModel: ObservableObject {
     }
 
     /// Approve the shop's photo, or send the shop a change request.
+    /// The customer cancels an order that the shop has not accepted yet.
+    func cancelOrder(_ orderId: String) {
+        reviewBusy = true
+        Task {
+            do { try await OrdersService.cancel(orderId: orderId) } catch { }
+            loadOrders()
+            reviewBusy = false
+        }
+    }
+
     func reviewPhoto(orderId: String, approve: Bool, note: String?) {
         reviewBusy = true
         Task {

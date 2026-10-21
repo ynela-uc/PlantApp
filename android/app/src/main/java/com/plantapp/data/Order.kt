@@ -24,6 +24,12 @@ data class OrderItem(
 /** How long the customer has to answer a photo; after that the shop can continue (checked by the database too). */
 const val PHOTO_WAIT_MINUTES = 60L
 
+/** Reasons a shop can give when it declines or cancels an order. */
+val ShopCancelReasons = listOf("out_of_stock", "cant_deliver_day", "cant_make", "other")
+
+/** Reasons a shop can give when an order could not be delivered. */
+val FailedDeliveryReasons = listOf("no_answer", "refused", "wrong_address", "other")
+
 /** Order progress, in the order a customer sees it. */
 enum class OrderStatus(val db: String) {
     Placed("placed"),
@@ -71,6 +77,9 @@ data class Order(
     /** True when the shop must send a photo that the customer approves before delivery. */
     @SerialName("photo_required") val photoRequired: Boolean = false,
     @SerialName("photo_sent_at") val photoSentAt: String? = null,
+    /** Why a cancelled order was cancelled (see [ShopCancelReasons]) and by whom: customer, shop or system. */
+    @SerialName("cancel_reason") val cancelReason: String? = null,
+    @SerialName("cancelled_by") val cancelledBy: String? = null,
 ) {
     val statusEnum: OrderStatus get() = OrderStatus.fromDb(status)
 
@@ -111,6 +120,11 @@ data class NewOrder(
 class OrdersRepository {
     suspend fun create(order: NewOrder) {
         Backend.client.from("orders").insert(order)
+    }
+
+    /** Customer cancels an order the shop has not accepted yet. */
+    suspend fun cancel(orderId: String) {
+        Backend.client.postgrest.rpc("customer_cancel_order", buildJsonObject { put("p_order_id", orderId) })
     }
 
     /** Customer's answer to the preparation photo: approve it, or ask the shop to change something. */

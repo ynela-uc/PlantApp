@@ -82,6 +82,7 @@ struct OrderDetailView: View {
 
     @State private var askingChange = false
     @State private var changeNote = ""
+    @State private var confirmCancel = false
 
     var body: some View {
         let status = order.statusEnum
@@ -149,7 +150,13 @@ struct OrderDetailView: View {
 
                     // Timeline
                     if status == .cancelled {
-                        StatusChip(status: status)
+                        VStack(alignment: .leading, spacing: 6) {
+                            StatusChip(status: status)
+                            if let reason = order.cancelReason {
+                                Text(lang.t("order_cancelled_reason", lang.t(cancelReasonKey(reason))))
+                                    .foregroundStyle(Theme.muted)
+                            }
+                        }
                     } else {
                         let reached = order.timeline.firstIndex(of: status) ?? 0
                         ForEach(Array(order.timeline.enumerated()), id: \.offset) { index, step in
@@ -186,6 +193,12 @@ struct OrderDetailView: View {
                 }
 
                 Group {
+                    if status == .placed {
+                        Button(lang.t("cancel_my_order")) { confirmCancel = true }
+                            .buttonStyle(PrimaryButtonStyle(color: Theme.error, filled: false))
+                            .disabled(model.reviewBusy)
+                            .padding(.top, 20)
+                    }
                     SectionHeading(text: lang.t("checkout_delivery"))
                     if order.isGift {
                         Text(lang.t("order_gift_for", order.recipientName ?? ""))
@@ -217,6 +230,12 @@ struct OrderDetailView: View {
                 if !note.isEmpty { model.reviewPhoto(orderId: order.id, approve: false, note: note) }
             }
             Button(lang.t("action_cancel"), role: .cancel) { changeNote = "" }
+        }
+        .alert(lang.t("cancel_confirm_title"), isPresented: $confirmCancel) {
+            Button(lang.t("cancel_confirm_yes"), role: .destructive) { model.cancelOrder(order.id) }
+            Button(lang.t("cancel_confirm_no"), role: .cancel) { }
+        } message: {
+            Text(lang.t("cancel_confirm_body"))
         }
     }
 }

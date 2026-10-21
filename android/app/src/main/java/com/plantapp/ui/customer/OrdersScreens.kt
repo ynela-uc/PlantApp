@@ -183,6 +183,7 @@ fun OrderDetailScreen(
     order: Order,
     reviewBusy: Boolean,
     onReview: (approve: Boolean, note: String?) -> Unit,
+    onCancel: () -> Unit,
     onBack: () -> Unit,
 ) {
     val lang = rememberLang()
@@ -190,6 +191,7 @@ fun OrderDetailScreen(
     val photoUrl by rememberSignedPhotoUrl(order.preparationPhotoPath)
     var askingChange by rememberSaveable { mutableStateOf(false) }
     var changeNote by rememberSaveable { mutableStateOf("") }
+    var confirmCancel by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize().systemBarsPadding().verticalScroll(rememberScrollState())) {
         val backArrow = if (LocalLayoutDirection.current == LayoutDirection.Rtl) "→" else "←"
@@ -265,6 +267,10 @@ fun OrderDetailScreen(
             // Timeline
             if (status == OrderStatus.Cancelled) {
                 StatusChip(status)
+                order.cancelReason?.let {
+                    Spacer(Modifier.height(6.dp))
+                    Text(stringResource(R.string.order_cancelled_reason, cancelReasonLabel(it)), color = TextMuted)
+                }
             } else {
                 val reached = order.timeline.indexOf(status)
                 order.timeline.forEachIndexed { index, step ->
@@ -275,6 +281,16 @@ fun OrderDetailScreen(
                         last = index == order.timeline.lastIndex,
                     )
                 }
+            }
+
+            if (status == OrderStatus.Placed) {
+                Spacer(Modifier.height(20.dp))
+                OutlinedButton(
+                    onClick = { confirmCancel = true },
+                    enabled = !reviewBusy,
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    shape = RoundedCornerShape(14.dp),
+                ) { Text(stringResource(R.string.cancel_my_order), color = CancelledRed) }
             }
 
             Spacer(Modifier.height(24.dp))
@@ -344,6 +360,19 @@ fun OrderDetailScreen(
                 ) { Text(stringResource(R.string.review_change_send)) }
             },
             dismissButton = { TextButton(onClick = { askingChange = false }) { Text(stringResource(R.string.action_cancel)) } },
+        )
+    }
+    if (confirmCancel) {
+        AlertDialog(
+            onDismissRequest = { confirmCancel = false },
+            title = { Text(stringResource(R.string.cancel_confirm_title)) },
+            text = { Text(stringResource(R.string.cancel_confirm_body)) },
+            confirmButton = {
+                TextButton(onClick = { confirmCancel = false; onCancel() }) {
+                    Text(stringResource(R.string.cancel_confirm_yes), color = CancelledRed)
+                }
+            },
+            dismissButton = { TextButton(onClick = { confirmCancel = false }) { Text(stringResource(R.string.cancel_confirm_no)) } },
         )
     }
 }

@@ -24,12 +24,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.plantapp.R
+import com.plantapp.data.FailedDeliveryReasons
 import com.plantapp.data.Order
+import com.plantapp.data.ShopCancelReasons
 import com.plantapp.data.OrderStatus
 import com.plantapp.data.localized
 import com.plantapp.ui.cityLabel
@@ -173,7 +179,7 @@ fun SellerOrderDetailScreen(
     order: Order,
     busy: Boolean,
     actionFailed: Boolean,
-    onStatus: (OrderStatus) -> Unit,
+    onStatus: (OrderStatus, String?) -> Unit,
     onPhoto: (ByteArray) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -182,6 +188,8 @@ fun SellerOrderDetailScreen(
     val status = order.statusEnum
     val capture = rememberPhotoCapture(onPhoto)
     val photoUrl by rememberSignedPhotoUrl(order.preparationPhotoPath)
+    /** Which list of reasons is being asked for: cancel ("shop") or failed delivery ("failed"); null = no question open. */
+    var askReason by rememberSaveable { mutableStateOf<String?>(null) }
 
     fun dial(number: String) {
         context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number")))
@@ -206,7 +214,11 @@ fun SellerOrderDetailScreen(
             Spacer(Modifier.height(20.dp))
             Heading(R.string.seller_customer)
             Text(order.buyerName.ifBlank { "—" }, fontWeight = FontWeight.SemiBold)
-            if (order.buyerPhone.isNotBlank()) CallRow(order.buyerPhone) { dial(order.buyerPhone) }
+            if (status == OrderStatus.Placed) {
+                Text(stringResource(R.string.cancel_no_phone_yet), color = TextMuted, style = MaterialTheme.typography.bodySmall)
+            } else if (order.buyerPhone.isNotBlank()) {
+                CallRow(order.buyerPhone) { dial(order.buyerPhone) }
+            }
 
             // Items
             Spacer(Modifier.height(20.dp))
@@ -240,7 +252,7 @@ fun SellerOrderDetailScreen(
             Heading(R.string.checkout_delivery)
             if (order.isGift) {
                 Text(stringResource(R.string.order_gift_for, order.recipientName.orEmpty()), fontWeight = FontWeight.SemiBold)
-                order.recipientPhone?.takeIf { it.isNotBlank() }?.let { CallRow(it) { dial(it) } }
+                if (status != OrderStatus.Placed) order.recipientPhone?.takeIf { it.isNotBlank() }?.let { CallRow(it) { dial(it) } }
                 order.giftNote?.takeIf { it.isNotBlank() }?.let {
                     Spacer(Modifier.height(6.dp))
                     Text("“$it”", style = MaterialTheme.typography.bodyMedium)
@@ -297,14 +309,14 @@ fun SellerOrderDetailScreen(
             }
             when (status) {
                 OrderStatus.Placed -> {
-                    ActionButton(R.string.act_accept, busy) { onStatus(OrderStatus.Preparing) }
+                    ActionButton(R.string.act_accept, busy) { onStatus(OrderStatus.Preparing, null) }
                     Spacer(Modifier.height(8.dp))
-                    DangerButton(R.string.act_decline, busy) { onStatus(OrderStatus.Cancelled) }
+                    DangerButton(R.string.act_decline, busy) { askReason = "shop" }
                 }
                 OrderStatus.Preparing -> if (!order.photoRequired) {
-                    ActionButton(R.string.act_out_for_delivery, busy) { onStatus(OrderStatus.OutForDelivery) }
+                    ActionButton(R.string.act_out_for_delivery, busy) { onStatus(OrderStatus.OutForDelivery, null) }
                     Spacer(Modifier.height(8.dp))
-                    DangerButton(R.string.act_cancel_order, busy) { onStatus(OrderStatus.Cancelled) }
+                    DangerButton(R.string.act_cancel_order, busy) { askReason = "shop" }
                 } else {
                     Text(stringResource(R.string.photo_prompt_title), fontWeight = FontWeight.Bold, color = PlantGreenDark)
                     Text(stringResource(R.string.photo_prompt_body), color = TextMuted)
@@ -324,7 +336,7 @@ fun SellerOrderDetailScreen(
                             shape = RoundedCornerShape(14.dp),
                         ) { Text(stringResource(R.string.photo_pick), color = SellerAmber) }
                         Spacer(Modifier.height(8.dp))
-                        DangerButton(R.string.act_cancel_order, false) { onStatus(OrderStatus.Cancelled) }
+                        DangerButton(R.string.act_cancel_order, false) { askReason = "shop" }
                     }
                 }
                 OrderStatus.PhotoSent -> if (order.photoAnswerOverdue) {
@@ -334,20 +346,54 @@ fun SellerOrderDetailScreen(
                         fontWeight = FontWeight.SemiBold,
                     )
                     Spacer(Modifier.height(8.dp))
-                    ActionButton(R.string.act_continue_no_answer, busy) { onStatus(OrderStatus.Approved) }
+                    ActionButton(R.string.act_continue_no_answer, busy) { onStatus(OrderStatus.Approved, null) }
                 } else {
                     Text(
                         stringResource(R.string.seller_waiting_approval),
                         color = TextMuted,
                         fontWeight = FontWeight.SemiBold,
                     )
+                    Spacer(Modifier.height(8.dp))
+                    DangerButton(R.string.act_cancel_order, busy) { askReason = "shop" }
                 }
-                OrderStatus.Approved -> ActionButton(R.string.act_out_for_delivery, busy) { onStatus(OrderStatus.OutForDelivery) }
-                OrderStatus.OutForDelivery -> ActionButton(R.string.act_mark_delivered, busy) { onStatus(OrderStatus.Delivered) }
+                OrderStatus.Approved -> {
+                    ActionButton(R.string.act_out_for_delivery, busy) { onStatus(OrderStatus.OutForDelivery, null) }
+                    Spacer(Modifier.height(8.dp))
+                    DangerButton(R.string.act_cancel_order, busy) { askReason = "shop" }
+                }
+                OrderStatus.OutForDelivery -> {
+                    ActionButton(R.string.act_mark_delivered, busy) { onStatus(OrderStatus.Delivered, null) }
+                    Spacer(Modifier.height(8.dp))
+                    DangerButton(R.string.act_delivery_failed, busy) { askReason = "failed" }
+                }
                 OrderStatus.Delivered, OrderStatus.Cancelled -> Unit
             }
             Spacer(Modifier.height(40.dp))
         }
+    }
+
+    val reasons = if (askReason == "failed") FailedDeliveryReasons else ShopCancelReasons
+    if (askReason != null) {
+        AlertDialog(
+            onDismissRequest = { askReason = null },
+            title = { Text(stringResource(R.string.reason_title)) },
+            text = {
+                Column {
+                    reasons.forEach { key ->
+                        OutlinedButton(
+                            onClick = {
+                                askReason = null
+                                onStatus(OrderStatus.Cancelled, key)
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
+                            shape = RoundedCornerShape(12.dp),
+                        ) { Text(com.plantapp.ui.customer.cancelReasonLabel(key), color = PlantGreenDark) }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = { TextButton(onClick = { askReason = null }) { Text(stringResource(R.string.action_cancel)) } },
+        )
     }
 }
 

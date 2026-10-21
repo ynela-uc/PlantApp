@@ -130,13 +130,14 @@ class SellerRepository {
             .decodeList<Order>()
 
     /** Moves an order along its status steps; the database checks that the change is allowed. */
-    suspend fun setOrderStatus(orderId: String, status: OrderStatus, photoPath: String? = null) {
+    suspend fun setOrderStatus(orderId: String, status: OrderStatus, photoPath: String? = null, reason: String? = null) {
         Backend.client.postgrest.rpc(
             "seller_set_order_status",
             buildJsonObject {
                 put("p_order_id", orderId)
                 put("p_status", status.db)
                 if (photoPath != null) put("p_photo_path", photoPath)
+                if (reason != null) put("p_reason", reason)
             },
         )
     }

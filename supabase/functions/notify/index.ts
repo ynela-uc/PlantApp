@@ -55,6 +55,21 @@ const TEXTS: Record<string, Record<Lang, Text>> = {
     ckb: { title: "داواکارییەکەت جێبەجێ نەکرا", body: "{shop} ببورە لە جێبەجێکردنی داواکارییەکەت" },
     en: { title: "Your order could not be fulfilled", body: "{shop} had to cancel your order" },
   },
+  customer_cancelled: {
+    ar: { title: "ألغى الزبون الطلب", body: "{name} ألغى طلبه قبل قبوله" },
+    ckb: { title: "کڕیار داواکارییەکەی هەڵوەشاندەوە", body: "{name} داواکارییەکەی پێش قبوڵکردن هەڵوەشاندەوە" },
+    en: { title: "The customer cancelled", body: "{name} cancelled the order before you accepted it" },
+  },
+  order_expired: {
+    ar: { title: "تم إلغاء طلبك", body: "لم يردّ {shop} على طلبك خلال 12 ساعة" },
+    ckb: { title: "داواکارییەکەت هەڵوەشێندرایەوە", body: "{shop} لە ماوەی ١٢ کاتژمێردا وەڵامی نەدایەوە" },
+    en: { title: "Your order was cancelled", body: "{shop} did not answer within 12 hours" },
+  },
+  delivery_failed: {
+    ar: { title: "تعذّر توصيل طلبك", body: "لم يتمكن {shop} من توصيل طلبك. افتح الطلب لمعرفة السبب" },
+    ckb: { title: "گەیاندنی داواکارییەکەت نەکرا", body: "{shop} نەیتوانی داواکارییەکەت بگەیەنێت. داواکارییەکە بکەرەوە بۆ زانینی هۆکار" },
+    en: { title: "Your order could not be delivered", body: "{shop} could not deliver it. Open the order to see why" },
+  },
   new_shop: {
     ar: { title: "متجر جديد ينتظر الموافقة", body: "{shop}" },
     ckb: { title: "فرۆشگایەکی نوێ چاوەڕێی پەسەندکردنە", body: "{shop}" },
@@ -67,7 +82,7 @@ const TEXTS: Record<string, Record<Lang, Text>> = {
   },
 };
 
-const FOR_SHOP = new Set(["new_order", "order_reminder", "photo_approved", "photo_change"]);
+const FOR_SHOP = new Set(["new_order", "order_reminder", "photo_approved", "photo_change", "customer_cancelled"]);
 
 const NOTIFY_SECRET = Deno.env.get("NOTIFY_SECRET");
 const SERVICE_ACCOUNT = Deno.env.get("FCM_SERVICE_ACCOUNT");

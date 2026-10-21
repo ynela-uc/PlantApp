@@ -106,6 +106,9 @@ struct SellerOrderDetailView: View {
 
     @State private var showCamera = false
     @State private var showLibrary = false
+    @State private var showReasons = false
+    /// Which list of reasons the dialog shows: "shop" (decline / cancel) or "failed" (could not deliver).
+    @State private var reasonKind = "shop"
 
     var body: some View {
         let status = order.statusEnum
@@ -127,7 +130,13 @@ struct SellerOrderDetailView: View {
                     SectionHeading(text: lang.t("seller_customer"))
                     Text(order.buyerName.isEmpty ? "—" : order.buyerName)
                         .font(.system(size: 16, weight: .semibold))
-                    if !order.buyerPhone.isEmpty { callRow(order.buyerPhone) }
+                    if status == .placed {
+                        Text(lang.t("cancel_no_phone_yet"))
+                            .font(.system(size: 13))
+                            .foregroundStyle(Theme.muted)
+                    } else if !order.buyerPhone.isEmpty {
+                        callRow(order.buyerPhone)
+                    }
 
                     // Items
                     SectionHeading(text: lang.t("order_items"))
@@ -165,7 +174,7 @@ struct SellerOrderDetailView: View {
                     if order.isGift {
                         Text(lang.t("order_gift_for", order.recipientName ?? ""))
                             .font(.system(size: 16, weight: .semibold))
-                        if let phone = order.recipientPhone, !phone.isEmpty { callRow(phone) }
+                        if status != .placed, let phone = order.recipientPhone, !phone.isEmpty { callRow(phone) }
                         if let note = order.giftNote, !note.isEmpty {
                             Text("“\(note)”").padding(.top, 6)
                         }
@@ -231,6 +240,12 @@ struct SellerOrderDetailView: View {
         .photoSheets(camera: $showCamera, library: $showLibrary) { data in
             model.sendPreparationPhoto(order.id, raw: data)
         }
+        .confirmationDialog(lang.t("reason_title"), isPresented: $showReasons, titleVisibility: .visible) {
+            ForEach(reasonKind == "failed" ? failedDeliveryReasons : shopCancelReasons, id: \.self) { key in
+                Button(lang.t(cancelReasonKey(key))) { model.changeStatus(order.id, .cancelled, reason: key) }
+            }
+            Button(lang.t("action_cancel"), role: .cancel) { }
+        }
     }
 
     @ViewBuilder
@@ -238,10 +253,10 @@ struct SellerOrderDetailView: View {
         switch status {
         case .placed:
             actionButton("act_accept", busy: busy) { model.changeStatus(order.id, .preparing) }
-            dangerButton("act_decline", busy: busy) { model.changeStatus(order.id, .cancelled) }
+            dangerButton("act_decline", busy: busy) { askReason("shop") }
         case .preparing where !order.photoRequired:
             actionButton("act_out_for_delivery", busy: busy) { model.changeStatus(order.id, .outForDelivery) }
-            dangerButton("act_cancel_order", busy: busy) { model.changeStatus(order.id, .cancelled) }
+            dangerButton("act_cancel_order", busy: busy) { askReason("shop") }
         case .preparing:
             Text(lang.t("photo_prompt_title"))
                 .font(.system(size: 16, weight: .bold))
@@ -258,7 +273,7 @@ struct SellerOrderDetailView: View {
                     .padding(.top, 6)
                 Button(lang.t("photo_pick")) { showLibrary = true }
                     .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
-                dangerButton("act_cancel_order", busy: false) { model.changeStatus(order.id, .cancelled) }
+                dangerButton("act_cancel_order", busy: false) { askReason("shop") }
             }
         case .photoSent:
             if order.photoAnswerOverdue {
@@ -270,14 +285,22 @@ struct SellerOrderDetailView: View {
                 Text(lang.t("seller_waiting_approval"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(Theme.muted)
+                dangerButton("act_cancel_order", busy: busy) { askReason("shop") }
             }
         case .approved:
             actionButton("act_out_for_delivery", busy: busy) { model.changeStatus(order.id, .outForDelivery) }
+            dangerButton("act_cancel_order", busy: busy) { askReason("shop") }
         case .outForDelivery:
             actionButton("act_mark_delivered", busy: busy) { model.changeStatus(order.id, .delivered) }
+            dangerButton("act_delivery_failed", busy: busy) { askReason("failed") }
         case .delivered, .cancelled:
             EmptyView()
         }
+    }
+
+    private func askReason(_ kind: String) {
+        reasonKind = kind
+        showReasons = true
     }
 
     private func callRow(_ number: String) -> some View {

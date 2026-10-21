@@ -136,7 +136,17 @@ private struct ReviewPhotoParams: Encodable {
     }
 }
 
+private struct CancelOrderParams: Encodable {
+    let pOrderId: String
+    enum CodingKeys: String, CodingKey { case pOrderId = "p_order_id" }
+}
+
 enum OrdersService {
+    /// Customer cancels an order the shop has not accepted yet.
+    static func cancel(orderId: String) async throws {
+        try await supabase.rpc("customer_cancel_order", params: CancelOrderParams(pOrderId: orderId)).execute()
+    }
+
     static func create(_ order: NewOrder) async throws {
         try await supabase.from("orders").insert(order).execute()
     }
@@ -175,11 +185,13 @@ private struct SetStatusParams: Encodable {
     let pOrderId: String
     let pStatus: String
     let pPhotoPath: String?
+    let pReason: String?
 
     enum CodingKeys: String, CodingKey {
         case pOrderId = "p_order_id"
         case pStatus = "p_status"
         case pPhotoPath = "p_photo_path"
+        case pReason = "p_reason"
     }
 }
 
@@ -238,10 +250,10 @@ enum SellerService {
     }
 
     /// Moves an order along its status steps; the database checks that the change is allowed.
-    static func setOrderStatus(orderId: String, status: OrderStatus, photoPath: String? = nil) async throws {
+    static func setOrderStatus(orderId: String, status: OrderStatus, photoPath: String? = nil, reason: String? = nil) async throws {
         try await supabase.rpc(
             "seller_set_order_status",
-            params: SetStatusParams(pOrderId: orderId, pStatus: status.rawValue, pPhotoPath: photoPath)
+            params: SetStatusParams(pOrderId: orderId, pStatus: status.rawValue, pPhotoPath: photoPath, pReason: reason)
         ).execute()
     }
 

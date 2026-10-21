@@ -97,6 +97,7 @@ fun CustomerApp(
                     order = order,
                     reviewBusy = state.reviewBusy,
                     onReview = { approve, note -> vm.reviewPhoto(order.id, approve, note) },
+                    onCancel = { vm.cancelOrder(order.id) },
                     onBack = vm::closeOverlay,
                 )
                 return

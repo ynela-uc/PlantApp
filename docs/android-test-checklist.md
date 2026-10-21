@@ -108,5 +108,13 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] In Supabase -> Table Editor -> sellers, tick `approved` for the new shop. Within about 30 seconds the notice disappears on the owner's phone (the owner also gets a push "Your shop was approved"), and customers now see the shop.
 - [ ] The existing shops (your test shop and the five demo shops) are still visible to customers.
 
+## 16. Cancel and problem rules
+- [ ] Customer: a NEW order (not accepted yet) shows a "Cancel order" button. Tap it, confirm: the order becomes Cancelled with "Reason: Cancelled by the customer", and the shop gets a "The customer cancelled" notification.
+- [ ] Customer: once the shop has accepted, the Cancel button is gone.
+- [ ] Shop: a new order shows "The customer's phone number appears after you accept the order." and no call button. After Accept, the phone and the Call button appear.
+- [ ] Shop: Decline (new order) or Cancel order (accepted, waiting for photo, approved) asks "Why?" with four reasons. The customer sees the chosen reason on the cancelled order and gets a notification.
+- [ ] Shop: on an order that is out for delivery there is a "Couldn't deliver" button with reasons (customer did not answer / refused / wrong address / other). The customer sees the reason.
+- [ ] An order nobody answers for 12 hours is cancelled by itself ("The shop did not answer in time") and the customer is notified. (Test by changing created_at in the SQL editor to 13 hours ago and waiting up to 10 minutes.)
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

@@ -494,11 +494,16 @@ struct Order: Codable, Identifiable, Equatable {
     /// True when the shop must send a photo that the customer approves before delivery.
     var photoRequired: Bool
     var photoSentAt: String?
+    /// Why a cancelled order was cancelled (see `shopCancelReasons`) and by whom: customer, shop or system.
+    var cancelReason: String?
+    var cancelledBy: String?
 
     enum CodingKeys: String, CodingKey {
         case id, items, status, city, address
         case photoRequired = "photo_required"
         case photoSentAt = "photo_sent_at"
+        case cancelReason = "cancel_reason"
+        case cancelledBy = "cancelled_by"
         case sellerId = "seller_id"
         case sellerName = "seller_name"
         case createdAt = "created_at"
@@ -540,6 +545,8 @@ struct Order: Codable, Identifiable, Equatable {
         buyerPhone = try c.decodeIfPresent(String.self, forKey: .buyerPhone) ?? ""
         photoRequired = try c.decodeIfPresent(Bool.self, forKey: .photoRequired) ?? false
         photoSentAt = try c.decodeIfPresent(String.self, forKey: .photoSentAt)
+        cancelReason = try c.decodeIfPresent(String.self, forKey: .cancelReason)
+        cancelledBy = try c.decodeIfPresent(String.self, forKey: .cancelledBy)
     }
 
     var statusEnum: OrderStatus { OrderStatus.from(status) }
@@ -558,6 +565,27 @@ struct Order: Codable, Identifiable, Equatable {
     }
     var shortId: String { String(id.prefix(6)).uppercased() }
     var itemCount: Int { items.reduce(0) { $0 + $1.qty } }
+}
+
+/// Reasons a shop can give when it declines or cancels an order.
+let shopCancelReasons = ["out_of_stock", "cant_deliver_day", "cant_make", "other"]
+
+/// Reasons a shop can give when an order could not be delivered.
+let failedDeliveryReasons = ["no_answer", "refused", "wrong_address", "other"]
+
+/// The string key for the words of a cancel / failed-delivery reason.
+func cancelReasonKey(_ key: String?) -> String {
+    switch key {
+    case "out_of_stock": return "reason_out_of_stock"
+    case "cant_deliver_day": return "reason_cant_deliver_day"
+    case "cant_make": return "reason_cant_make"
+    case "no_answer": return "reason_no_answer"
+    case "refused": return "reason_refused"
+    case "wrong_address": return "reason_wrong_address"
+    case "customer_cancelled": return "reason_customer_cancelled"
+    case "no_response": return "reason_no_response"
+    default: return "reason_other"
+    }
 }
 
 struct NewOrder: Encodable {

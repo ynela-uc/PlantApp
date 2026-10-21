@@ -184,6 +184,18 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
     }
 
     /** Approve the shop's photo, or send the shop a change request. */
+    /** The customer cancels an order that the shop has not accepted yet. */
+    fun cancelOrder(orderId: String) {
+        _state.update { it.copy(reviewBusy = true) }
+        viewModelScope.launch {
+            try {
+                ordersRepo.cancel(orderId)
+                loadOrders()
+            } catch (_: Exception) { loadOrders() }
+            _state.update { it.copy(reviewBusy = false) }
+        }
+    }
+
     fun reviewPhoto(orderId: String, approve: Boolean, note: String?) {
         _state.update { it.copy(reviewBusy = true) }
         viewModelScope.launch {

@@ -30,9 +30,9 @@ class PlantMessagingService : FirebaseMessagingService() {
         ) return
 
         val event = message.data["event"].orEmpty()
-        val forShop = event == "new_order" || event == "order_reminder" || event == "photo_approved" || event == "photo_change"
+        val forShop = event == "new_order" || event == "order_reminder" || event == "photo_approved" || event == "photo_change" || event == "customer_cancelled"
         // The seller's open app already shows its own banner and sound for new orders.
-        if (forShop && Push.inForeground) return
+        if (event == "new_order" && Push.inForeground) return
         val open = PendingIntent.getActivity(
             this, 0,
             Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP),

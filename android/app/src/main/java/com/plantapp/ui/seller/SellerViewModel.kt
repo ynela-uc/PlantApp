@@ -186,11 +186,11 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
 
     // ------------------------------------------------------------------ orders
 
-    fun changeStatus(orderId: String, status: OrderStatus) {
+    fun changeStatus(orderId: String, status: OrderStatus, reason: String? = null) {
         _state.update { it.copy(busyOrderId = orderId, actionFailed = false) }
         viewModelScope.launch {
             try {
-                repo.setOrderStatus(orderId, status)
+                repo.setOrderStatus(orderId, status, null, reason)
                 reloadOrdersNow()
                 _state.update { it.copy(busyOrderId = null) }
             } catch (_: Exception) {

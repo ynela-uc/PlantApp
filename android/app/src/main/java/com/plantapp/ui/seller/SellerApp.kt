@@ -133,7 +133,7 @@ private fun SellerScreens(vm: SellerViewModel, state: SellerState, profile: Prof
                     order = order,
                     busy = state.busyOrderId == order.id,
                     actionFailed = state.actionFailed,
-                    onStatus = { vm.changeStatus(order.id, it) },
+                    onStatus = { status, reason -> vm.changeStatus(order.id, status, reason) },
                     onPhoto = { vm.sendPreparationPhoto(order.id, it) },
                     onBack = vm::closeOverlay,
                 )

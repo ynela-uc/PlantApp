@@ -179,12 +179,12 @@ final class SellerModel: ObservableObject {
 
     // MARK: Orders
 
-    func changeStatus(_ orderId: String, _ status: OrderStatus) {
+    func changeStatus(_ orderId: String, _ status: OrderStatus, reason: String? = nil) {
         busyOrderId = orderId
         actionFailed = false
         Task {
             do {
-                try await SellerService.setOrderStatus(orderId: orderId, status: status)
+                try await SellerService.setOrderStatus(orderId: orderId, status: status, reason: reason)
                 await reloadOrders()
                 busyOrderId = nil
             } catch {

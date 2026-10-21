@@ -78,3 +78,19 @@ fun PlantPicture(listing: Listing, modifier: Modifier, emojiSize: TextUnit) {
         }
     }
 }
+
+/** The words for a cancel / failed-delivery reason key, in the app language. */
+@Composable
+fun cancelReasonLabel(key: String?): String = stringResource(
+    when (key) {
+        "out_of_stock" -> R.string.reason_out_of_stock
+        "cant_deliver_day" -> R.string.reason_cant_deliver_day
+        "cant_make" -> R.string.reason_cant_make
+        "no_answer" -> R.string.reason_no_answer
+        "refused" -> R.string.reason_refused
+        "wrong_address" -> R.string.reason_wrong_address
+        "customer_cancelled" -> R.string.reason_customer_cancelled
+        "no_response" -> R.string.reason_no_response
+        else -> R.string.reason_other
+    },
+)
