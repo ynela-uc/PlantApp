@@ -6,8 +6,9 @@ Last updated 2026-10-20. Order inside each group is the order we suggest, not a 
 - **Replace the contact details with the company's.** Everywhere the owner's personal email (y.neelah@gmail.com) and phone are used as the
   app's contact (privacy policy, terms, store listings, support links in the app), switch to the company email and phone number.
   Search the repo for "y.neelah" and for the placeholder contact text before the first store submission.
-- **Payments:** the owner decided the app will take **card payment only** and cancel cash on delivery. This needs an online payment
-  provider (see the payments notes below) and changes the cancel, refund and delivery rules. Decide the provider first.
+- **Payments (decision postponed on 2026-10-21, finish the app first):** the owner wants **card payment only** and no cash on delivery, with the app
+  holding the money and paying shops after delivery. Needs a registered company, a payment provider and legal advice. Research and plan:
+  docs/payments-plan.md. Until then the apps still use cash on delivery.
 - The Apple Developer account and the final app name (see Later).
 
 ## Ideas to build later (from the owner)
