@@ -37,6 +37,8 @@ struct ProfileTab: View {
                     .buttonStyle(PrimaryButtonStyle(color: accent, filled: false))
                     .padding(.top, 16)
 
+                AdminEntry(accent: accent)
+
                 LanguageSelector().padding(.top, 28)
 
                 Button(lang.t("action_signout")) { app.signOut() }

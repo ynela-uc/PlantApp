@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +45,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.plantapp.R
 import com.plantapp.data.Profile
+import com.plantapp.data.Shop
 import com.plantapp.ui.customer.rememberLang
 import com.plantapp.ui.theme.ScreenBackground
 import com.plantapp.ui.theme.SellerAmber
@@ -101,6 +104,11 @@ private fun SellerScreens(vm: SellerViewModel, state: SellerState, profile: Prof
         return
     }
 
+    if (shop.reviewStatus == "rejected") {
+        RejectedShopScreen(shop, onSignOut)
+        return
+    }
+
     // Full-screen pages on top of the tabs.
     val editor = state.editor
     if (editor != null) {
@@ -150,7 +158,7 @@ private fun SellerScreens(vm: SellerViewModel, state: SellerState, profile: Prof
 
     Scaffold(
         containerColor = ScreenBackground,
-        topBar = { if (!shop.approved) PendingApprovalNotice() },
+        topBar = { if (!shop.approved) ReviewNotice(shop, state.resubmitting, onEdit = vm::openShopEditor, onResubmit = vm::resubmit) },
         bottomBar = {
             NavigationBar(containerColor = Color.White) {
                 NavigationBarItem(
@@ -183,14 +191,48 @@ private fun SellerScreens(vm: SellerViewModel, state: SellerState, profile: Prof
     }
 }
 
-/** Shown at the top while the shop waits for the owner of the app to approve it. */
+/** Shown at the top while the shop is not approved: waiting for the admin, or asked to change something first. */
 @Composable
-private fun PendingApprovalNotice() {
+private fun ReviewNotice(shop: Shop, busy: Boolean, onEdit: () -> Unit, onResubmit: () -> Unit) {
     Surface(color = SellerAmberSoft, modifier = Modifier.fillMaxWidth().systemBarsPadding()) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-            Text(stringResource(R.string.shop_pending_title), fontWeight = FontWeight.Bold, color = SellerAmber)
-            Text(stringResource(R.string.shop_pending_body), style = MaterialTheme.typography.bodySmall, color = TextMuted)
+            if (shop.reviewStatus == "changes_requested") {
+                Text(stringResource(R.string.shopreview_changes_title), fontWeight = FontWeight.Bold, color = SellerAmber)
+                Text(stringResource(R.string.shopreview_changes_body), style = MaterialTheme.typography.bodySmall, color = TextMuted)
+                Text(shop.reviewNote.orEmpty(), fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(vertical = 6.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(onClick = onEdit, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.shop_edit), color = SellerAmber)
+                    }
+                    Button(onClick = onResubmit, enabled = !busy, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.shopreview_resubmit))
+                    }
+                }
+            } else {
+                Text(stringResource(R.string.shop_pending_title), fontWeight = FontWeight.Bold, color = SellerAmber)
+                Text(stringResource(R.string.shop_pending_body), style = MaterialTheme.typography.bodySmall, color = TextMuted)
+            }
         }
+    }
+}
+
+/** A rejected shop cannot be used: the reason, and the ways out. */
+@Composable
+private fun RejectedShopScreen(shop: Shop, onSignOut: () -> Unit) {
+    Column(
+        Modifier.fillMaxSize().systemBarsPadding().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(stringResource(R.string.shopreview_rejected_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = SellerAmber, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(10.dp))
+        Text(stringResource(R.string.shopreview_rejected_body), color = TextMuted, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(8.dp))
+        Text(shop.reviewNote.orEmpty(), fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(24.dp))
+        Button(onClick = onSignOut) { Text(stringResource(R.string.action_signout)) }
+        Spacer(Modifier.height(12.dp))
+        com.plantapp.ui.DeleteAccountSection(onDeleted = onSignOut)
     }
 }
 

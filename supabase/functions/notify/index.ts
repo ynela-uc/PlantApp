@@ -6,7 +6,8 @@
 // Input  (POST JSON, header x-notify-secret): { event: string, order_id?: string, seller_id?: string }
 // Events: new_order, order_reminder, photo_approved, photo_change (to the shop);
 //         photo_ready, out_for_delivery, order_cancelled (to the customer);
-//         new_shop (to the admin, internal_config 'admin_user_id'), shop_approved (to the shop owner), sent with { seller_id }.
+//         new_shop (to the admin, internal_config 'admin_user_id'), shop_approved / shop_changes_requested / shop_rejected
+//         (to the shop owner), sent with { seller_id }.
 //
 // Secrets (Supabase -> Edge Functions -> Secrets):
 //   NOTIFY_SECRET        same value as internal_config.notify_secret in the database
@@ -85,8 +86,19 @@ const TEXTS: Record<string, Record<Lang, Text>> = {
     ckb: { title: "فرۆشگاکەت پەسەند کرا", body: "ئێستا کڕیاران دەتوانن {shop} و بەرهەمەکانت ببینن" },
     en: { title: "Your shop was approved", body: "Customers can now see {shop} and your products" },
   },
+  shop_changes_requested: {
+    ar: { title: "مطلوب تعديل على متجرك", body: "افتح التطبيق لمعرفة ما يجب تعديله في {shop}" },
+    ckb: { title: "گۆڕانکاری لە فرۆشگاکەتدا داواکراوە", body: "ئەپەکە بکەرەوە بۆ زانینی ئەوەی دەبێت لە {shop} بگۆڕدرێت" },
+    en: { title: "Your shop needs changes", body: "Open the app to see what to change in {shop}" },
+  },
+  shop_rejected: {
+    ar: { title: "لم تتم الموافقة على متجرك", body: "افتح التطبيق لمعرفة السبب بخصوص {shop}" },
+    ckb: { title: "فرۆشگاکەت پەسەند نەکرا", body: "ئەپەکە بکەرەوە بۆ زانینی هۆکارەکە دەربارەی {shop}" },
+    en: { title: "Your shop was not approved", body: "Open the app to see why for {shop}" },
+  },
 };
 
+const SHOP_EVENTS = new Set(["new_shop", "shop_approved", "shop_changes_requested", "shop_rejected"]);
 const FOR_SHOP = new Set(["new_order", "order_reminder", "photo_approved", "photo_change", "customer_cancelled"]);
 
 const NOTIFY_SECRET = Deno.env.get("NOTIFY_SECRET");
@@ -137,7 +149,7 @@ Deno.serve(async (request) => {
   try { payload = await request.json(); } catch { return json({ error: "bad_request" }, 400); }
   const event = payload.event ?? "";
   const texts = TEXTS[event];
-  const shopEvent = event === "new_shop" || event === "shop_approved";
+  const shopEvent = SHOP_EVENTS.has(event);
   if (!texts || !(shopEvent ? payload.seller_id : payload.order_id)) return json({ error: "bad_request" }, 400);
 
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);

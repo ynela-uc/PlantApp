@@ -93,6 +93,7 @@ fun ShopTab(
         OutlinedButton(onClick = onEdit, modifier = Modifier.fillMaxWidth().height(50.dp), shape = RoundedCornerShape(14.dp)) {
             Text(stringResource(R.string.shop_edit), color = SellerAmber, fontWeight = FontWeight.SemiBold)
         }
+        com.plantapp.ui.AdminEntry(SellerAmber)
 
         Spacer(Modifier.height(28.dp))
         LanguageSelector()

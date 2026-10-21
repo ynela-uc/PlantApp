@@ -85,6 +85,7 @@ final class SellerModel: ObservableObject {
     @Published var busyOrderId: String?
     @Published var actionFailed = false
     @Published var savingShop = false
+    @Published var resubmitting = false
     /// New orders that arrived while the app was open; shown in a banner.
     @Published var alertOrders: [Order] = []
     /// Ids of orders waiting when we last looked; nil until the first load (so old orders do not ring).
@@ -453,6 +454,16 @@ final class SellerModel: ObservableObject {
     }
 
     // MARK: Shop
+
+    /// The admin asked for changes and the owner has made them: send the shop back for review.
+    func resubmit() {
+        resubmitting = true
+        Task {
+            try? await SellerService.resubmit()
+            if let fresh = try? await SellerService.fetchShop(ownerId: profile.id) { self.shop = fresh }
+            resubmitting = false
+        }
+    }
 
     func saveShop(_ update: ShopUpdate) {
         guard let shop else { return }

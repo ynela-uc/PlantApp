@@ -251,7 +251,43 @@ private struct StockUpdate: Encodable {
     enum CodingKeys: String, CodingKey { case inStock = "in_stock" }
 }
 
+private struct ReviewShopParams: Encodable {
+    let pShopId: String
+    let pDecision: String
+    let pNote: String?
+
+    enum CodingKeys: String, CodingKey {
+        case pShopId = "p_shop_id"
+        case pDecision = "p_decision"
+        case pNote = "p_note"
+    }
+}
+
+/// Calls only the admin account may make; the database refuses everybody else.
+enum AdminService {
+    static func isAdmin() async throws -> Bool {
+        try await supabase.rpc("is_admin", params: NoParams()).execute().value
+    }
+
+    static func shops() async throws -> [PendingShop] {
+        try await supabase.rpc("admin_pending_shops", params: NoParams()).execute().value
+    }
+
+    static func review(shopId: String, decision: ShopDecision, note: String?) async throws {
+        let trimmed = note?.trimmingCharacters(in: .whitespacesAndNewlines)
+        try await supabase.rpc(
+            "admin_review_shop",
+            params: ReviewShopParams(pShopId: shopId, pDecision: decision.rawValue, pNote: (trimmed?.isEmpty ?? true) ? nil : trimmed)
+        ).execute()
+    }
+}
+
 enum SellerService {
+    /// After the shop was returned for changes: send it back to the admin for review.
+    static func resubmit() async throws {
+        try await supabase.rpc("resubmit_shop", params: NoParams()).execute()
+    }
+
     static func fetchShop(ownerId: String) async throws -> Shop? {
         let rows: [Shop] = try await supabase.from("sellers")
             .select()

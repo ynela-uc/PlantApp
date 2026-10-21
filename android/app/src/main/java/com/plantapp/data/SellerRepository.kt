@@ -26,6 +26,9 @@ data class Shop(
     @SerialName("delivery_fees") val deliveryFees: Map<String, Int> = emptyMap(),
     /** False until the owner of the app approves the shop; customers cannot see it before. */
     val approved: Boolean = true,
+    /** pending, changes_requested (see reviewNote), rejected (see reviewNote) or approved. */
+    @SerialName("review_status") val reviewStatus: String = "approved",
+    @SerialName("review_note") val reviewNote: String? = null,
 ) {
     val isNationwide: Boolean get() = deliveryScope == "nationwide"
 }
@@ -92,6 +95,11 @@ class SellerRepository {
         Backend.client.from("sellers")
             .select { filter { eq("owner_id", ownerId) } }
             .decodeSingleOrNull<Shop>()
+
+    /** After the shop was returned for changes: send it back to the admin for review. */
+    suspend fun resubmitShop() {
+        Backend.client.postgrest.rpc("resubmit_shop")
+    }
 
     suspend fun updateShop(shopId: String, update: ShopUpdate) {
         Backend.client.from("sellers").update(update) { filter { eq("id", shopId) } }

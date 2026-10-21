@@ -29,7 +29,11 @@ struct SellerRoot: View {
                 }
                 .padding(24)
             } else if let shop = model.shop {
-                content(shop)
+                if shop.reviewStatus == "rejected" {
+                    RejectedShopView(shop: shop)
+                } else {
+                    content(shop)
+                }
             }
         }
         .environmentObject(model)
@@ -40,7 +44,7 @@ struct SellerRoot: View {
     private func content(_ shop: Shop) -> some View {
         ZStack {
             VStack(spacing: 0) {
-                if !shop.approved { PendingApprovalNotice() }
+                if !shop.approved { ReviewNotice(shop: shop) }
             TabView(selection: Binding(get: { model.tab }, set: { model.setTab($0) })) {
                 SellerOrdersTab()
                     .tabItem { Label(lang.t("nav_seller_orders"), systemImage: "shippingbox") }
@@ -141,22 +145,72 @@ struct NewOrderBanner: View {
     }
 }
 
-/// Shown at the top while the shop waits for the owner of the app to approve it.
-struct PendingApprovalNotice: View {
+/// Shown at the top while the shop is not approved: waiting for the admin, or asked to change something first.
+struct ReviewNotice: View {
     @EnvironmentObject var lang: LanguageStore
+    @EnvironmentObject var model: SellerModel
+    let shop: Shop
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(lang.t("shop_pending_title"))
-                .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(Theme.amber)
-            Text(lang.t("shop_pending_body"))
-                .font(.system(size: 13))
-                .foregroundStyle(Theme.muted)
+        VStack(alignment: .leading, spacing: 4) {
+            if shop.reviewStatus == "changes_requested" {
+                Text(lang.t("shopreview_changes_title"))
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(Theme.amber)
+                Text(lang.t("shopreview_changes_body"))
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.muted)
+                Text(shop.reviewNote ?? "")
+                    .font(.system(size: 15, weight: .semibold))
+                    .padding(.vertical, 4)
+                HStack(spacing: 8) {
+                    Button(lang.t("shop_edit")) { model.openShopEditor() }
+                        .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                    Button {
+                        model.resubmit()
+                    } label: {
+                        BusyLabel(title: lang.t("shopreview_resubmit"), busy: model.resubmitting)
+                    }
+                    .buttonStyle(PrimaryButtonStyle(color: Theme.amber))
+                    .disabled(model.resubmitting)
+                }
+            } else {
+                Text(lang.t("shop_pending_title"))
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(Theme.amber)
+                Text(lang.t("shop_pending_body"))
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.muted)
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.amberSoft)
+    }
+}
+
+/// A rejected shop cannot be used: the reason, and the ways out.
+struct RejectedShopView: View {
+    @EnvironmentObject var lang: LanguageStore
+    @EnvironmentObject var app: AppModel
+    let shop: Shop
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Text(lang.t("shopreview_rejected_title"))
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(Theme.amber)
+                .multilineTextAlignment(.center)
+            Text(lang.t("shopreview_rejected_body")).foregroundStyle(Theme.muted)
+            Text(shop.reviewNote ?? "")
+                .font(.system(size: 16, weight: .semibold))
+                .multilineTextAlignment(.center)
+            Button(lang.t("action_signout")) { app.signOut() }
+                .buttonStyle(PrimaryButtonStyle(color: Theme.amber))
+                .padding(.top, 14)
+            DeleteAccountSection().padding(.top, 8)
+        }
+        .padding(24)
     }
 }

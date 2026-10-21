@@ -130,9 +130,14 @@ struct Shop: Codable, Equatable {
     var deliveryFees: [String: Int]
     /// False until the owner of the app approves the shop; customers cannot see it before.
     var approved: Bool
+    /// pending, changes_requested (see reviewNote), rejected (see reviewNote) or approved.
+    var reviewStatus: String
+    var reviewNote: String?
 
     enum CodingKeys: String, CodingKey {
         case id, name, city, rating, phone, bio, approved
+        case reviewStatus = "review_status"
+        case reviewNote = "review_note"
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case shopTypes = "shop_types"
@@ -154,6 +159,8 @@ struct Shop: Codable, Equatable {
         deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
         deliveryFees = try c.decodeIfPresent([String: Int].self, forKey: .deliveryFees) ?? [:]
         approved = try c.decodeIfPresent(Bool.self, forKey: .approved) ?? true
+        reviewStatus = try c.decodeIfPresent(String.self, forKey: .reviewStatus) ?? "approved"
+        reviewNote = try c.decodeIfPresent(String.self, forKey: .reviewNote)
     }
 
     var isNationwide: Bool { deliveryScope == "nationwide" }
@@ -758,4 +765,49 @@ struct Rating: Decodable, Identifiable {
         reviewerName = try c.decodeIfPresent(String.self, forKey: .reviewerName) ?? ""
         createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt) ?? ""
     }
+}
+
+// MARK: - Shop review (admin)
+
+/// A shop that is not approved yet, as the admin sees it.
+struct PendingShop: Decodable, Identifiable {
+    let id: String
+    let name: String
+    let city: String
+    let phone: String
+    let bio: String
+    let shopTypes: [String]
+    /// pending (waiting for the admin), changes_requested (waiting for the shop), rejected.
+    let reviewStatus: String
+    let reviewNote: String?
+    let ownerName: String
+    let ownerEmail: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, city, phone, bio
+        case shopTypes = "shop_types"
+        case reviewStatus = "review_status"
+        case reviewNote = "review_note"
+        case ownerName = "owner_name"
+        case ownerEmail = "owner_email"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        city = try c.decode(String.self, forKey: .city)
+        phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
+        bio = try c.decodeIfPresent(String.self, forKey: .bio) ?? ""
+        shopTypes = try c.decodeIfPresent([String].self, forKey: .shopTypes) ?? []
+        reviewStatus = try c.decodeIfPresent(String.self, forKey: .reviewStatus) ?? "pending"
+        reviewNote = try c.decodeIfPresent(String.self, forKey: .reviewNote)
+        ownerName = try c.decodeIfPresent(String.self, forKey: .ownerName) ?? ""
+        ownerEmail = try c.decodeIfPresent(String.self, forKey: .ownerEmail) ?? ""
+    }
+}
+
+/// The three things the admin can do with a shop.
+enum ShopDecision: String {
+    case approve, changes, reject
 }

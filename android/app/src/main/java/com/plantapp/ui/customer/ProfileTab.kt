@@ -93,6 +93,7 @@ fun ProfileTab(
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(14.dp),
         ) { Text(stringResource(R.string.profile_edit), color = PlantGreen, fontWeight = FontWeight.SemiBold) }
+        com.plantapp.ui.AdminEntry(PlantGreen)
 
         Spacer(Modifier.height(28.dp))
         LanguageSelector()

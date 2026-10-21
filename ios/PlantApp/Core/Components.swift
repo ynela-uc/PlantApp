@@ -460,3 +460,200 @@ struct RateOrderSection: View {
         busy = false
     }
 }
+
+// MARK: - Shop approvals (admin only)
+
+/// Shown on the account page of the admin only: a button that opens the shop approvals.
+/// Everyone else sees nothing (and the database refuses their calls anyway).
+struct AdminEntry: View {
+    @EnvironmentObject var lang: LanguageStore
+    let accent: Color
+
+    @State private var isAdmin = false
+    @State private var waiting = 0
+    @State private var open = false
+
+    var body: some View {
+        Group {
+            if isAdmin {
+                Button {
+                    open = true
+                } label: {
+                    Text(waiting > 0 ? "\(lang.t("approvals_title")) (\(waiting))" : lang.t("approvals_title"))
+                }
+                .buttonStyle(PrimaryButtonStyle(color: accent))
+                .padding(.top, 16)
+            }
+        }
+        .task(id: open) {
+            isAdmin = (try? await AdminService.isAdmin()) ?? false
+            if isAdmin {
+                waiting = ((try? await AdminService.shops()) ?? []).filter { $0.reviewStatus == "pending" }.count
+            }
+        }
+        .fullScreenCover(isPresented: $open) { ApprovalsView { open = false } }
+    }
+}
+
+private struct ReviewAsk: Identifiable {
+    let shop: PendingShop
+    let decision: ShopDecision
+    var id: String { shop.id + decision.rawValue }
+}
+
+private struct ApprovalsView: View {
+    @EnvironmentObject var lang: LanguageStore
+    let onClose: () -> Void
+
+    @State private var shops: [PendingShop]?
+    @State private var failed = false
+    @State private var busyId: String?
+    @State private var ask: ReviewAsk?
+
+    private let groups: [(status: String, titleKey: String)] = [
+        ("pending", "approvals_section_waiting"),
+        ("changes_requested", "approvals_section_changes"),
+        ("rejected", "approvals_section_rejected"),
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text(lang.t("approvals_title"))
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(Theme.greenDark)
+                Spacer()
+                Button(lang.t("approvals_close"), action: onClose)
+            }
+            .padding(16)
+
+            if let shops {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if failed { ErrorText(message: lang.t("approvals_failed")) }
+                        if shops.isEmpty {
+                            Text(lang.t("approvals_empty")).foregroundStyle(Theme.muted)
+                        }
+                        ForEach(groups, id: \.status) { group in
+                            sectionView(group.titleKey, shops.filter { $0.reviewStatus == group.status })
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
+                }
+            } else if failed {
+                ErrorText(message: lang.t("approvals_failed")).padding(16)
+            } else {
+                ProgressView().tint(Theme.green).frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            Spacer(minLength: 0)
+        }
+        .background(AppBackground())
+        .task { await load() }
+        .sheet(item: $ask) { item in
+            ReviewNoteSheet(ask: item) { note in decide(item.shop, item.decision, note) }
+        }
+    }
+
+    @ViewBuilder
+    private func sectionView(_ titleKey: String, _ group: [PendingShop]) -> some View {
+        if !group.isEmpty {
+            Text(lang.t(titleKey))
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(Theme.greenDark)
+                .padding(.top, 10)
+            ForEach(group) { shop in card(shop) }
+        }
+    }
+
+    private func card(_ shop: PendingShop) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(shop.name).font(.system(size: 17, weight: .bold)).foregroundStyle(Theme.greenDark)
+            Text(lang.cityName(shop.city)).foregroundStyle(Theme.muted)
+            Text(lang.t("approvals_owner", shop.ownerName.isEmpty ? "-" : shop.ownerName, shop.ownerEmail))
+            if !shop.phone.isEmpty { Text(shop.phone) }
+            if !shop.shopTypes.isEmpty {
+                Text(shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", ")).foregroundStyle(Theme.muted)
+            }
+            if !shop.bio.isEmpty { Text(shop.bio).padding(.top, 2) }
+            if let note = shop.reviewNote, !note.isEmpty {
+                Text(lang.t("approvals_your_note", note)).font(.system(size: 13)).foregroundStyle(Theme.amber)
+            }
+            if shop.reviewStatus == "pending" {
+                VStack(spacing: 8) {
+                    if busyId == shop.id {
+                        ProgressView().tint(Theme.green)
+                    } else {
+                        Button(lang.t("approvals_approve")) { decide(shop, .approve, nil) }
+                            .buttonStyle(PrimaryButtonStyle())
+                        Button(lang.t("approvals_changes")) { ask = ReviewAsk(shop: shop, decision: .changes) }
+                            .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                        Button(lang.t("approvals_reject")) { ask = ReviewAsk(shop: shop, decision: .reject) }
+                            .buttonStyle(PrimaryButtonStyle(color: Theme.error, filled: false))
+                    }
+                }
+                .padding(.top, 8)
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .card()
+    }
+
+    private func load() async {
+        do {
+            shops = try await AdminService.shops()
+            failed = false
+        } catch {
+            failed = true
+        }
+    }
+
+    private func decide(_ shop: PendingShop, _ decision: ShopDecision, _ note: String?) {
+        busyId = shop.id
+        Task {
+            do {
+                try await AdminService.review(shopId: shop.id, decision: decision, note: note)
+                await load()
+            } catch {
+                failed = true
+            }
+            busyId = nil
+        }
+    }
+}
+
+private struct ReviewNoteSheet: View {
+    @EnvironmentObject var lang: LanguageStore
+    @Environment(\.dismiss) private var dismiss
+    let ask: ReviewAsk
+    let onSend: (String) -> Void
+
+    @State private var note = ""
+
+    private var trimmed: String { note.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+    var body: some View {
+        let changes = ask.decision == .changes
+        VStack(alignment: .leading, spacing: 12) {
+            Text(lang.t(changes ? "approvals_changes" : "approvals_reject"))
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(Theme.greenDark)
+            AppField(title: lang.t(changes ? "approvals_changes_hint" : "approvals_reject_hint"), text: $note, multiline: true)
+                .onChange(of: note) { value in
+                    if value.count > 500 { note = String(value.prefix(500)) }
+                }
+            Button(lang.t("approvals_send")) {
+                onSend(trimmed)
+                dismiss()
+            }
+            .buttonStyle(PrimaryButtonStyle())
+            .disabled(trimmed.count < 3)
+            Button(lang.t("action_cancel")) { dismiss() }
+                .buttonStyle(PrimaryButtonStyle(filled: false))
+            Spacer()
+        }
+        .padding(20)
+        .background(AppBackground())
+    }
+}

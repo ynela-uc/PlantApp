@@ -119,6 +119,7 @@ data class SellerState(
     val busyOrderId: String? = null,
     val actionFailed: Boolean = false,
     val savingShop: Boolean = false,
+    val resubmitting: Boolean = false,
     /** New orders that arrived while the app was open and are shown in the banner. */
     val alertOrders: List<Order> = emptyList(),
 ) {
@@ -180,6 +181,18 @@ class SellerViewModel(private val profile: Profile) : ViewModel() {
     }
 
     fun refreshOrders() = reloadOrders()
+
+    /** The admin asked for changes and the owner has made them: send the shop back for review. */
+    fun resubmit() {
+        _state.update { it.copy(resubmitting = true) }
+        viewModelScope.launch {
+            try {
+                repo.resubmitShop()
+                repo.fetchShop(profile.id)?.let { fresh -> _state.update { it.copy(shop = fresh) } }
+            } catch (_: Exception) { }
+            _state.update { it.copy(resubmitting = false) }
+        }
+    }
     fun openOrder(id: String) = _state.update { it.copy(overlay = SellerOverlay.OrderDetail(id), actionFailed = false) }
     fun openShopEditor() = _state.update { it.copy(overlay = SellerOverlay.ShopEditor) }
     fun closeOverlay() = _state.update { it.copy(overlay = null) }
