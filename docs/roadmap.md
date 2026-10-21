@@ -2,6 +2,14 @@
 
 Last updated 2026-10-20. Order inside each group is the order we suggest, not a promise.
 
+## BEFORE PUBLISHING (do not forget)
+- **Replace the contact details with the company's.** Everywhere the owner's personal email (y.neelah@gmail.com) and phone are used as the
+  app's contact (privacy policy, terms, store listings, support links in the app), switch to the company email and phone number.
+  Search the repo for "y.neelah" and for the placeholder contact text before the first store submission.
+- **Payments:** the owner decided the app will take **card payment only** and cancel cash on delivery. This needs an online payment
+  provider (see the payments notes below) and changes the cancel, refund and delivery rules. Decide the provider first.
+- The Apple Developer account and the final app name (see Later).
+
 ## Ideas to build later (from the owner)
 1. **Return system.** Customers can report a problem or ask for a return after delivery.
 2. **Real ratings by customers.** Stars and a short comment from people who actually received an order.
