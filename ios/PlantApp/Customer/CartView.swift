@@ -83,7 +83,7 @@ private struct CartLineRow: View {
                     Spacer(minLength: 0)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(FullTapStyle())
 
             HStack(spacing: 10) {
                 StepButton(symbol: "minus") { model.changeQuantity(line.key, -1) }
@@ -109,6 +109,6 @@ private struct StepButton: View {
                 .background(Theme.green)
                 .clipShape(Circle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }

@@ -94,7 +94,7 @@ private struct SellerOrderCard: View {
                     .stroke(needsAction ? Theme.amber : Theme.border, lineWidth: needsAction ? 2 : 1)
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }
 

@@ -79,7 +79,7 @@ private struct PlantRow: View {
                     Spacer(minLength: 0)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(FullTapStyle())
 
             VStack(alignment: .trailing, spacing: 4) {
                 Toggle("", isOn: Binding(get: { listing.inStock }, set: { _ in model.toggleStock(listing) }))
@@ -92,7 +92,7 @@ private struct PlantRow: View {
             Button(action: onDelete) {
                 Image(systemName: "trash").foregroundStyle(Theme.error)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(FullTapStyle())
         }
         .padding(12)
         .card()

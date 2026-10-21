@@ -133,7 +133,7 @@ struct NewOrderBanner: View {
                 .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.amber, lineWidth: 2))
                 .shadow(color: .black.opacity(0.15), radius: 8, y: 3)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(FullTapStyle())
             .padding(.horizontal, 12)
             .padding(.top, 8)
             Spacer()

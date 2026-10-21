@@ -17,7 +17,7 @@ struct BackButton: View {
                 .modifier(GlassSurface(radius: 22, interactive: true, fallbackFill: Color.clear, fallbackStroke: nil))
                 .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
         .zIndex(1)
     }
 }

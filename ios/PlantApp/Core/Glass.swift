@@ -54,7 +54,10 @@ struct GlassSurface: ViewModifier {
     func body(content: Content) -> some View {
         #if compiler(>=6.2)
         if #available(iOS 26.0, *) {
-            content.glassEffect(Self.glass(tint: tint, interactive: interactive), in: .rect(cornerRadius: radius))
+            // contentShape: the whole rounded surface is tappable, not only the text or icon in the middle of it.
+            content
+                .glassEffect(Self.glass(tint: tint, interactive: interactive), in: .rect(cornerRadius: radius))
+                .contentShape(RoundedRectangle(cornerRadius: radius))
         } else {
             legacy(content)
         }
@@ -71,6 +74,8 @@ struct GlassSurface: ViewModifier {
                 RoundedRectangle(cornerRadius: radius)
                     .stroke(fallbackStroke ?? Color.clear, lineWidth: 1)
             )
+            // An outlined button has a clear fill, which does not take taps: make the whole shape tappable.
+            .contentShape(RoundedRectangle(cornerRadius: radius))
     }
 
     #if compiler(>=6.2)

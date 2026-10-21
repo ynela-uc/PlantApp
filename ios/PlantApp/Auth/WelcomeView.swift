@@ -92,6 +92,6 @@ private struct RoleCard: View {
             .padding(18)
             .card(radius: 20)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }

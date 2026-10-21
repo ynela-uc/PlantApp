@@ -144,6 +144,6 @@ private struct ModeTab: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(selected ? accent : Theme.border, lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }

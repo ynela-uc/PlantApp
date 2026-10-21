@@ -160,7 +160,7 @@ struct ListingDetailView: View {
                         .foregroundStyle(Theme.green)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(FullTapStyle())
             Text("\(lang.cityName(shop.city))  ·  \(ratingLabel(lang, rating: shop.rating, count: shop.ratingCount))")
                 .font(.system(size: 14))
                 .foregroundStyle(Theme.muted)

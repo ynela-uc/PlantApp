@@ -240,6 +240,6 @@ private struct ScopeChoice: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(selected ? Theme.amber : Theme.border, lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }

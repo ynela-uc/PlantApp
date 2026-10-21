@@ -262,6 +262,6 @@ private struct Choice: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(selected ? Theme.green : Theme.border, lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }

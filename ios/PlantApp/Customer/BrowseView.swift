@@ -186,7 +186,7 @@ struct SectionTile: View {
             .padding(16)
             .card(radius: 20)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }
 
@@ -230,6 +230,6 @@ struct PlantCard: View {
             .card(radius: 18)
             .clipShape(RoundedRectangle(cornerRadius: 18))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }

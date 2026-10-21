@@ -79,6 +79,15 @@ extension View {
     func card(radius: CGFloat = 16) -> some View { modifier(CardStyle(radius: radius)) }
 }
 
+/// Like `.plain`, but the whole area of the label takes taps (padding and empty gaps too), not only the text or the icon.
+struct FullTapStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Rectangle())
+            .opacity(configuration.isPressed ? 0.85 : 1)
+    }
+}
+
 /// Big rounded call-to-action button: tinted Liquid Glass on iOS 26+, a solid or outlined button before that.
 struct PrimaryButtonStyle: ButtonStyle {
     var color: Color = Theme.green
@@ -129,7 +138,7 @@ struct Pill: View {
                     )
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
         .animation(.easeOut(duration: 0.18), value: selected)
     }
 }

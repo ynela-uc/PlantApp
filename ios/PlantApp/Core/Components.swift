@@ -87,7 +87,7 @@ struct LanguageSelector: View {
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                             .overlay(RoundedRectangle(cornerRadius: 14).stroke(selected ? Theme.green : Theme.border, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(FullTapStyle())
                 }
             }
         }
@@ -876,7 +876,7 @@ struct AddressPicker: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .overlay(RoundedRectangle(cornerRadius: 14).stroke(selected ? Theme.green : Theme.border, lineWidth: selected ? 2 : 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }
 

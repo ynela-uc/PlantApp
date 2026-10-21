@@ -71,7 +71,7 @@ private struct OrderCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .card()
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
     }
 }
 

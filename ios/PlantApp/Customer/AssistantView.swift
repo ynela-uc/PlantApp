@@ -96,7 +96,7 @@ struct AssistantView: View {
                                 .background(Theme.greenSoft)
                                 .clipShape(Capsule())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(FullTapStyle())
                     }
                 }
 
@@ -279,7 +279,7 @@ private struct AssistantBubble: View {
                             .background(Theme.green)
                             .clipShape(Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(FullTapStyle())
                     .padding(.top, 12)
                 }
 
@@ -295,7 +295,7 @@ private struct AssistantBubble: View {
                                     .background(Theme.greenSoft)
                                     .clipShape(Capsule())
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(FullTapStyle())
                         }
                     }
                     .padding(.top, 12)
@@ -421,7 +421,7 @@ private struct ShopRow: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.border, lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(FullTapStyle())
         .padding(.vertical, 3)
     }
 }
