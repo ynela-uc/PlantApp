@@ -51,7 +51,7 @@ Notes and suggested shape (a starting point, to decide together before building)
 - Seller order alerts (above).
 - Seller approval: built (migration 016, apply it first). Owner approves in the Supabase Table Editor; an in-app admin screen can come later.
 - Cancel and problem rules: built (migration 017, apply it first): customer cancels only while the order is new, shops give a reason, "couldn't deliver", automatic cancel after 12 hours, customer phone hidden from the shop until it accepts.
-- Privacy policy and terms (the stores require them).
+- Privacy policy and terms: written in en/ar/ckb (docs/legal, edit tools/build_legal.py, then run it). To go live: turn on GitHub Pages (Settings -> Pages -> Deploy from branch main, folder /docs) and replace the bracketed placeholders (company name, email, phone, address, court city). The Kurdish text needs a native reader. In-app account deletion: built (migration 018).
 - Real data: demo flower and gift products, and a real trial with Whites & Wicks.
 
 ## Important, not day one

@@ -101,6 +101,11 @@ fun ProfileTab(
         OutlinedButton(onClick = onSignOut, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.action_signout), color = PlantGreen, fontWeight = FontWeight.SemiBold)
         }
+
+        Spacer(Modifier.height(12.dp))
+        com.plantapp.ui.LegalLinks(PlantGreen)
+        Spacer(Modifier.height(8.dp))
+        com.plantapp.ui.DeleteAccountSection(onDeleted = onSignOut)
     }
 }
 

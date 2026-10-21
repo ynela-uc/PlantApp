@@ -101,6 +101,11 @@ fun ShopTab(
         OutlinedButton(onClick = onSignOut, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.action_signout), color = SellerAmber, fontWeight = FontWeight.SemiBold)
         }
+
+        Spacer(Modifier.height(12.dp))
+        com.plantapp.ui.LegalLinks(SellerAmber)
+        Spacer(Modifier.height(8.dp))
+        com.plantapp.ui.DeleteAccountSection(onDeleted = onSignOut)
     }
 }
 

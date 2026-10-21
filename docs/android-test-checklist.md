@@ -122,5 +122,12 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Shop: after accepting an order, the customer's phone row has Call and WhatsApp (message mentions the order number and the shop). Before accepting, no phone is shown.
 - [ ] A number written as 0770 123 4567 opens WhatsApp as +964 770 123 4567.
 
+## 18. Legal links and account deletion
+- [ ] Sign-up screen: under the Create account button there is "By creating an account you agree to the Terms of Use and the Privacy Policy" with two links (they open in the browser once GitHub Pages is on).
+- [ ] My account (customer) and Shop (shop owner): the links "Privacy policy" and "Terms of use", and a red "Delete my account" button.
+- [ ] Delete my account asks to confirm. With an order in progress (preparing, waiting for photo, approved, out for delivery) it says "You still have orders in progress...". Otherwise the account is deleted and the app returns to the welcome screen; signing in again with that email fails.
+- [ ] After a customer deletes their account, their old orders still appear for the shop but without name, phone and address.
+- [ ] After a shop owner deletes their account, customers no longer see the shop or its products, and old orders stay.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

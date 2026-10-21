@@ -101,6 +101,11 @@ enum AuthService {
     static func signOut() async throws {
         try await supabase.auth.signOut()
     }
+
+    /// Deletes the signed-in person's account on the server (refused while orders are in progress).
+    static func deleteMyAccount() async throws {
+        try await supabase.rpc("delete_my_account", params: NoParams()).execute()
+    }
 }
 
 enum AppError: Error {
@@ -135,6 +140,8 @@ private struct ReviewPhotoParams: Encodable {
         case pNote = "p_note"
     }
 }
+
+private struct NoParams: Encodable {}
 
 private struct CancelOrderParams: Encodable {
     let pOrderId: String

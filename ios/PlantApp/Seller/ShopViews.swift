@@ -48,6 +48,9 @@ struct ShopTab: View {
                     Button(lang.t("action_signout")) { app.signOut() }
                         .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
                         .padding(.top, 28)
+
+                    LegalLinks(accent: Theme.amber).padding(.top, 16)
+                    DeleteAccountSection().padding(.top, 12)
                 }
             }
             .padding(20)

@@ -40,6 +40,16 @@
     <string name="err_generic">حدث خطأ غير متوقع، حاول مرة أخرى.</string>
     <string name="err_price_changed">تغيّر سعر أحد المنتجات أو رسوم التوصيل. حدّثنا الأسعار، راجع السلة ثم أعد المحاولة.</string>
     <string name="err_unavailable">أحد المنتجات لم يعد متوفرًا أو تغيّرت خياراته. حدّثنا القائمة، راجع السلة.</string>
+    <string name="legal_privacy">سياسة الخصوصية</string>
+    <string name="legal_terms">شروط الاستخدام</string>
+    <string name="legal_agree">بإنشاء حساب فإنك توافق على شروط الاستخدام وسياسة الخصوصية.</string>
+    <string name="delete_account">حذف حسابي</string>
+    <string name="delete_title">حذف حسابك؟</string>
+    <string name="delete_body">سيُحذف ملفك الشخصي وبيانات المتجر والمنتجات وإعدادات الإشعارات نهائيًا. وتبقى الطلبات السابقة في سجلات المتاجر وسجلاتنا من دون اسمك ورقم هاتفك وعنوانك. لا يمكن التراجع عن هذا.</string>
+    <string name="delete_yes">نعم، احذف حسابي</string>
+    <string name="delete_no">الإبقاء على حسابي</string>
+    <string name="delete_blocked">لديك طلبات قيد التنفيذ. أنهِها أو ألغِها أولًا ثم حاول مرة أخرى.</string>
+    <string name="delete_failed">تعذّر حذف الحساب. تحقق من الاتصال وحاول مرة أخرى.</string>
     <string name="contact_title">تواصل مع المتجر</string>
     <string name="contact_call">اتصال</string>
     <string name="contact_whatsapp">واتساب</string>

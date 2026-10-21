@@ -40,6 +40,16 @@
     <string name="err_generic">Something went wrong. Please try again.</string>
     <string name="err_price_changed">Something changed: a price or a delivery fee is different now. We refreshed the prices, so please check your cart and try again.</string>
     <string name="err_unavailable">One of the products is no longer available or its choices changed. We refreshed the list, so please check your cart.</string>
+    <string name="legal_privacy">Privacy policy</string>
+    <string name="legal_terms">Terms of use</string>
+    <string name="legal_agree">By creating an account you agree to the Terms of Use and the Privacy Policy.</string>
+    <string name="delete_account">Delete my account</string>
+    <string name="delete_title">Delete your account?</string>
+    <string name="delete_body">Your profile, shop details, products and notification settings will be removed for good. Past orders stay in the shops\' and our records without your name, phone number and address. This cannot be undone.</string>
+    <string name="delete_yes">Yes, delete my account</string>
+    <string name="delete_no">Keep my account</string>
+    <string name="delete_blocked">You still have orders in progress. Finish or cancel them first, then try again.</string>
+    <string name="delete_failed">Could not delete the account. Check your connection and try again.</string>
     <string name="contact_title">Contact the shop</string>
     <string name="contact_call">Call</string>
     <string name="contact_whatsapp">WhatsApp</string>

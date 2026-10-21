@@ -82,11 +82,14 @@ struct AuthView: View {
 
                 ErrorText(message: localError ?? app.error.map { lang.t($0.key) })
 
-                Button(action: submit) {
-                    BusyLabel(title: lang.t(creating ? "action_signup" : "action_signin"), busy: app.busy)
+                VStack(alignment: .leading, spacing: 12) {
+                    Button(action: submit) {
+                        BusyLabel(title: lang.t(creating ? "action_signup" : "action_signin"), busy: app.busy)
+                    }
+                    .buttonStyle(PrimaryButtonStyle(color: accent))
+                    .disabled(app.busy)
+                    if creating { LegalAgreement(accent: accent) }
                 }
-                .buttonStyle(PrimaryButtonStyle(color: accent))
-                .disabled(app.busy)
                 .padding(.top, 8)
             }
             .padding(.horizontal, 24)

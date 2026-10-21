@@ -42,6 +42,9 @@ struct ProfileTab: View {
                 Button(lang.t("action_signout")) { app.signOut() }
                     .buttonStyle(PrimaryButtonStyle(color: accent, filled: false))
                     .padding(.top, 28)
+
+                LegalLinks(accent: accent).padding(.top, 16)
+                DeleteAccountSection().padding(.top, 12)
             }
             .padding(20)
         }

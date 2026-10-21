@@ -245,6 +245,7 @@ fun AuthScreen(
                 )
             }
         }
+        if (creating) LegalAgreement(accent)
         Spacer(Modifier.height(24.dp))
     }
 }
