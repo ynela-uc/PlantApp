@@ -199,6 +199,12 @@ struct OrderDetailView: View {
                             .disabled(model.reviewBusy)
                             .padding(.top, 20)
                     }
+                    if let phone = model.listings.first(where: { $0.sellerId == order.sellerId })?.sellers?.phone, !phone.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            SectionHeading(text: lang.t("contact_title"))
+                            ContactButtons(phone: phone, whatsappMessage: lang.t("contact_order_message", order.shortId))
+                        }
+                    }
                     SectionHeading(text: lang.t("checkout_delivery"))
                     if order.isGift {
                         Text(lang.t("order_gift_for", order.recipientName ?? ""))

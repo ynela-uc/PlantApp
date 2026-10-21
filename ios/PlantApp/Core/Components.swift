@@ -200,3 +200,48 @@ struct MessageState: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+// MARK: - Contact (call / WhatsApp)
+
+/// A phone number in international digits for WhatsApp: 0770... and 770... become 964770... (Iraq).
+func internationalDigits(_ phone: String) -> String? {
+    let digits = phone.filter { $0.isNumber }
+    if digits.isEmpty { return nil }
+    if digits.hasPrefix("00") { return String(digits.dropFirst(2)) }
+    if digits.hasPrefix("964") { return digits }
+    if digits.hasPrefix("0") { return "964" + String(digits.dropFirst()) }
+    if digits.count == 10 && digits.hasPrefix("7") { return "964" + digits }
+    return digits
+}
+
+func whatsappURL(phone: String, message: String?) -> URL? {
+    guard let number = internationalDigits(phone), var parts = URLComponents(string: "https://wa.me/\(number)") else { return nil }
+    if let message, !message.isEmpty { parts.queryItems = [URLQueryItem(name: "text", value: message)] }
+    return parts.url
+}
+
+func callURL(phone: String) -> URL? {
+    let number = phone.filter { $0.isNumber || $0 == "+" }
+    return number.isEmpty ? nil : URL(string: "tel:\(number)")
+}
+
+/// Two buttons: call the number, or write on WhatsApp (with a ready message).
+struct ContactButtons: View {
+    @EnvironmentObject var lang: LanguageStore
+    @Environment(\.openURL) private var openURL
+    let phone: String
+    var whatsappMessage: String?
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Button("📞  " + lang.t("contact_call")) {
+                if let url = callURL(phone: phone) { openURL(url) }
+            }
+            .buttonStyle(PrimaryButtonStyle(filled: false))
+            Button("💬  " + lang.t("contact_whatsapp")) {
+                if let url = whatsappURL(phone: phone, message: whatsappMessage) { openURL(url) }
+            }
+            .buttonStyle(PrimaryButtonStyle(filled: false))
+        }
+    }
+}

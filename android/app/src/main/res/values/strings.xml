@@ -40,6 +40,12 @@
     <string name="err_generic">Something went wrong. Please try again.</string>
     <string name="err_price_changed">Something changed: a price or a delivery fee is different now. We refreshed the prices, so please check your cart and try again.</string>
     <string name="err_unavailable">One of the products is no longer available or its choices changed. We refreshed the list, so please check your cart.</string>
+    <string name="contact_title">Contact the shop</string>
+    <string name="contact_call">Call</string>
+    <string name="contact_whatsapp">WhatsApp</string>
+    <string name="contact_order_message">Hello, I\'m asking about my order #%1$s</string>
+    <string name="contact_shop_message">Hello, I have a question about your products.</string>
+    <string name="contact_customer_message">Hello, about your order #%1$s from %2$s</string>
     <string name="cancel_my_order">Cancel order</string>
     <string name="cancel_confirm_title">Cancel this order?</string>
     <string name="cancel_confirm_body">The shop will be told. This cannot be undone.</string>

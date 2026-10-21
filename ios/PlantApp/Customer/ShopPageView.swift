@@ -50,8 +50,13 @@ struct ShopPageView: View {
                         }
                     }
                 }
-                if !shop.bio.isEmpty {
-                    Text(shop.bio).font(.system(size: 15))
+                VStack(alignment: .leading, spacing: 12) {
+                    if !shop.bio.isEmpty {
+                        Text(shop.bio).font(.system(size: 15))
+                    }
+                    if !shop.phone.isEmpty {
+                        ContactButtons(phone: shop.phone, whatsappMessage: lang.t("contact_shop_message"))
+                    }
                 }
                 HStack(spacing: 10) {
                     DeliveryBadge(shop: shop)

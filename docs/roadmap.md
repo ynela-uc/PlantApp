@@ -46,7 +46,7 @@ Notes and suggested shape (a starting point, to decide together before building)
 - Real data: demo flower and gift products, and a real trial with Whites & Wicks.
 
 ## Important, not day one
-- Call or WhatsApp button to reach the shop; favorites and better search; stock levels; more than one photo per product;
+- Favorites and better search; stock levels; more than one photo per product;
   saved delivery addresses.
 
 ## Later
@@ -54,6 +54,7 @@ Notes and suggested shape (a starting point, to decide together before building)
   Google Play and Apple release (Apple Developer account is needed for iPhone push and TestFlight).
 
 ## Done recently
+- Call and WhatsApp buttons: customer to shop (order page, shop page) and shop to customer (after accepting).
 - Push notifications on Android: Firebase project, notify function, device registration, order triggers and a 10-minute reminder (migration 015, docs/push-setup.md).
 - Photo approval is optional per product (off / optional / required), the customer can ask for it on optional products, and the shop can continue after 60 minutes without an answer (migration 014).
 - Server-side order checking (migration 013): the database recomputes prices, delivery fee and total.

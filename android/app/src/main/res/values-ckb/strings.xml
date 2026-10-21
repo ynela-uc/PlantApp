@@ -41,6 +41,12 @@
     <string name="err_generic">هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵبدەرەوە.</string>
     <string name="err_price_changed">نرخی یەکێک لە بەرهەمەکان یان کرێی گەیاندن گۆڕاوە. نرخەکانمان نوێکردەوە، تکایە سەبەتەکەت بپشکنە و دووبارە هەوڵبدەرەوە.</string>
     <string name="err_unavailable">یەکێک لە بەرهەمەکان ئیتر بەردەست نییە یان هەڵبژاردنەکانی گۆڕاون. لیستەکەمان نوێکردەوە، تکایە سەبەتەکەت بپشکنە.</string>
+    <string name="contact_title">پەیوەندی بە فرۆشگاکە بکە</string>
+    <string name="contact_call">پەیوەندی</string>
+    <string name="contact_whatsapp">واتسئاپ</string>
+    <string name="contact_order_message">سڵاو، دەپرسم دەربارەی داواکارییەکەم ژمارە %1$s</string>
+    <string name="contact_shop_message">سڵاو، پرسیارێکم هەیە دەربارەی بەرهەمەکانتان.</string>
+    <string name="contact_customer_message">سڵاو، دەربارەی داواکارییەکەتان ژمارە %1$s لە %2$s</string>
     <string name="cancel_my_order">هەڵوەشاندنەوەی داواکاری</string>
     <string name="cancel_confirm_title">ئەم داواکارییە هەڵبوەشێنیتەوە؟</string>
     <string name="cancel_confirm_body">فرۆشگاکە ئاگادار دەکرێتەوە. ناتوانرێت پاشگەز ببیتەوە.</string>

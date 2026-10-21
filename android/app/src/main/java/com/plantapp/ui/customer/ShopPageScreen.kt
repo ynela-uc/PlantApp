@@ -103,6 +103,10 @@ fun ShopPageScreen(
                     Spacer(Modifier.height(10.dp))
                     Text(shop.bio, style = MaterialTheme.typography.bodyMedium)
                 }
+                if (shop.phone.isNotBlank()) {
+                    Spacer(Modifier.height(10.dp))
+                    com.plantapp.ui.ContactButtons(shop.phone, stringResource(R.string.contact_shop_message))
+                }
                 Spacer(Modifier.height(10.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     DeliveryBadge(shop)

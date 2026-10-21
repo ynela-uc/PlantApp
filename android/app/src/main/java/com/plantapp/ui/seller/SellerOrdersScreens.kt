@@ -188,6 +188,7 @@ fun SellerOrderDetailScreen(
     val status = order.statusEnum
     val capture = rememberPhotoCapture(onPhoto)
     val photoUrl by rememberSignedPhotoUrl(order.preparationPhotoPath)
+    val waMessage = stringResource(R.string.contact_customer_message, order.id.take(6).uppercase(), order.sellerName)
     /** Which list of reasons is being asked for: cancel ("shop") or failed delivery ("failed"); null = no question open. */
     var askReason by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -217,7 +218,7 @@ fun SellerOrderDetailScreen(
             if (status == OrderStatus.Placed) {
                 Text(stringResource(R.string.cancel_no_phone_yet), color = TextMuted, style = MaterialTheme.typography.bodySmall)
             } else if (order.buyerPhone.isNotBlank()) {
-                CallRow(order.buyerPhone) { dial(order.buyerPhone) }
+                CallRow(order.buyerPhone, waMessage) { dial(order.buyerPhone) }
             }
 
             // Items
@@ -252,7 +253,7 @@ fun SellerOrderDetailScreen(
             Heading(R.string.checkout_delivery)
             if (order.isGift) {
                 Text(stringResource(R.string.order_gift_for, order.recipientName.orEmpty()), fontWeight = FontWeight.SemiBold)
-                if (status != OrderStatus.Placed) order.recipientPhone?.takeIf { it.isNotBlank() }?.let { CallRow(it) { dial(it) } }
+                if (status != OrderStatus.Placed) order.recipientPhone?.takeIf { it.isNotBlank() }?.let { CallRow(it, waMessage) { dial(it) } }
                 order.giftNote?.takeIf { it.isNotBlank() }?.let {
                     Spacer(Modifier.height(6.dp))
                     Text("“$it”", style = MaterialTheme.typography.bodyMedium)
@@ -398,11 +399,15 @@ fun SellerOrderDetailScreen(
 }
 
 @Composable
-private fun CallRow(number: String, onCall: () -> Unit) {
+private fun CallRow(number: String, whatsappMessage: String, onCall: () -> Unit) {
+    val context = LocalContext.current
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(number, color = TextMuted, modifier = Modifier.weight(1f))
         TextButton(onClick = onCall) {
             Text("📞  " + stringResource(R.string.seller_call), color = PlantGreen, fontWeight = FontWeight.SemiBold)
+        }
+        TextButton(onClick = { com.plantapp.ui.openWhatsApp(context, number, whatsappMessage) }) {
+            Text("💬  " + stringResource(R.string.contact_whatsapp), color = PlantGreen, fontWeight = FontWeight.SemiBold)
         }
     }
 }

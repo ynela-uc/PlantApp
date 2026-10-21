@@ -116,5 +116,11 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Shop: on an order that is out for delivery there is a "Couldn't deliver" button with reasons (customer did not answer / refused / wrong address / other). The customer sees the reason.
 - [ ] An order nobody answers for 12 hours is cancelled by itself ("The shop did not answer in time") and the customer is notified. (Test by changing created_at in the SQL editor to 13 hours ago and waiting up to 10 minutes.)
 
+## 17. Call and WhatsApp
+- [ ] Customer: open an order. A "Contact the shop" box has Call and WhatsApp buttons. Call opens the phone dialler with the shop's number. WhatsApp opens a chat with the shop with a ready message ("Hello, I'm asking about my order #XXXXXX").
+- [ ] Customer: a shop's page also shows Call and WhatsApp.
+- [ ] Shop: after accepting an order, the customer's phone row has Call and WhatsApp (message mentions the order number and the shop). Before accepting, no phone is shown.
+- [ ] A number written as 0770 123 4567 opens WhatsApp as +964 770 123 4567.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

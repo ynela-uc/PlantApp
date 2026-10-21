@@ -40,6 +40,12 @@
     <string name="err_generic">حدث خطأ غير متوقع، حاول مرة أخرى.</string>
     <string name="err_price_changed">تغيّر سعر أحد المنتجات أو رسوم التوصيل. حدّثنا الأسعار، راجع السلة ثم أعد المحاولة.</string>
     <string name="err_unavailable">أحد المنتجات لم يعد متوفرًا أو تغيّرت خياراته. حدّثنا القائمة، راجع السلة.</string>
+    <string name="contact_title">تواصل مع المتجر</string>
+    <string name="contact_call">اتصال</string>
+    <string name="contact_whatsapp">واتساب</string>
+    <string name="contact_order_message">مرحبًا، أسأل عن طلبي رقم %1$s</string>
+    <string name="contact_shop_message">مرحبًا، عندي سؤال عن منتجاتكم.</string>
+    <string name="contact_customer_message">مرحبًا، بخصوص طلبكم رقم %1$s من %2$s</string>
     <string name="cancel_my_order">إلغاء الطلب</string>
     <string name="cancel_confirm_title">إلغاء هذا الطلب؟</string>
     <string name="cancel_confirm_body">سيُبلَّغ المتجر. لا يمكن التراجع عن هذا.</string>

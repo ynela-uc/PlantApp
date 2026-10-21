@@ -184,6 +184,7 @@ fun OrderDetailScreen(
     reviewBusy: Boolean,
     onReview: (approve: Boolean, note: String?) -> Unit,
     onCancel: () -> Unit,
+    shopPhone: String?,
     onBack: () -> Unit,
 ) {
     val lang = rememberLang()
@@ -291,6 +292,12 @@ fun OrderDetailScreen(
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     shape = RoundedCornerShape(14.dp),
                 ) { Text(stringResource(R.string.cancel_my_order), color = CancelledRed) }
+            }
+
+            if (!shopPhone.isNullOrBlank()) {
+                Spacer(Modifier.height(20.dp))
+                Heading(R.string.contact_title)
+                com.plantapp.ui.ContactButtons(shopPhone, stringResource(R.string.contact_order_message, order.id.take(6).uppercase()))
             }
 
             Spacer(Modifier.height(24.dp))

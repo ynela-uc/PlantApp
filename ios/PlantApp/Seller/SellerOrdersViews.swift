@@ -315,6 +315,14 @@ struct SellerOrderDetailView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Theme.green)
             }
+            Button {
+                let message = lang.t("contact_customer_message", order.shortId, order.sellerName)
+                if let url = whatsappURL(phone: number, message: message) { openURL(url) }
+            } label: {
+                Text("💬  " + lang.t("contact_whatsapp"))
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Theme.green)
+            }
         }
     }
 
