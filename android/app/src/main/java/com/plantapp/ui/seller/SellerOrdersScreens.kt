@@ -269,6 +269,12 @@ fun SellerOrderDetailScreen(
             } else {
                 Text(addressText(order.city, order.district, order.neighborhood, order.address, order.landmark))
                 order.addressNotes.takeIf { it.isNotBlank() }?.let { Text(it, color = TextMuted) }
+                if (order.lat != null && order.lng != null) {
+                    androidx.compose.material3.OutlinedButton(
+                        onClick = { com.plantapp.ui.openInMaps(context, order.lat, order.lng, order.buyerName) },
+                        modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+                    ) { Text(stringResource(R.string.map_navigate), color = SellerAmber) }
+                }
             }
             order.deliveryDate?.let {
                 Text("$it  ·  ${stringResource(windowLabel(order.deliveryWindow))}", color = TextMuted)

@@ -84,7 +84,7 @@ struct ShopEditorView: View {
         _name = State(initialValue: shop.name)
         _phone = State(initialValue: shop.phone)
         _bio = State(initialValue: shop.bio)
-        _addr = State(initialValue: AddressDraft(city: shop.city, district: shop.district, neighborhood: shop.neighborhood, street: shop.address, landmark: shop.landmark, notes: shop.addressNotes))
+        _addr = State(initialValue: AddressDraft(city: shop.city, district: shop.district, neighborhood: shop.neighborhood, street: shop.address, landmark: shop.landmark, notes: shop.addressNotes, lat: shop.lat, lng: shop.lng))
         _nationwide = State(initialValue: shop.isNationwide)
         _cities = State(initialValue: Set(shop.deliversTo ?? []))
         _types = State(initialValue: Set(shop.shopTypes))
@@ -217,7 +217,9 @@ struct ShopEditorView: View {
                 district: place.district,
                 neighborhood: place.neighborhood,
                 landmark: place.landmark,
-                addressNotes: place.notes
+                addressNotes: place.notes,
+                lat: place.lat,
+                lng: place.lng
             )
         )
     }

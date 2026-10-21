@@ -51,6 +51,7 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         NSCameraUsageDescription: PlantApp uses the camera so sellers can photograph plants and prepared orders.
+        NSLocationWhenInUseUsageDescription: PlantApp uses your location only when you tap "Use my current location" on an address, to put a pin on the map.
         NSPhotoLibraryUsageDescription: PlantApp lets sellers choose plant and order photos from the photo library.
         CFBundleURLTypes:
           - CFBundleURLName: com.plantapp.iraq

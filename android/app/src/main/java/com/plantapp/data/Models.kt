@@ -49,6 +49,8 @@ data class NewSeller(
     val neighborhood: String = "",
     val landmark: String = "",
     @SerialName("address_notes") val addressNotes: String = "",
+    val lat: Double? = null,
+    val lng: Double? = null,
     @SerialName("delivery_scope") val deliveryScope: String = "local",
     @SerialName("delivers_to") val deliversTo: List<String>,
     val phone: String,
@@ -71,6 +73,8 @@ data class SignUpForm(
     val neighborhood: String = "",
     val landmark: String = "",
     val addressNotes: String = "",
+    val lat: Double? = null,
+    val lng: Double? = null,
     val shopName: String = "",
     /** Which kinds of shop this seller runs (Catalog section keys). */
     val shopTypes: List<String> = emptyList(),

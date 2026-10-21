@@ -37,7 +37,12 @@ data class AddressDraft(
     val street: String = "",
     val landmark: String = "",
     val notes: String = "",
+    /** The map pin, set together or not at all. */
+    val lat: Double? = null,
+    val lng: Double? = null,
 ) {
+    val hasPin: Boolean get() = lat != null && lng != null
+
     /** Governorate, district and neighborhood are needed, plus a street/building or a landmark to find the door. */
     val isComplete: Boolean
         get() = city.isNotBlank() && district.isNotBlank() && neighborhood.isNotBlank() && (street.isNotBlank() || landmark.isNotBlank())
@@ -50,8 +55,8 @@ data class AddressDraft(
     companion object {
         /** Keeps the draft across rotation and language changes. */
         val Saver = listSaver<AddressDraft, String>(
-            save = { listOf(it.city, it.district, it.neighborhood, it.street, it.landmark, it.notes) },
-            restore = { AddressDraft(it[0], it[1], it[2], it[3], it[4], it[5]) },
+            save = { listOf(it.city, it.district, it.neighborhood, it.street, it.landmark, it.notes, it.lat?.toString().orEmpty(), it.lng?.toString().orEmpty()) },
+            restore = { AddressDraft(it[0], it[1], it[2], it[3], it[4], it[5], it[6].toDoubleOrNull(), it[7].toDoubleOrNull()) },
         )
     }
 }
@@ -67,6 +72,7 @@ fun AddressFields(draft: AddressDraft, onChange: (AddressDraft) -> Unit, accent:
         AddressInput(draft.street, R.string.field_address) { onChange(draft.copy(street = it.take(300))) }
         AddressInput(draft.landmark, R.string.field_landmark) { onChange(draft.copy(landmark = it.take(200))) }
         AddressInput(draft.notes, R.string.field_address_notes, singleLine = false) { onChange(draft.copy(notes = it.take(300))) }
+        PinSection(draft, onChange)
     }
 }
 

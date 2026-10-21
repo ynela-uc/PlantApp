@@ -33,6 +33,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSCameraUsageDescription</key>
 	<string>PlantApp uses the camera so sellers can photograph plants and prepared orders.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>PlantApp uses your location only when you tap "Use my current location" on an address, to put a pin on the map.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>PlantApp lets sellers choose plant and order photos from the photo library.</string>
 	<key>UILaunchScreen</key>

@@ -33,6 +33,8 @@ data class PendingShop(
     val neighborhood: String = "",
     val landmark: String = "",
     @SerialName("address_notes") val addressNotes: String = "",
+    val lat: Double? = null,
+    val lng: Double? = null,
 )
 
 /** The three things the admin can do with a shop. */

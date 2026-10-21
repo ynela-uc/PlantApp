@@ -1,4 +1,6 @@
 import SwiftUI
+import MapKit
+import CoreLocation
 
 /// Labelled text input used by every form.
 struct AppField: View {
@@ -347,6 +349,11 @@ struct AddressDraft: Equatable {
     var street = ""
     var landmark = ""
     var notes = ""
+    /// The map pin, set together or not at all.
+    var lat: Double?
+    var lng: Double?
+
+    var hasPin: Bool { lat != nil && lng != nil }
 
     private static func filled(_ text: String) -> Bool { !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
@@ -357,7 +364,7 @@ struct AddressDraft: Equatable {
 
     var trimmed: AddressDraft {
         let clean: (String) -> String = { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-        return AddressDraft(city: city, district: clean(district), neighborhood: clean(neighborhood), street: clean(street), landmark: clean(landmark), notes: clean(notes))
+        return AddressDraft(city: city, district: clean(district), neighborhood: clean(neighborhood), street: clean(street), landmark: clean(landmark), notes: clean(notes), lat: lat, lng: lng)
     }
 }
 
@@ -396,6 +403,7 @@ struct AddressFields: View {
             AppField(title: lang.t("field_address"), text: $draft.street)
             AppField(title: lang.t("field_landmark"), text: $draft.landmark)
             AppField(title: lang.t("field_address_notes"), text: $draft.notes, multiline: true)
+            PinSection(draft: $draft)
         }
     }
 }
@@ -416,12 +424,226 @@ extension LanguageStore {
     }
 }
 
+// MARK: - Map pin (GPS and map)
+
+/// The main city of each governorate (latitude, longitude): a starting point for the map and a guess for "use my location".
+let governorateCenters: [String: (lat: Double, lng: Double)] = [
+    "Baghdad": (33.3152, 44.3661), "Erbil": (36.1911, 44.0092), "Basra": (30.5081, 47.7835),
+    "Mosul": (36.3350, 43.1189), "Najaf": (32.0000, 44.3362), "Sulaymaniyah": (35.5558, 45.4351),
+    "Karbala": (32.6160, 44.0249), "Duhok": (36.8679, 42.9884), "Kirkuk": (35.4681, 44.3922),
+    "Anbar": (33.4258, 43.3033), "Babil": (32.4637, 44.4196), "Diyala": (33.7500, 44.6333),
+    "Wasit": (32.5128, 45.8182), "Maysan": (31.8356, 47.1440), "DhiQar": (31.0580, 46.2573),
+    "Muthanna": (31.3098, 45.2870), "Qadisiyah": (31.9889, 44.9264), "SalahAlDin": (34.5953, 43.6827),
+    "Halabja": (35.1778, 45.9862),
+]
+
+/// The governorate whose main city is closest to a point; only a suggestion, the person can change it.
+func nearestGovernorate(lat: Double, lng: Double) -> String {
+    let scale = cos(lat * .pi / 180)
+    func distance(_ c: (lat: Double, lng: Double)) -> Double {
+        let dLat = c.lat - lat
+        let dLng = (c.lng - lng) * scale
+        return dLat * dLat + dLng * dLng
+    }
+    return governorateCenters.min { distance($0.value) < distance($1.value) }?.key ?? "Baghdad"
+}
+
+struct PinPoint: Equatable {
+    let lat: Double
+    let lng: Double
+    let stamp: Date
+}
+
+/// Asks for location permission (once, when the person taps the button) and reads where the phone is.
+final class LocationFetcher: NSObject, ObservableObject, CLLocationManagerDelegate {
+    @Published var busy = false
+    @Published var failed = false
+    @Published var result: PinPoint?
+    private let manager = CLLocationManager()
+
+    override init() {
+        super.init()
+        manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+
+    func request() {
+        busy = true
+        failed = false
+        switch manager.authorizationStatus {
+        case .notDetermined:
+            manager.requestWhenInUseAuthorization()
+        case .denied, .restricted:
+            busy = false
+            failed = true
+        default:
+            manager.requestLocation()
+        }
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        guard busy else { return }
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            manager.requestLocation()
+        case .denied, .restricted:
+            busy = false
+            failed = true
+        default:
+            break
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        busy = false
+        if let last = locations.last {
+            result = PinPoint(lat: last.coordinate.latitude, lng: last.coordinate.longitude, stamp: Date())
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        busy = false
+        failed = true
+    }
+}
+
+/// "Use my location", "Choose on the map" and the state of the pin, shown under the address fields.
+struct PinSection: View {
+    @EnvironmentObject var lang: LanguageStore
+    @Binding var draft: AddressDraft
+    @StateObject private var locator = LocationFetcher()
+    @State private var showMap = false
+    @State private var guessed = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(lang.t("pin_title"))
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Theme.muted)
+            Text(lang.t("pin_hint"))
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.muted)
+            HStack(spacing: 8) {
+                Button(locator.busy ? lang.t("pin_getting") : "📍 " + lang.t("pin_use_location")) { locator.request() }
+                    .buttonStyle(PrimaryButtonStyle(filled: false))
+                    .disabled(locator.busy)
+                Button("🗺 " + lang.t("pin_choose_map")) { showMap = true }
+                    .buttonStyle(PrimaryButtonStyle(filled: false))
+            }
+            if draft.hasPin {
+                HStack {
+                    Text("✓ " + lang.t("pin_saved")).font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.greenDark)
+                    Spacer()
+                    Button(lang.t("pin_remove")) {
+                        draft.lat = nil
+                        draft.lng = nil
+                        guessed = false
+                    }
+                    .foregroundStyle(Theme.error)
+                }
+                if let lat = draft.lat, let lng = draft.lng, let url = URL(string: "http://maps.apple.com/?ll=\(lat),\(lng)") {
+                    Link(lang.t("map_open"), destination: url).font(.system(size: 14))
+                }
+            }
+            if locator.failed { Text(lang.t("pin_failed")).font(.system(size: 12)).foregroundStyle(Theme.error) }
+            if guessed { Text(lang.t("pin_guessed")).font(.system(size: 12)).foregroundStyle(Theme.muted) }
+        }
+        .onChange(of: locator.result) { value in
+            if let value { place(lat: value.lat, lng: value.lng) }
+        }
+        .fullScreenCover(isPresented: $showMap) {
+            MapPickerView(lat: draft.lat, lng: draft.lng, hintCity: draft.city) { lat, lng in place(lat: lat, lng: lng) }
+        }
+    }
+
+    /// Sets the pin; when no governorate was chosen yet, suggests the nearest one.
+    private func place(lat: Double, lng: Double) {
+        let suggest = draft.city.isEmpty
+        guessed = suggest
+        draft.lat = lat
+        draft.lng = lng
+        if suggest { draft.city = nearestGovernorate(lat: lat, lng: lng) }
+    }
+}
+
+/// Full-screen map with the pin fixed in the middle: move the map until the pin is on the door, then confirm.
+struct MapPickerView: View {
+    @EnvironmentObject var lang: LanguageStore
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var locator = LocationFetcher()
+    @State private var region: MKCoordinateRegion
+    let onConfirm: (Double, Double) -> Void
+
+    init(lat: Double?, lng: Double?, hintCity: String, onConfirm: @escaping (Double, Double) -> Void) {
+        self.onConfirm = onConfirm
+        let start: (lat: Double, lng: Double)
+        let span: Double
+        if let lat, let lng {
+            start = (lat, lng)
+            span = 0.004
+        } else if let center = governorateCenters[hintCity] {
+            start = center
+            span = 0.15
+        } else {
+            start = (33.3152, 44.3661)
+            span = 0.15
+        }
+        _region = State(initialValue: MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: start.lat, longitude: start.lng),
+            span: MKCoordinateSpan(latitudeDelta: span, longitudeDelta: span)
+        ))
+    }
+
+    var body: some View {
+        ZStack {
+            Map(coordinateRegion: $region, showsUserLocation: true)
+                .ignoresSafeArea()
+            // The pin stays in the middle of the screen; its tip marks the chosen spot.
+            Text("📍").font(.system(size: 40)).offset(y: -20)
+            VStack {
+                Text(lang.t("pin_map_title"))
+                    .font(.system(size: 15, weight: .semibold))
+                    .padding(12)
+                    .background(Color.white.opacity(0.92))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.top, 8)
+                Spacer()
+                VStack(spacing: 8) {
+                    if locator.failed { Text(lang.t("pin_failed")).font(.system(size: 13)).foregroundStyle(Theme.error).padding(8).background(Color.white.opacity(0.92)).clipShape(RoundedRectangle(cornerRadius: 8)) }
+                    Button(lang.t("pin_confirm")) {
+                        onConfirm(region.center.latitude, region.center.longitude)
+                        dismiss()
+                    }
+                    .buttonStyle(PrimaryButtonStyle())
+                    HStack(spacing: 8) {
+                        Button("📍 " + lang.t("pin_use_location")) { locator.request() }
+                            .buttonStyle(PrimaryButtonStyle(filled: false))
+                        Button(lang.t("action_cancel")) { dismiss() }
+                            .buttonStyle(PrimaryButtonStyle(filled: false))
+                    }
+                }
+                .padding(16)
+            }
+        }
+        .onChange(of: locator.result) { value in
+            if let value {
+                withAnimation {
+                    region = MKCoordinateRegion(
+                        center: CLLocationCoordinate2D(latitude: value.lat, longitude: value.lng),
+                        span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
+                    )
+                }
+            }
+        }
+    }
+}
+
 // MARK: - Address book
 
 let addressLabelKeys = ["home", "work", "apartment"]
 
 extension SavedAddress {
-    var draft: AddressDraft { AddressDraft(city: city, district: district, neighborhood: neighborhood, street: street, landmark: landmark, notes: notes) }
+    var draft: AddressDraft { AddressDraft(city: city, district: district, neighborhood: neighborhood, street: street, landmark: landmark, notes: notes, lat: lat, lng: lng) }
 }
 
 extension LanguageStore {
@@ -1039,6 +1261,9 @@ private struct ShopPreviewView: View {
                     if !shop.phone.isEmpty { Text(shop.phone) }
                     Text(lang.addressText(city: shop.city, district: shop.district, neighborhood: shop.neighborhood, street: shop.address, landmark: shop.landmark))
                     if !shop.addressNotes.isEmpty { Text(shop.addressNotes).foregroundStyle(Theme.muted) }
+                    if let lat = shop.lat, let lng = shop.lng, let url = URL(string: "http://maps.apple.com/?ll=\(lat),\(lng)") {
+                        Link(lang.t("map_open"), destination: url).font(.system(size: 14))
+                    }
                     if !shop.shopTypes.isEmpty {
                         Text(shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", ")).foregroundStyle(Theme.muted)
                     }

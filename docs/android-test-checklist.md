@@ -180,5 +180,14 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Changing or deleting a saved address does not change an order that was already placed.
 - [ ] A new customer account gets its sign-up address as the first address (Home, Default). A shop account has no address book.
 
+## 25. GPS and map pin
+- [ ] Any address form (sign-up, address book, checkout "another address", shop address) has a "Location on the map" block under the notes: "Use my current location" and "Choose on the map".
+- [ ] Use my current location: Android asks for location permission the first time. After allowing, "Location saved on the map" appears; if the governorate was empty it is chosen from the position (with a note to change it if wrong). In BlueStacks set a location first (BlueStacks settings -> Location), otherwise it may fail with the red message.
+- [ ] Choose on the map (needs the Maps key, see docs/maps-setup.md; without it the button is grey with a note): a full-screen map opens at the saved pin or at the chosen governorate. Move the map so the 📍 is on the door, Confirm. The pin is saved.
+- [ ] Remove the pin clears it. "Open in maps" opens the place in the Google Maps app.
+- [ ] A saved address with a pin keeps it when you choose it at checkout; the order stores the pin.
+- [ ] Shop: before accepting an order only the area shows; after Accept, "Navigate to the customer" appears (if the customer set a pin) and opens the maps app.
+- [ ] Admin: a shop card with a pin has "Open in maps".
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

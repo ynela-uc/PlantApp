@@ -222,6 +222,8 @@ struct CheckoutView: View {
                 neighborhood: addr.trimmed.neighborhood,
                 landmark: addr.trimmed.landmark,
                 addressNotes: addr.trimmed.notes,
+                lat: addr.lat,
+                lng: addr.lng,
                 giftNote: String(note.trimmingCharacters(in: .whitespacesAndNewlines).prefix(200)),
                 deliveryDate: iso.string(from: date(dayOffset)),
                 window: window,

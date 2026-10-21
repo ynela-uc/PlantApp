@@ -121,6 +121,8 @@ struct AuthView: View {
         clean.neighborhood = place.neighborhood
         clean.landmark = place.landmark
         clean.addressNotes = place.notes
+        clean.lat = place.lat
+        clean.lng = place.lng
         clean.shopName = form.shopName.trimmingCharacters(in: .whitespaces)
         app.signUp(role: role, form: clean)
     }

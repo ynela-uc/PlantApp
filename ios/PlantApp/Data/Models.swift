@@ -72,6 +72,8 @@ struct SignUpForm {
     var neighborhood = ""
     var landmark = ""
     var addressNotes = ""
+    var lat: Double?
+    var lng: Double?
     var shopName = ""
     /// Which kinds of shop a seller runs (Catalog section keys).
     var shopTypes: [String] = []
@@ -150,10 +152,13 @@ struct Shop: Codable, Equatable {
     var neighborhood: String
     var landmark: String
     var addressNotes: String
+    var lat: Double?
+    var lng: Double?
 
     enum CodingKeys: String, CodingKey {
         case id, name, city, rating, phone, bio, approved, address, district, neighborhood, landmark
         case addressNotes = "address_notes"
+        case lat, lng
         case reviewStatus = "review_status"
         case reviewNote = "review_note"
         case deliveryScope = "delivery_scope"
@@ -184,6 +189,8 @@ struct Shop: Codable, Equatable {
         neighborhood = try c.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
         landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
         addressNotes = try c.decodeIfPresent(String.self, forKey: .addressNotes) ?? ""
+        lat = try c.decodeIfPresent(Double.self, forKey: .lat)
+        lng = try c.decodeIfPresent(Double.self, forKey: .lng)
     }
 
     var isNationwide: Bool { deliveryScope == "nationwide" }
@@ -204,10 +211,13 @@ struct ShopUpdate: Encodable {
     let neighborhood: String
     let landmark: String
     let addressNotes: String
+    let lat: Double?
+    let lng: Double?
 
     enum CodingKeys: String, CodingKey {
         case name, phone, bio, city, address, district, neighborhood, landmark
         case addressNotes = "address_notes"
+        case lat, lng
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case shopTypes = "shop_types"
@@ -231,6 +241,8 @@ struct ShopUpdate: Encodable {
         try c.encode(neighborhood, forKey: .neighborhood)
         try c.encode(landmark, forKey: .landmark)
         try c.encode(addressNotes, forKey: .addressNotes)
+        try c.encode(lat, forKey: .lat) // nil is sent as null: removing the pin clears it
+        try c.encode(lng, forKey: .lng)
     }
 }
 
@@ -244,6 +256,8 @@ struct NewSeller: Encodable {
     let neighborhood: String
     let landmark: String
     let addressNotes: String
+    let lat: Double?
+    let lng: Double?
     let deliveryScope: String
     let deliversTo: [String]
     let phone: String
@@ -255,6 +269,7 @@ struct NewSeller: Encodable {
     enum CodingKeys: String, CodingKey {
         case name, city, phone, bio, address, district, neighborhood, landmark
         case addressNotes = "address_notes"
+        case lat, lng
         case ownerId = "owner_id"
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
@@ -534,6 +549,8 @@ struct Order: Codable, Identifiable, Equatable {
     var neighborhood: String
     var landmark: String
     var addressNotes: String
+    var lat: Double?
+    var lng: Double?
     var createdAt: String
     var totalIqd: Int
     var deliveryFeeIqd: Int
@@ -557,6 +574,7 @@ struct Order: Codable, Identifiable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id, items, status, city, address, district, neighborhood, landmark
         case addressNotes = "address_notes"
+        case lat, lng
         case photoRequired = "photo_required"
         case photoSentAt = "photo_sent_at"
         case cancelReason = "cancel_reason"
@@ -591,6 +609,8 @@ struct Order: Codable, Identifiable, Equatable {
         neighborhood = try c.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
         landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
         addressNotes = try c.decodeIfPresent(String.self, forKey: .addressNotes) ?? ""
+        lat = try c.decodeIfPresent(Double.self, forKey: .lat)
+        lng = try c.decodeIfPresent(Double.self, forKey: .lng)
         createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt) ?? ""
         totalIqd = try c.decodeIfPresent(Int.self, forKey: .totalIqd) ?? 0
         deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
@@ -661,6 +681,8 @@ struct NewOrder: Encodable {
     let neighborhood: String
     let landmark: String
     let addressNotes: String
+    let lat: Double?
+    let lng: Double?
     let totalIqd: Int
     let deliveryFeeIqd: Int
     let buyerName: String
@@ -676,6 +698,7 @@ struct NewOrder: Encodable {
     enum CodingKeys: String, CodingKey {
         case items, city, address, district, neighborhood, landmark
         case addressNotes = "address_notes"
+        case lat, lng
         case photoRequested = "photo_requested"
         case buyerId = "buyer_id"
         case sellerId = "seller_id"
@@ -705,6 +728,8 @@ struct CheckoutForm {
     var neighborhood = ""
     var landmark = ""
     var addressNotes = ""
+    var lat: Double?
+    var lng: Double?
     var giftNote = ""
     /// ISO date, yyyy-MM-dd
     var deliveryDate = ""
@@ -857,10 +882,13 @@ struct PendingShop: Decodable, Identifiable {
     let neighborhood: String
     let landmark: String
     let addressNotes: String
+    let lat: Double?
+    let lng: Double?
 
     enum CodingKeys: String, CodingKey {
         case id, name, city, phone, bio, address, district, neighborhood, landmark
         case addressNotes = "address_notes"
+        case lat, lng
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case deliveryFeeIqd = "delivery_fee_iqd"
@@ -900,6 +928,8 @@ struct PendingShop: Decodable, Identifiable {
         neighborhood = try c.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
         landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
         addressNotes = try c.decodeIfPresent(String.self, forKey: .addressNotes) ?? ""
+        lat = try c.decodeIfPresent(Double.self, forKey: .lat)
+        lng = try c.decodeIfPresent(Double.self, forKey: .lng)
     }
 }
 
@@ -920,10 +950,12 @@ struct SavedAddress: Decodable, Identifiable, Equatable {
     let street: String
     let landmark: String
     let notes: String
+    let lat: Double?
+    let lng: Double?
     let isDefault: Bool
 
     enum CodingKeys: String, CodingKey {
-        case id, label, city, district, neighborhood, street, landmark, notes
+        case id, label, city, district, neighborhood, street, landmark, notes, lat, lng
         case isDefault = "is_default"
     }
 
@@ -937,6 +969,8 @@ struct SavedAddress: Decodable, Identifiable, Equatable {
         street = try c.decodeIfPresent(String.self, forKey: .street) ?? ""
         landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
         notes = try c.decodeIfPresent(String.self, forKey: .notes) ?? ""
+        lat = try c.decodeIfPresent(Double.self, forKey: .lat)
+        lng = try c.decodeIfPresent(Double.self, forKey: .lng)
         isDefault = try c.decodeIfPresent(Bool.self, forKey: .isDefault) ?? false
     }
 }
@@ -951,12 +985,29 @@ struct AddressInput: Encodable {
     let street: String
     let landmark: String
     let notes: String
+    let lat: Double?
+    let lng: Double?
     let isDefault: Bool
 
     enum CodingKeys: String, CodingKey {
-        case label, city, district, neighborhood, street, landmark, notes
+        case label, city, district, neighborhood, street, landmark, notes, lat, lng
         case userId = "user_id"
         case isDefault = "is_default"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(userId, forKey: .userId)
+        try c.encode(label, forKey: .label)
+        try c.encode(city, forKey: .city)
+        try c.encode(district, forKey: .district)
+        try c.encode(neighborhood, forKey: .neighborhood)
+        try c.encode(street, forKey: .street)
+        try c.encode(landmark, forKey: .landmark)
+        try c.encode(notes, forKey: .notes)
+        try c.encode(lat, forKey: .lat) // nil is sent as null: removing the pin clears it
+        try c.encode(lng, forKey: .lng)
+        try c.encode(isDefault, forKey: .isDefault)
     }
 }
 

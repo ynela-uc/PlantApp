@@ -137,7 +137,7 @@ fun ShopEditorScreen(
     var phone by rememberSaveable { mutableStateOf(shop.phone) }
     var bio by rememberSaveable { mutableStateOf(shop.bio) }
     var addr by rememberSaveable(stateSaver = AddressDraft.Saver) {
-        mutableStateOf(AddressDraft(shop.city, shop.district, shop.neighborhood, shop.address, shop.landmark, shop.addressNotes))
+        mutableStateOf(AddressDraft(shop.city, shop.district, shop.neighborhood, shop.address, shop.landmark, shop.addressNotes, shop.lat, shop.lng))
     }
     var nationwide by rememberSaveable { mutableStateOf(shop.isNationwide) }
     val cities = remember_cities(shop.deliversTo.orEmpty())
@@ -242,6 +242,8 @@ fun ShopEditorScreen(
                                     neighborhood = addr.trimmed().neighborhood,
                                     landmark = addr.trimmed().landmark,
                                     addressNotes = addr.trimmed().notes,
+                                    lat = addr.lat,
+                                    lng = addr.lng,
                                 )
                             )
                         }

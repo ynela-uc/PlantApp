@@ -4,6 +4,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- "Use my location" on an address: asked only when the person taps the button -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
@@ -30,6 +33,9 @@
                 <data android:scheme="plantapp" android:host="auth-callback" />
             </intent-filter>
         </activity>
+
+        <!-- Google Maps key (from android/local.properties; empty = the map screen is switched off) -->
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="${MAPS_API_KEY}" />
 
         <!-- Shows the error of a crash on screen (separate process, plain views) -->
         <activity

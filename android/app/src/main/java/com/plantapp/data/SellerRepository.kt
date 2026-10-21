@@ -35,6 +35,8 @@ data class Shop(
     val neighborhood: String = "",
     val landmark: String = "",
     @SerialName("address_notes") val addressNotes: String = "",
+    val lat: Double? = null,
+    val lng: Double? = null,
 ) {
     val isNationwide: Boolean get() = deliveryScope == "nationwide"
 }
@@ -55,6 +57,9 @@ data class ShopUpdate(
     val neighborhood: String,
     val landmark: String,
     @SerialName("address_notes") val addressNotes: String,
+    // No defaults: removing the pin must send null so the database clears it.
+    val lat: Double?,
+    val lng: Double?,
 )
 
 @Serializable

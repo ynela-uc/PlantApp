@@ -108,7 +108,7 @@ final class CustomerModel: ObservableObject {
             do {
                 let input = AddressInput(
                     userId: profile.id, label: label, city: draft.city, district: draft.district, neighborhood: draft.neighborhood,
-                    street: draft.street, landmark: draft.landmark, notes: draft.notes, isDefault: makeDefault
+                    street: draft.street, landmark: draft.landmark, notes: draft.notes, lat: draft.lat, lng: draft.lng, isDefault: makeDefault
                 )
                 if let id { try await AddressService.update(id: id, input: input) } else { try await AddressService.add(input) }
                 addresses = (try? await AddressService.list()) ?? addresses
@@ -390,6 +390,8 @@ final class CustomerModel: ObservableObject {
                     neighborhood: form.neighborhood,
                     landmark: form.landmark,
                     addressNotes: form.addressNotes,
+                    lat: form.lat,
+                    lng: form.lng,
                     totalIqd: group.total,
                     deliveryFeeIqd: group.fee,
                     buyerName: profile.fullName,
@@ -427,7 +429,7 @@ final class CustomerModel: ObservableObject {
             if created > 0 && form.saveAsAddress {
                 let input = AddressInput(
                     userId: profile.id, label: "", city: form.city, district: form.district, neighborhood: form.neighborhood,
-                    street: form.address, landmark: form.landmark, notes: form.addressNotes, isDefault: false
+                    street: form.address, landmark: form.landmark, notes: form.addressNotes, lat: form.lat, lng: form.lng, isDefault: false
                 )
                 try? await AddressService.add(input)
                 loadAddresses()

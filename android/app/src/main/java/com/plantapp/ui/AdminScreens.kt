@@ -305,6 +305,10 @@ private fun ShopPreviewScreen(shop: PendingShop, busy: Boolean, onClose: () -> U
             if (shop.phone.isNotBlank()) Text(shop.phone)
             Text(addressText(shop.city, shop.district, shop.neighborhood, shop.address, shop.landmark))
             if (shop.addressNotes.isNotBlank()) Text(shop.addressNotes, color = TextMuted)
+            if (shop.lat != null && shop.lng != null) {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                TextButton(onClick = { openInMaps(context, shop.lat, shop.lng, shop.name) }) { Text(stringResource(R.string.map_open)) }
+            }
             if (shop.shopTypes.isNotEmpty()) Text(shop.shopTypes.map { sectionName(it) }.joinToString(", "), color = TextMuted)
             if (shop.bio.isNotBlank()) {
                 Spacer(Modifier.height(6.dp))

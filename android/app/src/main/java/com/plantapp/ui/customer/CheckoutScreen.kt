@@ -268,6 +268,8 @@ fun CheckoutScreen(
                                     neighborhood = addr.trimmed().neighborhood,
                                     landmark = addr.trimmed().landmark,
                                     addressNotes = addr.trimmed().notes,
+                                    lat = addr.lat,
+                                    lng = addr.lng,
                                     giftNote = note.trim(),
                                     deliveryDate = today.plusDays(dayOffset.toLong()).toString(),
                                     window = window,

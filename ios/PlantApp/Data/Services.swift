@@ -52,10 +52,7 @@ enum AuthService {
     }
 
     static func signUp(role: Role, form: SignUpForm) async throws {
-        let response = try await supabase.auth.signUp(
-            email: form.email,
-            password: form.password,
-            data: [
+        var meta: [String: AnyJSON] = [
                 "role": .string(role.rawValue),
                 "first_name": .string(form.firstName),
                 "last_name": .string(form.lastName),
@@ -66,8 +63,12 @@ enum AuthService {
                 "neighborhood": .string(form.neighborhood),
                 "landmark": .string(form.landmark),
                 "address_notes": .string(form.addressNotes),
-            ]
-        )
+        ]
+        if let lat = form.lat, let lng = form.lng {
+            meta["lat"] = .double(lat)
+            meta["lng"] = .double(lng)
+        }
+        let response = try await supabase.auth.signUp(email: form.email, password: form.password, data: meta)
         guard response.session != nil else { throw AppError.noSession }
         if role == .seller {
             let uid = response.user.id.uuidString.lowercased()
@@ -81,6 +82,8 @@ enum AuthService {
                     neighborhood: form.neighborhood,
                     landmark: form.landmark,
                     addressNotes: form.addressNotes,
+                    lat: form.lat,
+                    lng: form.lng,
                     deliveryScope: "local",
                     deliversTo: [form.city],
                     phone: form.phone,

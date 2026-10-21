@@ -56,6 +56,8 @@ data class CheckoutForm(
     val neighborhood: String = "",
     val landmark: String = "",
     val addressNotes: String = "",
+    val lat: Double? = null,
+    val lng: Double? = null,
     val giftNote: String,
     /** ISO date, yyyy-MM-dd */
     val deliveryDate: String,
@@ -189,7 +191,7 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
         _state.update { it.copy(addressBusy = true, addressFailed = false) }
         viewModelScope.launch {
             try {
-                val input = AddressInput(profile.id, label, draft.city, draft.district, draft.neighborhood, draft.street, draft.landmark, draft.notes, makeDefault)
+                val input = AddressInput(profile.id, label, draft.city, draft.district, draft.neighborhood, draft.street, draft.landmark, draft.notes, draft.lat, draft.lng, makeDefault)
                 if (id == null) addressRepo.add(input) else addressRepo.update(id, input)
                 loadAddresses()
                 _state.update { it.copy(addressBusy = false) }
@@ -362,6 +364,8 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
                             neighborhood = form.neighborhood,
                             landmark = form.landmark,
                             addressNotes = form.addressNotes,
+                            lat = form.lat,
+                            lng = form.lng,
                             totalIqd = group.total,
                             deliveryFeeIqd = group.fee,
                             buyerName = "${profile.firstName} ${profile.lastName}".trim(),
@@ -392,7 +396,7 @@ class CustomerViewModel(initialProfile: Profile) : ViewModel() {
             if (created > 0) loadOrders()
             if (created > 0 && form.saveAsAddress) {
                 try {
-                    addressRepo.add(AddressInput(profile.id, "", form.city, form.district, form.neighborhood, form.address, form.landmark, form.addressNotes, false))
+                    addressRepo.add(AddressInput(profile.id, "", form.city, form.district, form.neighborhood, form.address, form.landmark, form.addressNotes, form.lat, form.lng, false))
                     loadAddresses()
                 } catch (_: Exception) { }
             }

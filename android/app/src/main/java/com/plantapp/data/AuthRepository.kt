@@ -50,6 +50,8 @@ class AuthRepository {
                 put("neighborhood", form.neighborhood)
                 put("landmark", form.landmark)
                 put("address_notes", form.addressNotes)
+                form.lat?.let { put("lat", it) }
+                form.lng?.let { put("lng", it) }
             }
         }
         if (role == Role.Seller) {
@@ -64,6 +66,8 @@ class AuthRepository {
                     neighborhood = form.neighborhood,
                     landmark = form.landmark,
                     addressNotes = form.addressNotes,
+                    lat = form.lat,
+                    lng = form.lng,
                     deliversTo = listOf(form.city),
                     phone = form.phone,
                     shopTypes = form.shopTypes,

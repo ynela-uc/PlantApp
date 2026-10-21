@@ -32,6 +32,9 @@ data class AddressInput(
     val street: String,
     val landmark: String,
     val notes: String,
+    // No defaults: removing the pin must send null so the database clears it.
+    val lat: Double?,
+    val lng: Double?,
     @SerialName("is_default") val isDefault: Boolean,
 )
 

@@ -56,7 +56,7 @@ private val AddressRed = Color(0xFFC62828)
 /** The names an address can have besides the customer's own text. */
 val AddressLabelKeys = listOf("home", "work", "apartment")
 
-fun SavedAddress.toDraft() = AddressDraft(city, district, neighborhood, street, landmark, notes)
+fun SavedAddress.toDraft() = AddressDraft(city, district, neighborhood, street, landmark, notes, lat, lng)
 
 @Composable
 fun addressLabelText(label: String): String = when (label) {

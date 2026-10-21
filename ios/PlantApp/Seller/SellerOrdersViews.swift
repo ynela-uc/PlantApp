@@ -186,6 +186,12 @@ struct SellerOrderDetailView: View {
                     } else {
                         Text(lang.addressText(city: order.city, district: order.district, neighborhood: order.neighborhood, street: order.address, landmark: order.landmark))
                         if !order.addressNotes.isEmpty { Text(order.addressNotes).foregroundStyle(Theme.muted) }
+                        if let lat = order.lat, let lng = order.lng, let url = URL(string: "http://maps.apple.com/?daddr=\(lat),\(lng)") {
+                            Link(lang.t("map_navigate"), destination: url)
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(Theme.amber)
+                                .padding(.top, 4)
+                        }
                     }
                     if let date = order.deliveryDate {
                         Text("\(date)  ·  \(lang.t(windowLabelKey(order.deliveryWindow)))")
