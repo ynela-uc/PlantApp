@@ -33,7 +33,9 @@ Notes and suggested shape (a starting point, to decide together before building)
 - Needs: a `follows` table (customer, shop) with row-level security, plus a limit so shops cannot spam followers.
 
 ## Next up
-- **Order alerts (planned together, in progress).** Push notifications so a shop knows at once about a new order, and a
+- **Order alerts: Android push works end to end (tested 2026-10-21).** Still to do: in-app alert while the app is open (Android and iPhone),
+  test the 10-minute reminder, iPhone push (needs the Apple Developer account).
+- **Order alerts (original plan).** Push notifications so a shop knows at once about a new order, and a
   customer knows when the photo is ready for approval or the order is on its way. Also the base for follow and ratings.
 
 ## Must-have before real customers
@@ -52,6 +54,7 @@ Notes and suggested shape (a starting point, to decide together before building)
   Google Play and Apple release (Apple Developer account is needed for iPhone push and TestFlight).
 
 ## Done recently
+- Push notifications on Android: Firebase project, notify function, device registration, order triggers and a 10-minute reminder (migration 015, docs/push-setup.md).
 - Photo approval is optional per product (off / optional / required), the customer can ask for it on optional products, and the shop can continue after 60 minutes without an answer (migration 014).
 - Server-side order checking (migration 013): the database recomputes prices, delivery fee and total.
 - Categories cleaned up (migration 012), Smart Assistant renamed, "Ask" tab, brand theme and logo.
