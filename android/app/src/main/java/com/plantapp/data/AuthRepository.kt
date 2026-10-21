@@ -46,6 +46,10 @@ class AuthRepository {
                 put("phone", form.phone)
                 put("city", form.city)
                 put("address", form.address)
+                put("district", form.district)
+                put("neighborhood", form.neighborhood)
+                put("landmark", form.landmark)
+                put("address_notes", form.addressNotes)
             }
         }
         if (role == Role.Seller) {
@@ -55,6 +59,11 @@ class AuthRepository {
                     ownerId = uid,
                     name = form.shopName,
                     city = form.city,
+                    address = form.address,
+                    district = form.district,
+                    neighborhood = form.neighborhood,
+                    landmark = form.landmark,
+                    addressNotes = form.addressNotes,
                     deliversTo = listOf(form.city),
                     phone = form.phone,
                     shopTypes = form.shopTypes,

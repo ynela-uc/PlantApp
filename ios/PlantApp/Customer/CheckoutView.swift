@@ -8,8 +8,7 @@ struct CheckoutView: View {
     @State private var isGift = false
     @State private var recipientName = ""
     @State private var recipientPhone = ""
-    @State private var city = ""
-    @State private var address = ""
+    @State private var addr = AddressDraft()
     @State private var note = ""
     @State private var dayOffset = 0
     @State private var window = "any"
@@ -17,6 +16,9 @@ struct CheckoutView: View {
     @State private var photoRequested = false
 
     private let windows = ["any", "morning", "afternoon", "evening"]
+
+    /// The governorate chosen for this order (delivery fees and which shops can deliver depend on it).
+    private var city: String { addr.city }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -46,15 +48,8 @@ struct CheckoutView: View {
                         }
 
                         SectionHeading(text: lang.t("checkout_delivery"))
-                        Caption(lang.t("field_city"))
-                        FlowLayout(spacing: 8) {
-                            ForEach(Cities.codes, id: \.self) { code in
-                                Pill(label: lang.cityName(code), selected: city == code) { city = code }
-                            }
-                        }
-                        .padding(.top, 6)
-                        AppField(title: lang.t("field_address"), text: $address, multiline: true)
-                            .padding(.top, 12)
+                        AddressFields(draft: $addr)
+                            .padding(.top, 6)
 
                         Caption(lang.t("delivery_date")).padding(.top, 12)
                     }
@@ -136,8 +131,9 @@ struct CheckoutView: View {
             .glassBar()
         }
         .onAppear {
-            if city.isEmpty { city = model.city }
-            if address.isEmpty { address = profile.address }
+            if addr.city.isEmpty {
+                addr = AddressDraft(city: model.city, district: profile.district, neighborhood: profile.neighborhood, street: profile.address, landmark: profile.landmark, notes: profile.addressNotes)
+            }
         }
     }
 
@@ -193,7 +189,7 @@ struct CheckoutView: View {
 
     private func submit() {
         let blank: (String) -> Bool = { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        let missing = blank(address) || (isGift && (blank(recipientName) || blank(recipientPhone)))
+        let missing = !addr.isComplete || (isGift && (blank(recipientName) || blank(recipientPhone)))
         if missing {
             fieldsError = true
             return
@@ -207,8 +203,12 @@ struct CheckoutView: View {
                 isGift: isGift,
                 recipientName: recipientName.trimmingCharacters(in: .whitespacesAndNewlines),
                 recipientPhone: recipientPhone.trimmingCharacters(in: .whitespacesAndNewlines),
-                city: city,
-                address: address.trimmingCharacters(in: .whitespacesAndNewlines),
+                city: addr.city,
+                address: addr.trimmed.street,
+                district: addr.trimmed.district,
+                neighborhood: addr.trimmed.neighborhood,
+                landmark: addr.trimmed.landmark,
+                addressNotes: addr.trimmed.notes,
                 giftNote: String(note.trimmingCharacters(in: .whitespacesAndNewlines).prefix(200)),
                 deliveryDate: iso.string(from: date(dayOffset)),
                 window: window,

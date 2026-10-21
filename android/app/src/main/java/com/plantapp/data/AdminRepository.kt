@@ -28,6 +28,11 @@ data class PendingShop(
     val approved: Boolean = false,
     val rating: Double = 0.0,
     @SerialName("rating_count") val ratingCount: Int = 0,
+    val address: String = "",
+    val district: String = "",
+    val neighborhood: String = "",
+    val landmark: String = "",
+    @SerialName("address_notes") val addressNotes: String = "",
 )
 
 /** The three things the admin can do with a shop. */

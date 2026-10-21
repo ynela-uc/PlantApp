@@ -16,9 +16,14 @@ struct Profile: Codable, Identifiable, Equatable {
     var phone: String
     var city: String
     var address: String
+    var district: String
+    var neighborhood: String
+    var landmark: String
+    var addressNotes: String
 
     enum CodingKeys: String, CodingKey {
-        case id, role, phone, city, address
+        case id, role, phone, city, address, district, neighborhood, landmark
+        case addressNotes = "address_notes"
         case firstName = "first_name"
         case lastName = "last_name"
     }
@@ -32,6 +37,10 @@ struct Profile: Codable, Identifiable, Equatable {
         phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
         city = try c.decodeIfPresent(String.self, forKey: .city) ?? ""
         address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
+        district = try c.decodeIfPresent(String.self, forKey: .district) ?? ""
+        neighborhood = try c.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
+        landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
+        addressNotes = try c.decodeIfPresent(String.self, forKey: .addressNotes) ?? ""
     }
 
     var roleEnum: Role { Role.from(role) }
@@ -45,9 +54,14 @@ struct ProfileUpdate: Encodable {
     let phone: String
     let city: String
     let address: String
+    let district: String
+    let neighborhood: String
+    let landmark: String
+    let addressNotes: String
 
     enum CodingKeys: String, CodingKey {
-        case phone, city, address
+        case phone, city, address, district, neighborhood, landmark
+        case addressNotes = "address_notes"
         case firstName = "first_name"
         case lastName = "last_name"
     }
@@ -61,6 +75,10 @@ struct SignUpForm {
     var phone = ""
     var city = ""
     var address = ""
+    var district = ""
+    var neighborhood = ""
+    var landmark = ""
+    var addressNotes = ""
     var shopName = ""
     /// Which kinds of shop a seller runs (Catalog section keys).
     var shopTypes: [String] = []
@@ -133,9 +151,16 @@ struct Shop: Codable, Equatable {
     /// pending, changes_requested (see reviewNote), rejected (see reviewNote) or approved.
     var reviewStatus: String
     var reviewNote: String?
+    /// The shop address: `city` is the governorate. Customers never see it; the admin and the owner do.
+    var address: String
+    var district: String
+    var neighborhood: String
+    var landmark: String
+    var addressNotes: String
 
     enum CodingKeys: String, CodingKey {
-        case id, name, city, rating, phone, bio, approved
+        case id, name, city, rating, phone, bio, approved, address, district, neighborhood, landmark
+        case addressNotes = "address_notes"
         case reviewStatus = "review_status"
         case reviewNote = "review_note"
         case deliveryScope = "delivery_scope"
@@ -161,6 +186,11 @@ struct Shop: Codable, Equatable {
         approved = try c.decodeIfPresent(Bool.self, forKey: .approved) ?? true
         reviewStatus = try c.decodeIfPresent(String.self, forKey: .reviewStatus) ?? "approved"
         reviewNote = try c.decodeIfPresent(String.self, forKey: .reviewNote)
+        address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
+        district = try c.decodeIfPresent(String.self, forKey: .district) ?? ""
+        neighborhood = try c.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
+        landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
+        addressNotes = try c.decodeIfPresent(String.self, forKey: .addressNotes) ?? ""
     }
 
     var isNationwide: Bool { deliveryScope == "nationwide" }
@@ -175,9 +205,16 @@ struct ShopUpdate: Encodable {
     let shopTypes: [String]
     let deliveryFeeIqd: Int
     let deliveryFees: [String: Int]
+    let city: String
+    let address: String
+    let district: String
+    let neighborhood: String
+    let landmark: String
+    let addressNotes: String
 
     enum CodingKeys: String, CodingKey {
-        case name, phone, bio
+        case name, phone, bio, city, address, district, neighborhood, landmark
+        case addressNotes = "address_notes"
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case shopTypes = "shop_types"
@@ -195,6 +232,12 @@ struct ShopUpdate: Encodable {
         try c.encode(shopTypes, forKey: .shopTypes)
         try c.encode(deliveryFeeIqd, forKey: .deliveryFeeIqd)
         try c.encode(deliveryFees, forKey: .deliveryFees)
+        try c.encode(city, forKey: .city)
+        try c.encode(address, forKey: .address)
+        try c.encode(district, forKey: .district)
+        try c.encode(neighborhood, forKey: .neighborhood)
+        try c.encode(landmark, forKey: .landmark)
+        try c.encode(addressNotes, forKey: .addressNotes)
     }
 }
 
@@ -203,6 +246,11 @@ struct NewSeller: Encodable {
     let ownerId: String
     let name: String
     let city: String
+    let address: String
+    let district: String
+    let neighborhood: String
+    let landmark: String
+    let addressNotes: String
     let deliveryScope: String
     let deliversTo: [String]
     let phone: String
@@ -212,7 +260,8 @@ struct NewSeller: Encodable {
     let deliveryFeeIqd: Int
 
     enum CodingKeys: String, CodingKey {
-        case name, city, phone, bio
+        case name, city, phone, bio, address, district, neighborhood, landmark
+        case addressNotes = "address_notes"
         case ownerId = "owner_id"
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
@@ -488,6 +537,10 @@ struct Order: Codable, Identifiable, Equatable {
     var status: String
     var city: String
     var address: String
+    var district: String
+    var neighborhood: String
+    var landmark: String
+    var addressNotes: String
     var createdAt: String
     var totalIqd: Int
     var deliveryFeeIqd: Int
@@ -509,7 +562,8 @@ struct Order: Codable, Identifiable, Equatable {
     var cancelledBy: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, items, status, city, address
+        case id, items, status, city, address, district, neighborhood, landmark
+        case addressNotes = "address_notes"
         case photoRequired = "photo_required"
         case photoSentAt = "photo_sent_at"
         case cancelReason = "cancel_reason"
@@ -540,6 +594,10 @@ struct Order: Codable, Identifiable, Equatable {
         status = try c.decodeIfPresent(String.self, forKey: .status) ?? "placed"
         city = try c.decodeIfPresent(String.self, forKey: .city) ?? ""
         address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
+        district = try c.decodeIfPresent(String.self, forKey: .district) ?? ""
+        neighborhood = try c.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
+        landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
+        addressNotes = try c.decodeIfPresent(String.self, forKey: .addressNotes) ?? ""
         createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt) ?? ""
         totalIqd = try c.decodeIfPresent(Int.self, forKey: .totalIqd) ?? 0
         deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
@@ -606,6 +664,10 @@ struct NewOrder: Encodable {
     let paymentMethod = "cod"
     let city: String
     let address: String
+    let district: String
+    let neighborhood: String
+    let landmark: String
+    let addressNotes: String
     let totalIqd: Int
     let deliveryFeeIqd: Int
     let buyerName: String
@@ -619,7 +681,8 @@ struct NewOrder: Encodable {
     let photoRequested: Bool
 
     enum CodingKeys: String, CodingKey {
-        case items, city, address
+        case items, city, address, district, neighborhood, landmark
+        case addressNotes = "address_notes"
         case photoRequested = "photo_requested"
         case buyerId = "buyer_id"
         case sellerId = "seller_id"
@@ -645,6 +708,10 @@ struct CheckoutForm {
     var recipientPhone = ""
     var city = ""
     var address = ""
+    var district = ""
+    var neighborhood = ""
+    var landmark = ""
+    var addressNotes = ""
     var giftNote = ""
     /// ISO date, yyyy-MM-dd
     var deliveryDate = ""
@@ -790,9 +857,15 @@ struct PendingShop: Decodable, Identifiable {
     let approved: Bool
     let rating: Double
     let ratingCount: Int
+    let address: String
+    let district: String
+    let neighborhood: String
+    let landmark: String
+    let addressNotes: String
 
     enum CodingKeys: String, CodingKey {
-        case id, name, city, phone, bio
+        case id, name, city, phone, bio, address, district, neighborhood, landmark
+        case addressNotes = "address_notes"
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case deliveryFeeIqd = "delivery_fee_iqd"
@@ -827,6 +900,11 @@ struct PendingShop: Decodable, Identifiable {
         approved = try c.decodeIfPresent(Bool.self, forKey: .approved) ?? false
         rating = try c.decodeIfPresent(Double.self, forKey: .rating) ?? 0
         ratingCount = try c.decodeIfPresent(Int.self, forKey: .ratingCount) ?? 0
+        address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
+        district = try c.decodeIfPresent(String.self, forKey: .district) ?? ""
+        neighborhood = try c.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
+        landmark = try c.decodeIfPresent(String.self, forKey: .landmark) ?? ""
+        addressNotes = try c.decodeIfPresent(String.self, forKey: .addressNotes) ?? ""
     }
 }
 

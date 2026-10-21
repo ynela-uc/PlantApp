@@ -8,6 +8,7 @@ struct AuthView: View {
 
     @State private var creating = false
     @State private var form = SignUpForm()
+    @State private var addr = AddressDraft()
     @State private var localError: String?
 
     private var accent: Color { role == .seller ? Theme.amber : Theme.green }
@@ -64,20 +65,7 @@ struct AuthView: View {
                             }
                         }
                     }
-                    Text(lang.t("field_city"))
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(Theme.muted)
-                    FlowLayout(spacing: 8) {
-                        ForEach(Cities.codes, id: \.self) { code in
-                            Pill(label: lang.cityName(code), selected: form.city == code, accent: accent) {
-                                form.city = code
-                                app.clearError()
-                            }
-                        }
-                    }
-                    if role == .customer {
-                        AppField(title: lang.t("field_address"), text: $form.address, multiline: true)
-                    }
+                    AddressFields(draft: $addr, accent: accent)
                 }
 
                 ErrorText(message: localError ?? app.error.map { lang.t($0.key) })
@@ -116,8 +104,7 @@ struct AuthView: View {
         }
         let blank: (String) -> Bool = { $0.trimmingCharacters(in: .whitespaces).isEmpty }
         let missing = blank(email) || form.password.isEmpty || blank(form.firstName) || blank(form.lastName)
-            || blank(form.phone) || form.city.isEmpty
-            || (role == .customer && blank(form.address))
+            || blank(form.phone) || !addr.isComplete
             || (role == .seller && blank(form.shopName))
         if missing { localError = lang.t("err_required"); return }
         if form.password.count < 6 { localError = lang.t("err_password_short"); return }
@@ -127,7 +114,13 @@ struct AuthView: View {
         clean.firstName = form.firstName.trimmingCharacters(in: .whitespaces)
         clean.lastName = form.lastName.trimmingCharacters(in: .whitespaces)
         clean.phone = form.phone.trimmingCharacters(in: .whitespaces)
-        clean.address = form.address.trimmingCharacters(in: .whitespacesAndNewlines)
+        let place = addr.trimmed
+        clean.city = place.city
+        clean.address = place.street
+        clean.district = place.district
+        clean.neighborhood = place.neighborhood
+        clean.landmark = place.landmark
+        clean.addressNotes = place.notes
         clean.shopName = form.shopName.trimmingCharacters(in: .whitespaces)
         app.signUp(role: role, form: clean)
     }

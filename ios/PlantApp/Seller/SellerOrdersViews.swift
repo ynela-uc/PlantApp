@@ -180,7 +180,13 @@ struct SellerOrderDetailView: View {
                         }
                         Spacer().frame(height: 6)
                     }
-                    Text("\(lang.cityName(order.city)), \(order.address)")
+                    if status == .placed {
+                        Text(lang.areaText(city: order.city, district: order.district))
+                        Text(lang.t("address_after_accept")).font(.system(size: 12)).foregroundStyle(Theme.muted)
+                    } else {
+                        Text(lang.addressText(city: order.city, district: order.district, neighborhood: order.neighborhood, street: order.address, landmark: order.landmark))
+                        if !order.addressNotes.isEmpty { Text(order.addressNotes).foregroundStyle(Theme.muted) }
+                    }
                     if let date = order.deliveryDate {
                         Text("\(date)  ·  \(lang.t(windowLabelKey(order.deliveryWindow)))")
                             .foregroundStyle(Theme.muted)

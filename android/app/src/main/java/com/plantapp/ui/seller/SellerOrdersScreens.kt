@@ -64,6 +64,8 @@ import com.plantapp.ui.customer.statusLabel
 import com.plantapp.ui.customer.windowLabel
 import com.plantapp.ui.rememberPhotoCapture
 import com.plantapp.ui.TapToZoomImage
+import com.plantapp.ui.addressText
+import com.plantapp.ui.areaText
 import com.plantapp.ui.rememberSignedPhotoUrl
 import com.plantapp.ui.theme.CardBorder
 import com.plantapp.ui.theme.PlantGreen
@@ -261,7 +263,13 @@ fun SellerOrderDetailScreen(
                 }
                 Spacer(Modifier.height(6.dp))
             }
-            Text("${cityLabel(order.city)}, ${order.address}")
+            if (status == OrderStatus.Placed) {
+                Text(areaText(order.city, order.district))
+                Text(stringResource(R.string.address_after_accept), color = TextMuted, style = MaterialTheme.typography.bodySmall)
+            } else {
+                Text(addressText(order.city, order.district, order.neighborhood, order.address, order.landmark))
+                order.addressNotes.takeIf { it.isNotBlank() }?.let { Text(it, color = TextMuted) }
+            }
             order.deliveryDate?.let {
                 Text("$it  ·  ${stringResource(windowLabel(order.deliveryWindow))}", color = TextMuted)
             }

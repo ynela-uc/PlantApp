@@ -219,7 +219,8 @@ struct OrderDetailView: View {
                         }
                         Spacer().frame(height: 6)
                     }
-                    Text("\(lang.cityName(order.city)), \(order.address)")
+                    Text(lang.addressText(city: order.city, district: order.district, neighborhood: order.neighborhood, street: order.address, landmark: order.landmark))
+                    if !order.addressNotes.isEmpty { Text(order.addressNotes).foregroundStyle(Theme.muted) }
                     if let date = order.deliveryDate {
                         Text("\(date)  ·  \(lang.t(windowLabelKey(order.deliveryWindow)))")
                             .foregroundStyle(Theme.muted)

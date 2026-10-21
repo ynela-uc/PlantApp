@@ -336,6 +336,72 @@ struct DeleteAccountSection: View {
     }
 }
 
+// MARK: - Addresses
+
+/// An address as the person types it. `city` is the governorate code (see Cities); `street` is the street or building.
+/// Iraq has no dependable street names or postcodes, so the landmark counts as much as the street.
+struct AddressDraft: Equatable {
+    var city = ""
+    var district = ""
+    var neighborhood = ""
+    var street = ""
+    var landmark = ""
+    var notes = ""
+
+    private static func filled(_ text: String) -> Bool { !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+    /// Governorate, district and neighborhood are needed, plus a street/building or a landmark to find the door.
+    var isComplete: Bool {
+        !city.isEmpty && Self.filled(district) && Self.filled(neighborhood) && (Self.filled(street) || Self.filled(landmark))
+    }
+
+    var trimmed: AddressDraft {
+        let clean: (String) -> String = { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        return AddressDraft(city: city, district: clean(district), neighborhood: clean(neighborhood), street: clean(street), landmark: clean(landmark), notes: clean(notes))
+    }
+}
+
+/// Governorate pills and the address fields, one below the other.
+struct AddressFields: View {
+    @EnvironmentObject var lang: LanguageStore
+    @Binding var draft: AddressDraft
+    var accent: Color = Theme.green
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(lang.t("field_city"))
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Theme.muted)
+            FlowLayout(spacing: 8) {
+                ForEach(Cities.codes, id: \.self) { code in
+                    Pill(label: lang.cityName(code), selected: draft.city == code, accent: accent) { draft.city = code }
+                }
+            }
+            AppField(title: lang.t("field_district"), text: $draft.district)
+            AppField(title: lang.t("field_neighborhood"), text: $draft.neighborhood)
+            AppField(title: lang.t("field_address"), text: $draft.street)
+            AppField(title: lang.t("field_landmark"), text: $draft.landmark)
+            AppField(title: lang.t("field_address_notes"), text: $draft.notes, multiline: true)
+        }
+    }
+}
+
+extension LanguageStore {
+    /// The address on one line, for lists and summaries: governorate, district, neighborhood, street, "near landmark".
+    func addressText(city: String, district: String, neighborhood: String, street: String, landmark: String) -> String {
+        var parts: [String] = []
+        if !city.isEmpty { parts.append(cityName(city)) }
+        for part in [district, neighborhood, street] where !part.isEmpty { parts.append(part) }
+        if !landmark.isEmpty { parts.append(t("address_near", landmark)) }
+        return parts.joined(separator: ", ")
+    }
+
+    /// Only the area (governorate and district): shown to a shop before it accepts the order.
+    func areaText(city: String, district: String) -> String {
+        [city.isEmpty ? "" : cityName(city), district].filter { !$0.isEmpty }.joined(separator: ", ")
+    }
+}
+
 // MARK: - Ratings
 
 /// A shop shows stars only after this many ratings; before that it is "New".
@@ -574,6 +640,8 @@ struct AdminRoot: View {
                 .foregroundStyle(Theme.muted)
             Text(lang.t("approvals_owner", shop.ownerName.isEmpty ? "-" : shop.ownerName, shop.ownerEmail))
             if !shop.phone.isEmpty { Text(shop.phone) }
+            Text(lang.addressText(city: shop.city, district: shop.district, neighborhood: shop.neighborhood, street: shop.address, landmark: shop.landmark))
+                .foregroundStyle(Theme.muted)
             if !shop.shopTypes.isEmpty {
                 Text(shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", ")).foregroundStyle(Theme.muted)
             }
@@ -713,6 +781,8 @@ private struct ShopPreviewView: View {
                         .foregroundStyle(Theme.muted)
                     Text(lang.t("approvals_owner", shop.ownerName.isEmpty ? "-" : shop.ownerName, shop.ownerEmail)).padding(.top, 6)
                     if !shop.phone.isEmpty { Text(shop.phone) }
+                    Text(lang.addressText(city: shop.city, district: shop.district, neighborhood: shop.neighborhood, street: shop.address, landmark: shop.landmark))
+                    if !shop.addressNotes.isEmpty { Text(shop.addressNotes).foregroundStyle(Theme.muted) }
                     if !shop.shopTypes.isEmpty {
                         Text(shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", ")).foregroundStyle(Theme.muted)
                     }

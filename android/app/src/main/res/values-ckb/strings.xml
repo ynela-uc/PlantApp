@@ -25,9 +25,17 @@
     <string name="field_first_name">ناوی یەکەم</string>
     <string name="field_last_name">پاشناو</string>
     <string name="field_phone">ژمارەی تەلەفۆن</string>
-    <string name="field_address">ناونیشان</string>
+    <string name="field_address">شەقام / ژمارەی بینا</string>
+    <string name="field_district">قەزا / شار</string>
+    <string name="field_neighborhood">گەڕەک / ناوچە</string>
+    <string name="field_landmark">نزیکترین شوێنی ناسراو</string>
+    <string name="field_address_notes">تێبینی بۆ گەیاندن (ئارەزوومەندانە)</string>
+    <string name="address_near">نزیک %1$s</string>
+    <string name="address_after_accept">ناونیشانی تەواو دوای قبوڵکردنی داواکارییەکە دەردەکەوێت.</string>
+    <string name="shop_address_title">ناونیشانی فرۆشگا</string>
+    <string name="shop_address_hint">کڕیاران تەنها پارێزگاکەت دەبینن. ناونیشانی تەواو بۆ تیمی ئەپەکەیە.</string>
     <string name="field_shop_name">ناوی دوکان</string>
-    <string name="field_city">شار</string>
+    <string name="field_city">پارێزگا</string>
 
     <string name="action_signin">چوونەژوورەوە</string>
     <string name="action_signup">دروستکردنی هەژمار</string>
@@ -201,7 +209,7 @@
     <string name="pay_card_soon">کارت (بەم زووانە)</string>
     <string name="checkout_summary">پوختەی داواکاری</string>
     <string name="place_order">داواکردن</string>
-    <string name="err_checkout_fields">تکایە ناونیشانی گەیاندن و زانیاری وەرگر پڕبکەرەوە.</string>
+    <string name="err_checkout_fields">تکایە ناونیشانی گەیاندن (پارێزگا، قەزا، گەڕەک و شەقام یان شوێنی ناسراو) و زانیاری وەرگر پڕبکەرەوە.</string>
     <string name="err_not_deliverable">%1$s گەیاندن ناکات بۆ %2$s. ئەو بەرهەمانە لابە یان شارێکی تر هەڵبژێرە.</string>
 
     <string name="placed_title">داواکارییەکە تۆمارکرا!</string>

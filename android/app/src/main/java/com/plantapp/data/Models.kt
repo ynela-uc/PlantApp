@@ -22,6 +22,10 @@ data class Profile(
     val phone: String = "",
     val city: String = "",
     val address: String = "",
+    val district: String = "",
+    val neighborhood: String = "",
+    val landmark: String = "",
+    @SerialName("address_notes") val addressNotes: String = "",
 ) {
     val roleEnum: Role get() = Role.fromDb(role)
 }
@@ -34,6 +38,10 @@ data class ProfileUpdate(
     val phone: String,
     val city: String,
     val address: String,
+    val district: String,
+    val neighborhood: String,
+    val landmark: String,
+    @SerialName("address_notes") val addressNotes: String,
 )
 
 /** Row inserted into `sellers` when a seller creates an account. */
@@ -42,6 +50,11 @@ data class NewSeller(
     @SerialName("owner_id") val ownerId: String,
     val name: String,
     val city: String,
+    val address: String = "",
+    val district: String = "",
+    val neighborhood: String = "",
+    val landmark: String = "",
+    @SerialName("address_notes") val addressNotes: String = "",
     @SerialName("delivery_scope") val deliveryScope: String = "local",
     @SerialName("delivers_to") val deliversTo: List<String>,
     val phone: String,
@@ -60,6 +73,10 @@ data class SignUpForm(
     val phone: String,
     val city: String,
     val address: String = "",
+    val district: String = "",
+    val neighborhood: String = "",
+    val landmark: String = "",
+    val addressNotes: String = "",
     val shopName: String = "",
     /** Which kinds of shop this seller runs (Catalog section keys). */
     val shopTypes: List<String> = emptyList(),

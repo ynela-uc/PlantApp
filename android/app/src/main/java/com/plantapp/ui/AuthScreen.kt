@@ -74,8 +74,7 @@ fun AuthScreen(
     var firstName by rememberSaveable { mutableStateOf("") }
     var lastName by rememberSaveable { mutableStateOf("") }
     var phone by rememberSaveable { mutableStateOf("") }
-    var city by rememberSaveable { mutableStateOf("") }
-    var address by rememberSaveable { mutableStateOf("") }
+    var addr by rememberSaveable(stateSaver = AddressDraft.Saver) { mutableStateOf(AddressDraft()) }
     var shopName by rememberSaveable { mutableStateOf("") }
     // Seller sign-up: the kinds of shop, as comma-separated Catalog section keys (survives rotation).
     var shopTypesCsv by rememberSaveable { mutableStateOf("") }
@@ -94,8 +93,7 @@ fun AuthScreen(
             return
         }
         val missing = email.isBlank() || password.isBlank() || firstName.isBlank() ||
-            lastName.isBlank() || phone.isBlank() || city.isBlank() ||
-            (role == Role.Customer && address.isBlank()) ||
+            lastName.isBlank() || phone.isBlank() || !addr.isComplete ||
             (role == Role.Seller && shopName.isBlank())
         if (missing) { localError = requiredMsg; return }
         if (password.length < 6) { localError = shortPasswordMsg; return }
@@ -107,8 +105,12 @@ fun AuthScreen(
                 firstName = firstName.trim(),
                 lastName = lastName.trim(),
                 phone = phone.trim(),
-                city = city,
-                address = address.trim(),
+                city = addr.city,
+                address = addr.trimmed().street,
+                district = addr.trimmed().district,
+                neighborhood = addr.trimmed().neighborhood,
+                landmark = addr.trimmed().landmark,
+                addressNotes = addr.trimmed().notes,
                 shopName = shopName.trim(),
                 shopTypes = shopTypes,
             )
@@ -184,38 +186,7 @@ fun AuthScreen(
                     }
                 }
             }
-            Text(
-                text = stringResource(R.string.field_city),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
-            )
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                CityCodes.forEach { code ->
-                    val selected = city == code
-                    Surface(
-                        modifier = Modifier.clickable { city = code; onEdit() },
-                        shape = RoundedCornerShape(999.dp),
-                        color = if (selected) accent else Color.White,
-                        border = BorderStroke(1.dp, if (selected) accent else CardBorder),
-                    ) {
-                        Text(
-                            text = cityLabel(code),
-                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                            color = if (selected) Color.White else TextMuted,
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
-            Spacer(Modifier.height(12.dp))
-            if (role == Role.Customer) {
-                Field(address, { address = it; onEdit() }, R.string.field_address, singleLine = false)
-            }
+            AddressFields(addr, { addr = it; onEdit() }, accent)
         }
 
         val message = localError ?: error?.let { stringResource(it.messageRes()) }

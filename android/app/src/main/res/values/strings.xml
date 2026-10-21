@@ -24,9 +24,17 @@
     <string name="field_first_name">First name</string>
     <string name="field_last_name">Last name</string>
     <string name="field_phone">Phone number</string>
-    <string name="field_address">Address</string>
+    <string name="field_address">Street / building</string>
+    <string name="field_district">City / district</string>
+    <string name="field_neighborhood">Neighborhood</string>
+    <string name="field_landmark">Nearest landmark</string>
+    <string name="field_address_notes">Delivery notes (optional)</string>
+    <string name="address_near">Near %1$s</string>
+    <string name="address_after_accept">The full address appears after you accept the order.</string>
+    <string name="shop_address_title">Shop address</string>
+    <string name="shop_address_hint">Customers only see your governorate. The full address is for the app team.</string>
     <string name="field_shop_name">Shop name</string>
-    <string name="field_city">City</string>
+    <string name="field_city">Governorate</string>
 
     <string name="action_signin">Sign in</string>
     <string name="action_signup">Create account</string>
@@ -200,7 +208,7 @@
     <string name="pay_card_soon">Card (coming soon)</string>
     <string name="checkout_summary">Order summary</string>
     <string name="place_order">Place order</string>
-    <string name="err_checkout_fields">Please fill in the delivery address and the recipient details.</string>
+    <string name="err_checkout_fields">Please fill in the delivery address (governorate, district, neighborhood and a street or landmark) and the recipient details.</string>
     <string name="err_not_deliverable">%1$s does not deliver to %2$s. Remove those items or choose another city.</string>
 
     <string name="placed_title">Order placed!</string>

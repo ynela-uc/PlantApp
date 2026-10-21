@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import com.plantapp.R
 import com.plantapp.data.Profile
 import com.plantapp.data.localized
+import com.plantapp.ui.AddressDraft
+import com.plantapp.ui.AddressFields
 import com.plantapp.ui.CityCodes
 import com.plantapp.ui.cityLabel
 import com.plantapp.ui.theme.CardBorder
@@ -67,8 +69,9 @@ fun CheckoutScreen(
     var isGift by rememberSaveable { mutableStateOf(false) }
     var recipientName by rememberSaveable { mutableStateOf("") }
     var recipientPhone by rememberSaveable { mutableStateOf("") }
-    var city by rememberSaveable { mutableStateOf(state.city) }
-    var address by rememberSaveable { mutableStateOf(profile.address) }
+    var addr by rememberSaveable(stateSaver = AddressDraft.Saver) {
+        mutableStateOf(AddressDraft(state.city, profile.district, profile.neighborhood, profile.address, profile.landmark, profile.addressNotes))
+    }
     var note by rememberSaveable { mutableStateOf("") }
     var dayOffset by rememberSaveable { mutableIntStateOf(0) }
     var window by rememberSaveable { mutableStateOf("any") }
@@ -106,13 +109,7 @@ fun CheckoutScreen(
 
             // Delivery
             SectionTitle(R.string.checkout_delivery)
-            Text(stringResource(R.string.field_city), style = MaterialTheme.typography.labelLarge, color = TextMuted)
-            Spacer(Modifier.height(6.dp))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                CityCodes.forEach { code -> Pill(cityLabel(code), city == code) { city = code } }
-            }
-            Spacer(Modifier.height(12.dp))
-            Input(address, { address = it; fieldsError = false }, R.string.field_address, singleLine = false)
+            AddressFields(addr, { addr = it; fieldsError = false }, PlantGreen)
 
             Text(stringResource(R.string.delivery_date), style = MaterialTheme.typography.labelLarge, color = TextMuted)
             Spacer(Modifier.height(6.dp))
@@ -178,7 +175,7 @@ fun CheckoutScreen(
 
             // Summary
             SectionTitle(R.string.checkout_summary)
-            val groups = state.cartGroups(city)
+            val groups = state.cartGroups(addr.city)
             groups.forEach { group ->
                 Text(
                     text = stringResource(R.string.sold_by, group.shop?.name.orEmpty()),
@@ -200,7 +197,7 @@ fun CheckoutScreen(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(stringResource(R.string.delivery_to_city, cityLabel(city)), color = TextMuted, modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.delivery_to_city, cityLabel(addr.city)), color = TextMuted, modifier = Modifier.weight(1f))
                     Text(if (group.fee == 0) stringResource(R.string.delivery_free) else priceText(group.fee))
                 }
             }
@@ -209,7 +206,7 @@ fun CheckoutScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(stringResource(R.string.total_with_delivery), fontWeight = FontWeight.Bold)
-                Text(priceText(state.grandTotal(city)), fontWeight = FontWeight.Bold)
+                Text(priceText(state.grandTotal(addr.city)), fontWeight = FontWeight.Bold)
             }
             Spacer(Modifier.height(16.dp))
         }
@@ -218,7 +215,7 @@ fun CheckoutScreen(
             Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp)) {
                 val errorText = when (val e = state.checkoutError) {
                     is CheckoutError.NotDeliverable -> stringResource(
-                        R.string.err_not_deliverable, e.shops.joinToString(", "), cityLabel(city),
+                        R.string.err_not_deliverable, e.shops.joinToString(", "), cityLabel(addr.city),
                     )
                     CheckoutError.PriceChanged -> stringResource(R.string.err_price_changed)
                     CheckoutError.Unavailable -> stringResource(R.string.err_unavailable)
@@ -232,7 +229,7 @@ fun CheckoutScreen(
                 }
                 Button(
                     onClick = {
-                        val missing = address.isBlank() || (isGift && (recipientName.isBlank() || recipientPhone.isBlank()))
+                        val missing = !addr.isComplete || (isGift && (recipientName.isBlank() || recipientPhone.isBlank()))
                         if (missing) {
                             fieldsError = true
                         } else {
@@ -242,8 +239,12 @@ fun CheckoutScreen(
                                     isGift = isGift,
                                     recipientName = recipientName.trim(),
                                     recipientPhone = recipientPhone.trim(),
-                                    city = city,
-                                    address = address.trim(),
+                                    city = addr.city,
+                                    address = addr.trimmed().street,
+                                    district = addr.trimmed().district,
+                                    neighborhood = addr.trimmed().neighborhood,
+                                    landmark = addr.trimmed().landmark,
+                                    addressNotes = addr.trimmed().notes,
                                     giftNote = note.trim(),
                                     deliveryDate = today.plusDays(dayOffset.toLong()).toString(),
                                     window = window,
@@ -260,7 +261,7 @@ fun CheckoutScreen(
                         CircularProgressIndicator(Modifier.size(22.dp), color = Color.White, strokeWidth = 2.dp)
                     } else {
                         Text(
-                            text = stringResource(R.string.place_order) + "  ·  " + priceText(state.grandTotal(city)),
+                            text = stringResource(R.string.place_order) + "  ·  " + priceText(state.grandTotal(addr.city)),
                             fontWeight = FontWeight.Bold,
                         )
                     }

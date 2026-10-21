@@ -24,7 +24,15 @@
     <string name="field_first_name">الاسم الأول</string>
     <string name="field_last_name">اللقب</string>
     <string name="field_phone">رقم الموبايل</string>
-    <string name="field_address">العنوان بالتفصيل</string>
+    <string name="field_address">الشارع / رقم البناية</string>
+    <string name="field_district">القضاء / المدينة</string>
+    <string name="field_neighborhood">الحي / المنطقة</string>
+    <string name="field_landmark">أقرب نقطة دالة</string>
+    <string name="field_address_notes">ملاحظات للتوصيل (اختياري)</string>
+    <string name="address_near">بالقرب من %1$s</string>
+    <string name="address_after_accept">يظهر العنوان الكامل بعد قبول الطلب.</string>
+    <string name="shop_address_title">عنوان المتجر</string>
+    <string name="shop_address_hint">يرى الزبائن المحافظة فقط. العنوان الكامل لفريق التطبيق.</string>
     <string name="field_shop_name">اسم المتجر</string>
     <string name="field_city">المحافظة</string>
 
@@ -200,7 +208,7 @@
     <string name="pay_card_soon">بطاقة مصرفية (قريبًا)</string>
     <string name="checkout_summary">ملخص الطلب</string>
     <string name="place_order">تأكيد الطلب</string>
-    <string name="err_checkout_fields">أدخل عنوان التوصيل وبيانات المستلم.</string>
+    <string name="err_checkout_fields">أدخل عنوان التوصيل (المحافظة والقضاء والحي مع الشارع أو أقرب نقطة دالة) وبيانات المستلم.</string>
     <string name="err_not_deliverable">%1$s لا يوصل إلى %2$s. احذف هذه المنتجات أو اختر محافظة أخرى.</string>
 
     <string name="placed_title">تم إرسال طلبك بنجاح!</string>

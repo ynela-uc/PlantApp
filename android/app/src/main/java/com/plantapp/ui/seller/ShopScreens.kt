@@ -49,7 +49,10 @@ import com.plantapp.ui.sectionName
 import com.plantapp.data.Profile
 import com.plantapp.data.Shop
 import com.plantapp.data.ShopUpdate
+import com.plantapp.ui.AddressDraft
+import com.plantapp.ui.AddressFields
 import com.plantapp.ui.CityCodes
+import com.plantapp.ui.addressText
 import com.plantapp.ui.LanguageSelector
 import com.plantapp.ui.cityLabel
 import com.plantapp.ui.theme.CardBorder
@@ -75,6 +78,7 @@ fun ShopTab(
         Text(cityLabel(shop.city), color = TextMuted)
         Spacer(Modifier.height(16.dp))
         InfoRow(R.string.field_phone, shop.phone)
+        InfoRow(R.string.shop_address_title, addressText(shop.city, shop.district, shop.neighborhood, shop.address, shop.landmark))
         InfoRow(R.string.shop_types_label, shop.shopTypes.map { sectionName(it) }.joinToString(", "))
         InfoRow(R.string.shop_fee_title, priceText(shop.deliveryFeeIqd))
         InfoRow(
@@ -132,6 +136,9 @@ fun ShopEditorScreen(
     var name by rememberSaveable { mutableStateOf(shop.name) }
     var phone by rememberSaveable { mutableStateOf(shop.phone) }
     var bio by rememberSaveable { mutableStateOf(shop.bio) }
+    var addr by rememberSaveable(stateSaver = AddressDraft.Saver) {
+        mutableStateOf(AddressDraft(shop.city, shop.district, shop.neighborhood, shop.address, shop.landmark, shop.addressNotes))
+    }
     var nationwide by rememberSaveable { mutableStateOf(shop.isNationwide) }
     val cities = remember_cities(shop.deliversTo.orEmpty())
     val types = remember_cities(shop.shopTypes)
@@ -157,6 +164,10 @@ fun ShopEditorScreen(
             OutlinedTextField(name, { name = it; showError = false }, label = { Text(stringResource(R.string.field_shop_name)) }, singleLine = true, shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp))
             OutlinedTextField(phone, { phone = it; showError = false }, label = { Text(stringResource(R.string.field_phone)) }, singleLine = true, shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp))
             OutlinedTextField(bio, { bio = it }, label = { Text(stringResource(R.string.field_bio)) }, minLines = 3, shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp))
+
+            Text(stringResource(R.string.shop_address_title), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp, bottom = 2.dp))
+            Text(stringResource(R.string.shop_address_hint), style = MaterialTheme.typography.bodySmall, color = TextMuted, modifier = Modifier.padding(bottom = 6.dp))
+            AddressFields(addr, { addr = it; showError = false }, SellerAmber)
 
             Text(stringResource(R.string.shop_types_title), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -212,7 +223,7 @@ fun ShopEditorScreen(
                 }
                 Button(
                     onClick = {
-                        if (name.isBlank() || phone.isBlank() || types.isEmpty() || (!nationwide && cities.isEmpty())) {
+                        if (name.isBlank() || phone.isBlank() || !addr.isComplete || types.isEmpty() || (!nationwide && cities.isEmpty())) {
                             showError = true
                         } else {
                             onSave(
@@ -225,6 +236,12 @@ fun ShopEditorScreen(
                                     shopTypes = Catalog.sections.map { it.key }.filter { it in types },
                                     deliveryFeeIqd = feeText.toIntOrNull() ?: 0,
                                     deliveryFees = cityFees.mapNotNull { (city, text) -> text.toIntOrNull()?.let { city to it } }.toMap(),
+                                    city = addr.city,
+                                    address = addr.trimmed().street,
+                                    district = addr.trimmed().district,
+                                    neighborhood = addr.trimmed().neighborhood,
+                                    landmark = addr.trimmed().landmark,
+                                    addressNotes = addr.trimmed().notes,
                                 )
                             )
                         }

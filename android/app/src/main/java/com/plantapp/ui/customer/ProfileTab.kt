@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.plantapp.R
 import com.plantapp.data.Profile
 import com.plantapp.data.ProfileUpdate
+import com.plantapp.ui.AddressDraft
+import com.plantapp.ui.AddressFields
 import com.plantapp.ui.CityCodes
 import com.plantapp.ui.LanguageSelector
 import com.plantapp.ui.PickChip
@@ -85,7 +87,11 @@ fun ProfileTab(
         Spacer(Modifier.height(16.dp))
         InfoRow(R.string.field_phone, profile.phone)
         InfoRow(R.string.field_city, if (profile.city.isBlank()) "" else cityLabel(profile.city))
+        InfoRow(R.string.field_district, profile.district)
+        InfoRow(R.string.field_neighborhood, profile.neighborhood)
         InfoRow(R.string.field_address, profile.address)
+        InfoRow(R.string.field_landmark, profile.landmark)
+        InfoRow(R.string.field_address_notes, profile.addressNotes)
 
         Spacer(Modifier.height(16.dp))
         OutlinedButton(
@@ -122,8 +128,9 @@ private fun ProfileEditor(
     var firstName by rememberSaveable { mutableStateOf(profile.firstName) }
     var lastName by rememberSaveable { mutableStateOf(profile.lastName) }
     var phone by rememberSaveable { mutableStateOf(profile.phone) }
-    var city by rememberSaveable { mutableStateOf(profile.city) }
-    var address by rememberSaveable { mutableStateOf(profile.address) }
+    var addr by rememberSaveable(stateSaver = AddressDraft.Saver) {
+        mutableStateOf(AddressDraft(profile.city, profile.district, profile.neighborhood, profile.address, profile.landmark, profile.addressNotes))
+    }
     var missing by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -142,19 +149,7 @@ private fun ProfileEditor(
         Input(firstName, { firstName = it; missing = false }, R.string.field_first_name)
         Input(lastName, { lastName = it; missing = false }, R.string.field_last_name)
         Input(phone, { phone = it; missing = false }, R.string.field_phone, KeyboardType.Phone)
-        Text(
-            text = stringResource(R.string.field_city),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
-        )
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CityCodes.forEach { code ->
-                PickChip(cityLabel(code), city == code, accent = PlantGreen) { city = code; missing = false }
-            }
-        }
-        Spacer(Modifier.height(12.dp))
-        Input(address, { address = it; missing = false }, R.string.field_address, singleLine = false)
+        AddressFields(addr, { addr = it; missing = false }, PlantGreen)
 
         if (missing) {
             Text(stringResource(R.string.err_required), color = Color(0xFFC62828), style = MaterialTheme.typography.bodyMedium)
@@ -164,10 +159,11 @@ private fun ProfileEditor(
         Spacer(Modifier.height(12.dp))
         Button(
             onClick = {
-                if (firstName.isBlank() || lastName.isBlank() || phone.isBlank() || city.isBlank() || address.isBlank()) {
+                if (firstName.isBlank() || lastName.isBlank() || phone.isBlank() || !addr.isComplete) {
                     missing = true
                 } else {
-                    onSave(ProfileUpdate(firstName.trim(), lastName.trim(), phone.trim(), city, address.trim()))
+                    val a = addr.trimmed()
+                    onSave(ProfileUpdate(firstName.trim(), lastName.trim(), phone.trim(), a.city, a.street, a.district, a.neighborhood, a.landmark, a.notes))
                 }
             },
             enabled = !saving,

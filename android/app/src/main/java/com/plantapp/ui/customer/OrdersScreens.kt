@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
 import com.plantapp.ui.TapToZoomImage
+import com.plantapp.ui.addressText
 import com.plantapp.ui.rememberSignedPhotoUrl
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -333,7 +334,8 @@ fun OrderDetailScreen(
                 }
                 Spacer(Modifier.height(6.dp))
             }
-            Text("${cityLabel(order.city)}, ${order.address}")
+            Text(addressText(order.city, order.district, order.neighborhood, order.address, order.landmark))
+            order.addressNotes.takeIf { it.isNotBlank() }?.let { Text(it, color = TextMuted) }
             order.deliveryDate?.let {
                 Text("$it  ·  ${stringResource(windowLabel(order.deliveryWindow))}", color = TextMuted)
             }

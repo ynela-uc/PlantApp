@@ -160,5 +160,15 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] Open a shop (View shop and products): products with photos, and a Reviews list. Remove this product asks for a reason, deletes it and the shop owner gets a notification. Remove review asks for a reason, deletes it, and the shop rating and count update.
 - [ ] A normal customer or shop account never sees any of this.
 
+## 23. Structured addresses
+- [ ] Create a new customer account: after the governorate chips there are City / district, Neighborhood, Street / building, Nearest landmark and Delivery notes (optional). Governorate, district, neighborhood and a street or a landmark are required.
+- [ ] Create a new shop account: the same address fields are asked (this is the shop address).
+- [ ] My account (customer): the profile shows every filled field; Edit saves them. An old account must fill district and neighborhood before it can save.
+- [ ] Checkout: the delivery address fields are filled from the profile and can be changed for this order (also for a gift). The order saves them.
+- [ ] Customer order screen: the address reads like: Baghdad, Karrada, Arasat, Street 1, Near the mosque, and the delivery notes below it.
+- [ ] Shop, new order: only governorate and district show, with "The full address appears after you accept the order." After Accept the full address and notes show.
+- [ ] Shop tab shows the shop address; Edit shop has the address fields (governorate can be changed). Customers never see the shop address, only its governorate.
+- [ ] Admin: shop cards and the preview show the shop address.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).

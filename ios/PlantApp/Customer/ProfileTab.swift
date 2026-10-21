@@ -29,9 +29,16 @@ struct ProfileTab: View {
                     .foregroundStyle(Theme.greenDark)
                     .padding(.bottom, 16)
 
+                // A Group: Xcode 14.2 allows at most 10 children in one block.
+                Group {
                 InfoRow(label: lang.t("field_phone"), value: profile.phone)
                 InfoRow(label: lang.t("field_city"), value: profile.city.isEmpty ? "" : lang.cityName(profile.city))
+                InfoRow(label: lang.t("field_district"), value: profile.district)
+                InfoRow(label: lang.t("field_neighborhood"), value: profile.neighborhood)
                 InfoRow(label: lang.t("field_address"), value: profile.address)
+                InfoRow(label: lang.t("field_landmark"), value: profile.landmark)
+                InfoRow(label: lang.t("field_address_notes"), value: profile.addressNotes)
+                }
 
                 Button(lang.t("profile_edit")) { editing = true }
                     .buttonStyle(PrimaryButtonStyle(color: accent, filled: false))
@@ -60,8 +67,7 @@ private struct ProfileEditor: View {
     @State private var firstName: String
     @State private var lastName: String
     @State private var phone: String
-    @State private var city: String
-    @State private var address: String
+    @State private var addr: AddressDraft
     @State private var missing = false
 
     init(profile: Profile, onCancel: @escaping () -> Void) {
@@ -70,8 +76,7 @@ private struct ProfileEditor: View {
         _firstName = State(initialValue: profile.firstName)
         _lastName = State(initialValue: profile.lastName)
         _phone = State(initialValue: profile.phone)
-        _city = State(initialValue: profile.city)
-        _address = State(initialValue: profile.address)
+        _addr = State(initialValue: AddressDraft(city: profile.city, district: profile.district, neighborhood: profile.neighborhood, street: profile.address, landmark: profile.landmark, notes: profile.addressNotes))
     }
 
     var body: some View {
@@ -86,15 +91,7 @@ private struct ProfileEditor: View {
                 AppField(title: lang.t("field_last_name"), text: $lastName)
                 AppField(title: lang.t("field_phone"), text: $phone, keyboard: .phonePad)
 
-                Text(lang.t("field_city"))
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Theme.muted)
-                FlowLayout(spacing: 8) {
-                    ForEach(Cities.codes, id: \.self) { code in
-                        Pill(label: lang.cityName(code), selected: city == code) { city = code }
-                    }
-                }
-                AppField(title: lang.t("field_address"), text: $address, multiline: true)
+                AddressFields(draft: $addr)
 
                 if missing {
                     ErrorText(message: lang.t("err_required"))
@@ -120,18 +117,23 @@ private struct ProfileEditor: View {
 
     private func save() {
         let blank: (String) -> Bool = { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        if blank(firstName) || blank(lastName) || blank(phone) || city.isEmpty || blank(address) {
+        if blank(firstName) || blank(lastName) || blank(phone) || !addr.isComplete {
             missing = true
             return
         }
         missing = false
+        let place = addr.trimmed
         app.updateProfile(
             ProfileUpdate(
                 firstName: firstName.trimmingCharacters(in: .whitespaces),
                 lastName: lastName.trimmingCharacters(in: .whitespaces),
                 phone: phone.trimmingCharacters(in: .whitespaces),
-                city: city,
-                address: address.trimmingCharacters(in: .whitespacesAndNewlines)
+                city: place.city,
+                address: place.street,
+                district: place.district,
+                neighborhood: place.neighborhood,
+                landmark: place.landmark,
+                addressNotes: place.notes
             )
         )
     }

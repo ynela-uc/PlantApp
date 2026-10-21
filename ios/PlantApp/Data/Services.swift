@@ -62,6 +62,10 @@ enum AuthService {
                 "phone": .string(form.phone),
                 "city": .string(form.city),
                 "address": .string(form.address),
+                "district": .string(form.district),
+                "neighborhood": .string(form.neighborhood),
+                "landmark": .string(form.landmark),
+                "address_notes": .string(form.addressNotes),
             ]
         )
         guard response.session != nil else { throw AppError.noSession }
@@ -72,6 +76,11 @@ enum AuthService {
                     ownerId: uid,
                     name: form.shopName,
                     city: form.city,
+                    address: form.address,
+                    district: form.district,
+                    neighborhood: form.neighborhood,
+                    landmark: form.landmark,
+                    addressNotes: form.addressNotes,
                     deliveryScope: "local",
                     deliversTo: [form.city],
                     phone: form.phone,

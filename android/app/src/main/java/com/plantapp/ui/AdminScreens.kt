@@ -207,6 +207,7 @@ private fun ShopReviewCard(shop: PendingShop, busy: Boolean, onView: () -> Unit,
             Spacer(Modifier.height(6.dp))
             Text(stringResource(R.string.approvals_owner, shop.ownerName.ifBlank { "-" }, shop.ownerEmail))
             if (shop.phone.isNotBlank()) Text(shop.phone)
+            Text(addressText(shop.city, shop.district, shop.neighborhood, shop.address, shop.landmark), color = TextMuted)
             if (shop.shopTypes.isNotEmpty()) Text(shop.shopTypes.map { sectionName(it) }.joinToString(", "), color = TextMuted)
             if (shop.bio.isNotBlank()) {
                 Spacer(Modifier.height(4.dp))
@@ -302,6 +303,8 @@ private fun ShopPreviewScreen(shop: PendingShop, busy: Boolean, onClose: () -> U
             Spacer(Modifier.height(8.dp))
             Text(stringResource(R.string.approvals_owner, shop.ownerName.ifBlank { "-" }, shop.ownerEmail))
             if (shop.phone.isNotBlank()) Text(shop.phone)
+            Text(addressText(shop.city, shop.district, shop.neighborhood, shop.address, shop.landmark))
+            if (shop.addressNotes.isNotBlank()) Text(shop.addressNotes, color = TextMuted)
             if (shop.shopTypes.isNotEmpty()) Text(shop.shopTypes.map { sectionName(it) }.joinToString(", "), color = TextMuted)
             if (shop.bio.isNotBlank()) {
                 Spacer(Modifier.height(6.dp))

@@ -20,6 +20,10 @@ struct ShopTab: View {
                         .padding(.bottom, 16)
 
                     InfoRow(label: lang.t("field_phone"), value: shop.phone)
+                    InfoRow(
+                        label: lang.t("shop_address_title"),
+                        value: lang.addressText(city: shop.city, district: shop.district, neighborhood: shop.neighborhood, street: shop.address, landmark: shop.landmark)
+                    )
                     InfoRow(label: lang.t("shop_fee_title"), value: lang.price(shop.deliveryFeeIqd))
                     InfoRow(label: lang.t("shop_types_label"), value: shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", "))
                     InfoRow(
@@ -67,6 +71,7 @@ struct ShopEditorView: View {
     @State private var name: String
     @State private var phone: String
     @State private var bio: String
+    @State private var addr: AddressDraft
     @State private var nationwide: Bool
     @State private var cities: Set<String>
     @State private var types: Set<String>
@@ -79,6 +84,7 @@ struct ShopEditorView: View {
         _name = State(initialValue: shop.name)
         _phone = State(initialValue: shop.phone)
         _bio = State(initialValue: shop.bio)
+        _addr = State(initialValue: AddressDraft(city: shop.city, district: shop.district, neighborhood: shop.neighborhood, street: shop.address, landmark: shop.landmark, notes: shop.addressNotes))
         _nationwide = State(initialValue: shop.isNationwide)
         _cities = State(initialValue: Set(shop.deliversTo ?? []))
         _types = State(initialValue: Set(shop.shopTypes))
@@ -103,6 +109,14 @@ struct ShopEditorView: View {
                         AppField(title: lang.t("field_shop_name"), text: $name)
                         AppField(title: lang.t("field_phone"), text: $phone, keyboard: .phonePad)
                         AppField(title: lang.t("field_bio"), text: $bio, multiline: true)
+
+                        Text(lang.t("shop_address_title"))
+                            .font(.system(size: 14, weight: .bold))
+                            .padding(.top, 8)
+                        Text(lang.t("shop_address_hint"))
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.muted)
+                        AddressFields(draft: $addr, accent: Theme.amber)
 
                         Text(lang.t("shop_types_title"))
                             .font(.system(size: 14, weight: .bold))
@@ -182,11 +196,12 @@ struct ShopEditorView: View {
 
     private func save() {
         let blank: (String) -> Bool = { $0.trimmingCharacters(in: .whitespaces).isEmpty }
-        if blank(name) || blank(phone) || types.isEmpty || (!nationwide && cities.isEmpty) {
+        if blank(name) || blank(phone) || !addr.isComplete || types.isEmpty || (!nationwide && cities.isEmpty) {
             showError = true
             return
         }
         showError = false
+        let place = addr.trimmed
         model.saveShop(
             ShopUpdate(
                 name: name.trimmingCharacters(in: .whitespaces),
@@ -196,7 +211,13 @@ struct ShopEditorView: View {
                 deliversTo: nationwide ? nil : Cities.codes.filter { cities.contains($0) },
                 shopTypes: Catalog.sections.map(\.key).filter { types.contains($0) },
                 deliveryFeeIqd: Int(feeText) ?? 0,
-                deliveryFees: cityFees.compactMapValues { Int($0) }
+                deliveryFees: cityFees.compactMapValues { Int($0) },
+                city: place.city,
+                address: place.street,
+                district: place.district,
+                neighborhood: place.neighborhood,
+                landmark: place.landmark,
+                addressNotes: place.notes
             )
         )
     }

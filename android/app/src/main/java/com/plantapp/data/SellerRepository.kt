@@ -29,6 +29,12 @@ data class Shop(
     /** pending, changes_requested (see reviewNote), rejected (see reviewNote) or approved. */
     @SerialName("review_status") val reviewStatus: String = "approved",
     @SerialName("review_note") val reviewNote: String? = null,
+    /** The shop address: city above is the governorate. Customers never see it; the admin and the owner do. */
+    val address: String = "",
+    val district: String = "",
+    val neighborhood: String = "",
+    val landmark: String = "",
+    @SerialName("address_notes") val addressNotes: String = "",
 ) {
     val isNationwide: Boolean get() = deliveryScope == "nationwide"
 }
@@ -43,6 +49,12 @@ data class ShopUpdate(
     @SerialName("shop_types") val shopTypes: List<String>,
     @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int,
     @SerialName("delivery_fees") val deliveryFees: Map<String, Int>,
+    val city: String,
+    val address: String,
+    val district: String,
+    val neighborhood: String,
+    val landmark: String,
+    @SerialName("address_notes") val addressNotes: String,
 )
 
 @Serializable
