@@ -156,7 +156,7 @@ fun ListingDetailScreen(
                                 Text(stringResource(R.string.shop_visit) + "  ›", color = PlantGreen, fontWeight = FontWeight.SemiBold)
                             }
                             Text(
-                                text = "${cityLabel(shop.city)}  ·  ★ ${"%.1f".format(shop.rating)}",
+                                text = "${cityLabel(shop.city)}  ·  ${ratingLabel(shop.rating, shop.ratingCount)}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = TextMuted,
                             )

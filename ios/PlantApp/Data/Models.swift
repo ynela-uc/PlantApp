@@ -75,6 +75,7 @@ struct SellerInfo: Codable, Equatable {
     var deliveryScope: String
     var deliversTo: [String]?
     var rating: Double
+    var ratingCount: Int
     var phone: String
     var bio: String
     var deliveryFeeIqd: Int
@@ -84,6 +85,7 @@ struct SellerInfo: Codable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case id, name, city, rating, phone, bio
+        case ratingCount = "rating_count"
         case deliveryScope = "delivery_scope"
         case deliversTo = "delivers_to"
         case deliveryFeeIqd = "delivery_fee_iqd"
@@ -99,6 +101,7 @@ struct SellerInfo: Codable, Equatable {
         deliveryScope = try c.decodeIfPresent(String.self, forKey: .deliveryScope) ?? "local"
         deliversTo = try c.decodeIfPresent([String].self, forKey: .deliversTo)
         rating = try c.decodeIfPresent(Double.self, forKey: .rating) ?? 0
+        ratingCount = try c.decodeIfPresent(Int.self, forKey: .ratingCount) ?? 0
         phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? ""
         bio = try c.decodeIfPresent(String.self, forKey: .bio) ?? ""
         deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
@@ -728,4 +731,31 @@ struct PlantSuggestion: Codable {
 struct ListingOption: Codable, Equatable {
     var name: String
     var values: [String]
+}
+
+// MARK: - Ratings
+
+/// One customer's rating of a delivered order.
+struct Rating: Decodable, Identifiable {
+    let id: String
+    let stars: Int
+    let comment: String?
+    /// First name and last initial; empty when the customer deleted their account.
+    let reviewerName: String
+    let createdAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, stars, comment
+        case reviewerName = "reviewer_name"
+        case createdAt = "created_at"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        stars = try c.decode(Int.self, forKey: .stars)
+        comment = try c.decodeIfPresent(String.self, forKey: .comment)
+        reviewerName = try c.decodeIfPresent(String.self, forKey: .reviewerName) ?? ""
+        createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt) ?? ""
+    }
 }

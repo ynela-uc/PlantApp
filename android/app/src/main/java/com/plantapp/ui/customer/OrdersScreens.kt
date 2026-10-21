@@ -294,6 +294,11 @@ fun OrderDetailScreen(
                 ) { Text(stringResource(R.string.cancel_my_order), color = CancelledRed) }
             }
 
+            if (status == OrderStatus.Delivered) {
+                Spacer(Modifier.height(20.dp))
+                RateOrderSection(order.id)
+            }
+
             if (!shopPhone.isNullOrBlank()) {
                 Spacer(Modifier.height(20.dp))
                 Heading(R.string.contact_title)

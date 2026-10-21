@@ -80,7 +80,7 @@ fun ShopPageScreen(
                     color = PlantGreenDark,
                 )
                 Text(
-                    text = "${cityLabel(shop.city)}  ·  ★ ${"%.1f".format(shop.rating)}",
+                    text = "${cityLabel(shop.city)}  ·  ${ratingLabel(shop.rating, shop.ratingCount)}",
                     color = TextMuted,
                 )
                 if (shop.shopTypes.isNotEmpty()) {
@@ -137,6 +137,9 @@ fun ShopPageScreen(
         }
         items(visible, key = { it.id }) { listing ->
             PlantCard(listing, lang) { onOpen(listing.id) }
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            ShopReviews(shop.id)
         }
     }
 }

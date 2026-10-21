@@ -15,7 +15,7 @@ let supabase = SupabaseClient(
     )
 )
 
-private let listingColumns = "*, sellers(id,name,city,delivery_scope,delivers_to,rating,phone,bio,delivery_fee_iqd,delivery_fees,shop_types)"
+private let listingColumns = "*, sellers(id,name,city,delivery_scope,delivers_to,rating,rating_count,phone,bio,delivery_fee_iqd,delivery_fees,shop_types)"
 
 // MARK: - Auth
 
@@ -146,6 +146,50 @@ private struct NoParams: Encodable {}
 private struct CancelOrderParams: Encodable {
     let pOrderId: String
     enum CodingKeys: String, CodingKey { case pOrderId = "p_order_id" }
+}
+
+private struct RateOrderParams: Encodable {
+    let pOrderId: String
+    let pStars: Int
+    let pComment: String?
+
+    enum CodingKeys: String, CodingKey {
+        case pOrderId = "p_order_id"
+        case pStars = "p_stars"
+        case pComment = "p_comment"
+    }
+}
+
+enum RatingsService {
+    /// The latest ratings of a shop.
+    static func forShop(_ shopId: String) async throws -> [Rating] {
+        try await supabase.from("ratings")
+            .select()
+            .eq("seller_id", value: shopId)
+            .order("created_at", ascending: false)
+            .limit(10)
+            .execute()
+            .value
+    }
+
+    /// The rating of one order, or nil when it was not rated yet.
+    static func forOrder(_ orderId: String) async throws -> Rating? {
+        let rows: [Rating] = try await supabase.from("ratings")
+            .select()
+            .eq("order_id", value: orderId)
+            .limit(1)
+            .execute()
+            .value
+        return rows.first
+    }
+
+    static func rate(orderId: String, stars: Int, comment: String) async throws {
+        let trimmed = comment.trimmingCharacters(in: .whitespacesAndNewlines)
+        try await supabase.rpc(
+            "rate_order",
+            params: RateOrderParams(pOrderId: orderId, pStars: stars, pComment: trimmed.isEmpty ? nil : trimmed)
+        ).execute()
+    }
 }
 
 enum OrdersService {

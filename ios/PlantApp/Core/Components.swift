@@ -329,3 +329,133 @@ struct DeleteAccountSection: View {
         }
     }
 }
+
+// MARK: - Ratings
+
+/// A shop shows stars only after this many ratings; before that it is "New".
+let ratingMinCount = 3
+
+func ratingLabel(_ lang: LanguageStore, rating: Double, count: Int) -> String {
+    count >= ratingMinCount ? "★ \(String(format: "%.1f", rating)) (\(count))" : lang.t("rating_new")
+}
+
+/// Five stars; tap one to choose when `onPick` is given.
+struct StarsRow: View {
+    let stars: Int
+    var onPick: ((Int) -> Void)?
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(1...5, id: \.self) { i in
+                Text(i <= stars ? "★" : "☆")
+                    .font(.system(size: onPick != nil ? 34 : 18))
+                    .foregroundStyle(Color(hex: 0xF2B544))
+                    .onTapGesture { onPick?(i) }
+            }
+        }
+    }
+}
+
+/// The latest reviews of a shop (shown on its page).
+struct ShopReviewsSection: View {
+    @EnvironmentObject var lang: LanguageStore
+    let shopId: String
+    @State private var ratings: [Rating]?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let ratings {
+                Text(lang.t("reviews_title"))
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(Theme.greenDark)
+                if ratings.isEmpty {
+                    Text(lang.t("reviews_empty")).foregroundStyle(Theme.muted)
+                }
+                ForEach(ratings) { rating in
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 8) {
+                            StarsRow(stars: rating.stars)
+                            Text(rating.reviewerName.isEmpty ? lang.t("reviewer_anonymous") : rating.reviewerName)
+                                .font(.system(size: 14, weight: .semibold))
+                            Text(String(rating.createdAt.prefix(10)))
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.muted)
+                        }
+                        if let comment = rating.comment, !comment.isEmpty {
+                            Text(comment).font(.system(size: 14))
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 12)
+        .task { ratings = (try? await RatingsService.forShop(shopId)) ?? [] }
+    }
+}
+
+/// On a delivered order: the customer's rating, or the form to give one.
+struct RateOrderSection: View {
+    @EnvironmentObject var lang: LanguageStore
+    let orderId: String
+
+    @State private var mine: Rating?
+    @State private var loaded = false
+    @State private var stars = 0
+    @State private var comment = ""
+    @State private var busy = false
+    @State private var failed = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if loaded {
+                if let mine {
+                    Text(lang.t("rate_yours"))
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Theme.greenDark)
+                    StarsRow(stars: mine.stars)
+                    if let text = mine.comment, !text.isEmpty { Text(text) }
+                } else {
+                    Text(lang.t("rate_title"))
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Theme.greenDark)
+                    StarsRow(stars: stars) { stars = $0 }
+                    AppField(title: lang.t("rate_comment_hint"), text: $comment)
+                        .onChange(of: comment) { value in
+                            if value.count > 300 { comment = String(value.prefix(300)) }
+                        }
+                    if failed { ErrorText(message: lang.t("rate_failed")) }
+                    Button {
+                        Task { await send() }
+                    } label: {
+                        BusyLabel(title: lang.t("rate_send"), busy: busy)
+                    }
+                    .buttonStyle(PrimaryButtonStyle())
+                    .disabled(stars == 0 || busy)
+                }
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.greenSoft)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .opacity(loaded ? 1 : 0)
+        .task {
+            mine = try? await RatingsService.forOrder(orderId)
+            loaded = true
+        }
+    }
+
+    private func send() async {
+        busy = true
+        failed = false
+        do {
+            try await RatingsService.rate(orderId: orderId, stars: stars, comment: comment)
+            mine = try? await RatingsService.forOrder(orderId)
+        } catch {
+            failed = true
+        }
+        busy = false
+    }
+}

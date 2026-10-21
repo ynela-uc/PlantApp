@@ -40,6 +40,15 @@
     <string name="err_generic">Something went wrong. Please try again.</string>
     <string name="err_price_changed">Something changed: a price or a delivery fee is different now. We refreshed the prices, so please check your cart and try again.</string>
     <string name="err_unavailable">One of the products is no longer available or its choices changed. We refreshed the list, so please check your cart.</string>
+    <string name="rating_new">New</string>
+    <string name="reviews_title">Reviews</string>
+    <string name="reviews_empty">No reviews yet</string>
+    <string name="reviewer_anonymous">Customer</string>
+    <string name="rate_title">How was your order?</string>
+    <string name="rate_comment_hint">Write a short comment (optional)</string>
+    <string name="rate_send">Send rating</string>
+    <string name="rate_yours">Your rating</string>
+    <string name="rate_failed">Could not send the rating. Try again.</string>
     <string name="legal_privacy">Privacy policy</string>
     <string name="legal_terms">Terms of use</string>
     <string name="legal_agree">By creating an account you agree to the Terms of Use and the Privacy Policy.</string>

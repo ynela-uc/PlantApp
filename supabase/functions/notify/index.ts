@@ -70,6 +70,11 @@ const TEXTS: Record<string, Record<Lang, Text>> = {
     ckb: { title: "گەیاندنی داواکارییەکەت نەکرا", body: "{shop} نەیتوانی داواکارییەکەت بگەیەنێت. داواکارییەکە بکەرەوە بۆ زانینی هۆکار" },
     en: { title: "Your order could not be delivered", body: "{shop} could not deliver it. Open the order to see why" },
   },
+  order_delivered: {
+    ar: { title: "وصل طلبك", body: "كيف كان طلبك من {shop}؟ قيّمه الآن" },
+    ckb: { title: "داواکارییەکەت گەیشت", body: "داواکارییەکەت لە {shop} چۆن بوو؟ ئێستا هەڵیبسەنگێنە" },
+    en: { title: "Your order was delivered", body: "How was your order from {shop}? Rate it now" },
+  },
   new_shop: {
     ar: { title: "متجر جديد ينتظر الموافقة", body: "{shop}" },
     ckb: { title: "فرۆشگایەکی نوێ چاوەڕێی پەسەندکردنە", body: "{shop}" },

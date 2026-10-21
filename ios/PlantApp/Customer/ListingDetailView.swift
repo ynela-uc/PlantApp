@@ -163,7 +163,7 @@ struct ListingDetailView: View {
                 }
             }
             .buttonStyle(.plain)
-            Text("\(lang.cityName(shop.city))  ·  ★ \(String(format: "%.1f", shop.rating))")
+            Text("\(lang.cityName(shop.city))  ·  \(ratingLabel(lang, rating: shop.rating, count: shop.ratingCount))")
                 .font(.system(size: 14))
                 .foregroundStyle(Theme.muted)
             DeliveryBadge(shop: shop).padding(.top, 4)

@@ -41,6 +41,15 @@
     <string name="err_generic">هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵبدەرەوە.</string>
     <string name="err_price_changed">نرخی یەکێک لە بەرهەمەکان یان کرێی گەیاندن گۆڕاوە. نرخەکانمان نوێکردەوە، تکایە سەبەتەکەت بپشکنە و دووبارە هەوڵبدەرەوە.</string>
     <string name="err_unavailable">یەکێک لە بەرهەمەکان ئیتر بەردەست نییە یان هەڵبژاردنەکانی گۆڕاون. لیستەکەمان نوێکردەوە، تکایە سەبەتەکەت بپشکنە.</string>
+    <string name="rating_new">نوێ</string>
+    <string name="reviews_title">هەڵسەنگاندنەکان</string>
+    <string name="reviews_empty">هێشتا هیچ هەڵسەنگاندنێک نییە</string>
+    <string name="reviewer_anonymous">کڕیار</string>
+    <string name="rate_title">داواکارییەکەت چۆن بوو؟</string>
+    <string name="rate_comment_hint">تێبینییەکی کورت بنووسە (ئارەزوومەندانە)</string>
+    <string name="rate_send">ناردنی هەڵسەنگاندن</string>
+    <string name="rate_yours">هەڵسەنگاندنەکەت</string>
+    <string name="rate_failed">نەتوانرا هەڵسەنگاندن بنێردرێت. دووبارە هەوڵبدەرەوە.</string>
     <string name="legal_privacy">سیاسەتی نهێنیێتی</string>
     <string name="legal_terms">مەرجەکانی بەکارهێنان</string>
     <string name="legal_agree">بە دروستکردنی ئەکاونت ڕازی دەبیت بە مەرجەکانی بەکارهێنان و سیاسەتی نهێنیێتی.</string>

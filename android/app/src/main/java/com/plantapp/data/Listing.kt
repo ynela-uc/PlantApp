@@ -12,6 +12,7 @@ data class SellerInfo(
     @SerialName("delivery_scope") val deliveryScope: String = "local",
     @SerialName("delivers_to") val deliversTo: List<String>? = null,
     val rating: Double = 0.0,
+    @SerialName("rating_count") val ratingCount: Int = 0,
     val phone: String = "",
     val bio: String = "",
     @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 0,

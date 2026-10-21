@@ -33,7 +33,7 @@ struct ShopPageView: View {
                 Text(shop.name)
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(Theme.greenDark)
-                Text("\(lang.cityName(shop.city))  ·  ★ \(String(format: "%.1f", shop.rating))")
+                Text("\(lang.cityName(shop.city))  ·  \(ratingLabel(lang, rating: shop.rating, count: shop.ratingCount))")
                     .foregroundStyle(Theme.muted)
 
                 if !shop.shopTypes.isEmpty {
@@ -84,6 +84,8 @@ struct ShopPageView: View {
                     }
                 }
                 .padding(.top, 8)
+
+                ShopReviewsSection(shopId: shop.id)
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 16)

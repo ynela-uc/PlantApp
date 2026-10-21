@@ -199,6 +199,10 @@ struct OrderDetailView: View {
                             .disabled(model.reviewBusy)
                             .padding(.top, 20)
                     }
+                    if status == .delivered {
+                        RateOrderSection(orderId: order.id)
+                            .padding(.top, 20)
+                    }
                     if let phone = model.listings.first(where: { $0.sellerId == order.sellerId })?.sellers?.phone, !phone.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             SectionHeading(text: lang.t("contact_title"))

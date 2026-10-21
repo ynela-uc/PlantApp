@@ -129,5 +129,15 @@ Tick each line. Write down what you saw if it is not what is expected.
 - [ ] After a customer deletes their account, their old orders still appear for the shop but without name, phone and address.
 - [ ] After a shop owner deletes their account, customers no longer see the shop or its products, and old orders stay.
 
+## 19. Ratings
+- [ ] Customer: open a DELIVERED order. A box "How was your order?" has five tappable stars, a comment field (max 300 characters) and "Send rating". Send stays disabled until a star is chosen.
+- [ ] After sending, the box changes to "Your rating" with the stars and comment, and cannot be sent twice.
+- [ ] An order that is not delivered shows no rating box.
+- [ ] Shop page: shows "New" until the shop has 3 ratings, then "★ 4.7 (3)". The page ends with a "Reviews" list (latest 10) with stars, first name + last initial, date and comment; "No reviews yet" when empty.
+- [ ] The product page shows the same "New" / stars label next to the city.
+- [ ] When a shop marks an order delivered the customer gets a push "Your order was delivered / How was your order from <shop>? Rate it now".
+- [ ] Shop owner: cannot change their own rating (the shop screen has no such field).
+- [ ] Customer deletes their account: their reviews stay but show "Customer" instead of the name.
+
 ## Report
 For anything that fails: which step, what you tapped, what the screen said (a screenshot is best).
