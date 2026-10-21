@@ -100,6 +100,11 @@
     <string name="approvals_changes_hint">فرۆشگا چی زیاد بکات یان بگۆڕێت؟</string>
     <string name="approvals_reject_hint">بۆچی فرۆشگاکە گونجاو نییە؟</string>
     <string name="approvals_send">ناردن</string>
+    <string name="approvals_view">بینینی فرۆشگا و بەرهەمەکان (%1$d)</string>
+    <string name="approvals_products">بەرهەمەکان (%1$d)</string>
+    <string name="approvals_no_products">ئەم فرۆشگایە هێشتا هیچ بەرهەمێکی زیاد نەکردووە</string>
+    <string name="approvals_pieces">%1$d دانە</string>
+    <string name="approvals_out_of_stock">بەردەست نییە</string>
     <string name="shopreview_changes_title">پێش پەسەندکردن گۆڕانکاری پێویستە</string>
     <string name="shopreview_changes_body">تیمی ئەپەکە داوای کرد ئەمە بگۆڕیت یان زیاد بکەیت:</string>
     <string name="shopreview_resubmit">ناردن بۆ پێداچوونەوە</string>

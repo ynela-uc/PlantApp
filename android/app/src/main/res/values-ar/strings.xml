@@ -99,6 +99,11 @@
     <string name="approvals_changes_hint">ما الذي يجب أن يضيفه المتجر أو يعدّله؟</string>
     <string name="approvals_reject_hint">لماذا لا يناسب المتجر التطبيق؟</string>
     <string name="approvals_send">إرسال</string>
+    <string name="approvals_view">عرض المتجر والمنتجات (%1$d)</string>
+    <string name="approvals_products">المنتجات (%1$d)</string>
+    <string name="approvals_no_products">لم يضف هذا المتجر أي منتج بعد</string>
+    <string name="approvals_pieces">%1$d قطعة</string>
+    <string name="approvals_out_of_stock">غير متوفر</string>
     <string name="shopreview_changes_title">مطلوب تعديل قبل الموافقة</string>
     <string name="shopreview_changes_body">طلب منك فريق التطبيق تعديل أو إضافة التالي:</string>
     <string name="shopreview_resubmit">إرسال للمراجعة</string>

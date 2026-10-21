@@ -509,6 +509,7 @@ private struct ApprovalsView: View {
     @State private var failed = false
     @State private var busyId: String?
     @State private var ask: ReviewAsk?
+    @State private var previewing: PendingShop?
 
     private let groups: [(status: String, titleKey: String)] = [
         ("pending", "approvals_section_waiting"),
@@ -553,6 +554,12 @@ private struct ApprovalsView: View {
         .sheet(item: $ask) { item in
             ReviewNoteSheet(ask: item) { note in decide(item.shop, item.decision, note) }
         }
+        .fullScreenCover(item: $previewing) { shop in
+            ShopPreviewView(shop: shop, busy: busyId == shop.id, onClose: { previewing = nil }) { decision in
+                previewing = nil
+                choose(shop, decision)
+            }
+        }
     }
 
     @ViewBuilder
@@ -579,20 +586,11 @@ private struct ApprovalsView: View {
             if let note = shop.reviewNote, !note.isEmpty {
                 Text(lang.t("approvals_your_note", note)).font(.system(size: 13)).foregroundStyle(Theme.amber)
             }
-            if shop.reviewStatus == "pending" {
-                VStack(spacing: 8) {
-                    if busyId == shop.id {
-                        ProgressView().tint(Theme.green)
-                    } else {
-                        Button(lang.t("approvals_approve")) { decide(shop, .approve, nil) }
-                            .buttonStyle(PrimaryButtonStyle())
-                        Button(lang.t("approvals_changes")) { ask = ReviewAsk(shop: shop, decision: .changes) }
-                            .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
-                        Button(lang.t("approvals_reject")) { ask = ReviewAsk(shop: shop, decision: .reject) }
-                            .buttonStyle(PrimaryButtonStyle(color: Theme.error, filled: false))
-                    }
-                }
+            Button(lang.t("approvals_view", shop.productCount)) { previewing = shop }
+                .buttonStyle(PrimaryButtonStyle())
                 .padding(.top, 8)
+            if shop.reviewStatus == "pending" {
+                DecisionButtons(busy: busyId == shop.id) { choose(shop, $0) }
             }
         }
         .padding(14)
@@ -607,6 +605,10 @@ private struct ApprovalsView: View {
         } catch {
             failed = true
         }
+    }
+
+    private func choose(_ shop: PendingShop, _ decision: ShopDecision) {
+        if decision == .approve { decide(shop, decision, nil) } else { ask = ReviewAsk(shop: shop, decision: decision) }
     }
 
     private func decide(_ shop: PendingShop, _ decision: ShopDecision, _ note: String?) {
@@ -655,5 +657,139 @@ private struct ReviewNoteSheet: View {
         }
         .padding(20)
         .background(AppBackground())
+    }
+}
+
+private struct DecisionButtons: View {
+    @EnvironmentObject var lang: LanguageStore
+    let busy: Bool
+    let onDecide: (ShopDecision) -> Void
+
+    var body: some View {
+        VStack(spacing: 8) {
+            if busy {
+                ProgressView().tint(Theme.green)
+            } else {
+                Button(lang.t("approvals_approve")) { onDecide(.approve) }
+                    .buttonStyle(PrimaryButtonStyle())
+                Button(lang.t("approvals_changes")) { onDecide(.changes) }
+                    .buttonStyle(PrimaryButtonStyle(color: Theme.amber, filled: false))
+                Button(lang.t("approvals_reject")) { onDecide(.reject) }
+                    .buttonStyle(PrimaryButtonStyle(color: Theme.error, filled: false))
+            }
+        }
+        .padding(.top, 8)
+    }
+}
+
+/// Everything a customer would see about the shop, so the admin can decide: details, delivery and every product with its photo.
+private struct ShopPreviewView: View {
+    @EnvironmentObject var lang: LanguageStore
+    let shop: PendingShop
+    let busy: Bool
+    let onClose: () -> Void
+    let onDecide: (ShopDecision) -> Void
+
+    @State private var products: [Listing]?
+    @State private var failed = false
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 4) {
+                Group {
+                    HStack(alignment: .top) {
+                        Text(shop.name)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(Theme.greenDark)
+                        Spacer()
+                        Button(lang.t("approvals_close"), action: onClose)
+                    }
+                    Text(lang.cityName(shop.city)).foregroundStyle(Theme.muted)
+                    Text(lang.t("approvals_owner", shop.ownerName.isEmpty ? "-" : shop.ownerName, shop.ownerEmail)).padding(.top, 6)
+                    if !shop.phone.isEmpty { Text(shop.phone) }
+                    if !shop.shopTypes.isEmpty {
+                        Text(shop.shopTypes.map { lang.t("sec_" + $0) }.joined(separator: ", ")).foregroundStyle(Theme.muted)
+                    }
+                    if !shop.bio.isEmpty { Text(shop.bio).padding(.top, 4) }
+                }
+                Group {
+                    Text(lang.t("shop_delivery"))
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(Theme.greenDark)
+                        .padding(.top, 10)
+                    Text(
+                        shop.deliveryScope == "nationwide"
+                            ? lang.t("delivers_nationwide")
+                            : (shop.deliversTo.isEmpty ? lang.cityName(shop.city) : shop.deliversTo.map { lang.cityName($0) }.joined(separator: ", "))
+                    )
+                    Text(lang.t("shop_fee_title") + ": " + lang.price(shop.deliveryFeeIqd))
+                    ForEach(shop.deliveryFees.sorted(by: { $0.key < $1.key }), id: \.key) { city, fee in
+                        Text(lang.cityName(city) + ": " + lang.price(fee)).foregroundStyle(Theme.muted)
+                    }
+                    if let note = shop.reviewNote, !note.isEmpty {
+                        Text(lang.t("approvals_your_note", note)).foregroundStyle(Theme.amber).padding(.top, 6)
+                    }
+                    Text(lang.t("approvals_products", products?.count ?? shop.productCount))
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(Theme.greenDark)
+                        .padding(.top, 14)
+                }
+                if let products {
+                    if products.isEmpty { Text(lang.t("approvals_no_products")).foregroundStyle(Theme.muted) }
+                    ForEach(products) { listing in productCard(listing) }
+                } else if failed {
+                    ErrorText(message: lang.t("approvals_failed"))
+                } else {
+                    ProgressView().tint(Theme.green).padding()
+                }
+                if shop.reviewStatus == "pending" {
+                    DecisionButtons(busy: busy, onDecide: onDecide).padding(.top, 12)
+                }
+            }
+            .padding(16)
+        }
+        .background(AppBackground())
+        .task {
+            do { products = try await AdminService.listings(shopId: shop.id) } catch { failed = true }
+        }
+    }
+
+    private func productCard(_ listing: Listing) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            PlantPicture(listing: listing, emojiSize: 64)
+                .frame(height: 220)
+                .frame(maxWidth: .infinity)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(lang.localized(listing.name))
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(Theme.greenDark)
+                Text(productLine(listing))
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.muted)
+                HStack(spacing: 8) {
+                    Text(lang.price(listing.priceIqd)).font(.system(size: 16, weight: .bold))
+                    if let old = listing.oldPriceIqd, old > listing.priceIqd {
+                        Text(lang.price(old)).strikethrough().foregroundStyle(Theme.muted)
+                    }
+                }
+                if let pieces = listing.pieces { Text(lang.t("approvals_pieces", pieces)).font(.system(size: 12)).foregroundStyle(Theme.muted) }
+                if !listing.inStock { Text(lang.t("approvals_out_of_stock")).font(.system(size: 12)).foregroundStyle(Theme.error) }
+                if !lang.localized(listing.description).isEmpty { Text(lang.localized(listing.description)).font(.system(size: 14)) }
+                ForEach(Array(listing.options.enumerated()), id: \.offset) { _, option in
+                    Text(option.name + ": " + option.values.joined(separator: ", ")).font(.system(size: 12)).foregroundStyle(Theme.muted)
+                }
+            }
+            .padding(12)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .card()
+        .padding(.vertical, 4)
+    }
+
+    private func productLine(_ listing: Listing) -> String {
+        var parts = [lang.t("sec_" + listing.section)]
+        if let category = listing.category { parts.append(lang.t("cat_" + category)) }
+        if let collection = listing.collection, !collection.isEmpty { parts.append(collection) }
+        return parts.joined(separator: "  ·  ")
     }
 }

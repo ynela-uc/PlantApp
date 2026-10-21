@@ -251,6 +251,11 @@ private struct StockUpdate: Encodable {
     enum CodingKeys: String, CodingKey { case inStock = "in_stock" }
 }
 
+private struct ShopIdParams: Encodable {
+    let pShopId: String
+    enum CodingKeys: String, CodingKey { case pShopId = "p_shop_id" }
+}
+
 private struct ReviewShopParams: Encodable {
     let pShopId: String
     let pDecision: String
@@ -271,6 +276,11 @@ enum AdminService {
 
     static func shops() async throws -> [PendingShop] {
         try await supabase.rpc("admin_pending_shops", params: NoParams()).execute().value
+    }
+
+    /// All products of a shop, including shops that are not approved yet.
+    static func listings(shopId: String) async throws -> [Listing] {
+        try await supabase.rpc("admin_shop_listings", params: ShopIdParams(pShopId: shopId)).execute().value
     }
 
     static func review(shopId: String, decision: ShopDecision, note: String?) async throws {

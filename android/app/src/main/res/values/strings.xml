@@ -99,6 +99,11 @@
     <string name="approvals_changes_hint">What should the shop add or change?</string>
     <string name="approvals_reject_hint">Why is the shop not suitable?</string>
     <string name="approvals_send">Send</string>
+    <string name="approvals_view">View shop and products (%1$d)</string>
+    <string name="approvals_products">Products (%1$d)</string>
+    <string name="approvals_no_products">This shop has not added any products yet</string>
+    <string name="approvals_pieces">%1$d pieces</string>
+    <string name="approvals_out_of_stock">Out of stock</string>
     <string name="shopreview_changes_title">Changes needed before approval</string>
     <string name="shopreview_changes_body">The app team asked you to change or add this:</string>
     <string name="shopreview_resubmit">Send for review</string>

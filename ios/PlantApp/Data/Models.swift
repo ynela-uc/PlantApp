@@ -782,9 +782,19 @@ struct PendingShop: Decodable, Identifiable {
     let reviewNote: String?
     let ownerName: String
     let ownerEmail: String
+    let deliveryScope: String
+    let deliversTo: [String]
+    let deliveryFeeIqd: Int
+    let deliveryFees: [String: Int]
+    let productCount: Int
 
     enum CodingKeys: String, CodingKey {
         case id, name, city, phone, bio
+        case deliveryScope = "delivery_scope"
+        case deliversTo = "delivers_to"
+        case deliveryFeeIqd = "delivery_fee_iqd"
+        case deliveryFees = "delivery_fees"
+        case productCount = "product_count"
         case shopTypes = "shop_types"
         case reviewStatus = "review_status"
         case reviewNote = "review_note"
@@ -804,6 +814,11 @@ struct PendingShop: Decodable, Identifiable {
         reviewNote = try c.decodeIfPresent(String.self, forKey: .reviewNote)
         ownerName = try c.decodeIfPresent(String.self, forKey: .ownerName) ?? ""
         ownerEmail = try c.decodeIfPresent(String.self, forKey: .ownerEmail) ?? ""
+        deliveryScope = try c.decodeIfPresent(String.self, forKey: .deliveryScope) ?? "local"
+        deliversTo = try c.decodeIfPresent([String].self, forKey: .deliversTo) ?? []
+        deliveryFeeIqd = try c.decodeIfPresent(Int.self, forKey: .deliveryFeeIqd) ?? 0
+        deliveryFees = try c.decodeIfPresent([String: Int].self, forKey: .deliveryFees) ?? [:]
+        productCount = try c.decodeIfPresent(Int.self, forKey: .productCount) ?? 0
     }
 }
 

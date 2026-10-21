@@ -142,6 +142,7 @@ Tick each line. Write down what you saw if it is not what is expected.
 ## 20. Shop approvals (admin)
 - [ ] Sign in with the admin account (customer or shop): the account page shows an "Shop approvals" button, with the number of shops waiting in brackets. Other accounts do not see it.
 - [ ] Create a new shop. The admin gets the "new shop" notification; the shop's list shows it under "Waiting for you" with name, city, owner, phone, types and bio.
+- [ ] Tap "View shop and products" on a waiting shop: a full page shows the owner, phone, shop types, bio, delivery cities and fees, and every product with its photo, name, category, price (old price crossed out), stock, pieces, description and options. The three decision buttons are at the bottom of that page too.
 - [ ] Approve: the shop owner gets "Your shop was approved" and the waiting notice disappears; customers can now see the shop.
 - [ ] Return for changes: write a message (at least 3 characters). The shop owner gets a notification and, at the top of the shop screens, "Changes needed before approval" with the message, an Edit shop button and a Send for review button. The shop is still hidden from customers.
 - [ ] After the owner taps Send for review, the admin gets a notification and the shop is under "Waiting for you" again.

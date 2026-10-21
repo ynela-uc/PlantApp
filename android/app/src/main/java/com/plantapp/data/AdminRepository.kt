@@ -21,6 +21,10 @@ data class PendingShop(
     @SerialName("review_note") val reviewNote: String? = null,
     @SerialName("owner_name") val ownerName: String = "",
     @SerialName("owner_email") val ownerEmail: String = "",
+    @SerialName("delivers_to") val deliversTo: List<String>? = null,
+    @SerialName("delivery_fee_iqd") val deliveryFeeIqd: Int = 0,
+    @SerialName("delivery_fees") val deliveryFees: Map<String, Int> = emptyMap(),
+    @SerialName("product_count") val productCount: Int = 0,
 )
 
 /** The three things the admin can do with a shop. */
@@ -33,6 +37,10 @@ object AdminRepository {
 
     suspend fun shops(): List<PendingShop> =
         Backend.client.postgrest.rpc("admin_pending_shops").decodeList<PendingShop>()
+
+    /** All products of a shop, including shops that are not approved yet. */
+    suspend fun listings(shopId: String): List<Listing> =
+        Backend.client.postgrest.rpc("admin_shop_listings", buildJsonObject { put("p_shop_id", shopId) }).decodeList<Listing>()
 
     suspend fun review(shopId: String, decision: ShopDecision, note: String?) {
         Backend.client.postgrest.rpc(

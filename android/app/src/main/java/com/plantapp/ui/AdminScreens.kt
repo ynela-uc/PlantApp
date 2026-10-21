@@ -33,6 +33,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.sp
+import com.plantapp.data.Listing
+import com.plantapp.data.localized
+import com.plantapp.ui.customer.PlantPicture
+import com.plantapp.ui.customer.priceText
+import com.plantapp.ui.customer.rememberLang
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.plantapp.R
@@ -88,6 +95,7 @@ private fun ApprovalsScreen(accent: Color, onClose: () -> Unit) {
     var failed by remember { mutableStateOf(false) }
     var busyId by remember { mutableStateOf<String?>(null) }
     var asking by remember { mutableStateOf<Pair<PendingShop, ShopDecision>?>(null) }
+    var previewing by remember { mutableStateOf<PendingShop?>(null) }
     val scope = rememberCoroutineScope()
 
     suspend fun load() {
@@ -111,6 +119,10 @@ private fun ApprovalsScreen(accent: Color, onClose: () -> Unit) {
             }
             busyId = null
         }
+    }
+
+    fun choose(shop: PendingShop, decision: ShopDecision) {
+        if (decision == ShopDecision.Approve) decide(shop, decision, null) else asking = shop to decision
     }
 
     Surface(color = ScreenBackground, modifier = Modifier.fillMaxSize()) {
@@ -148,14 +160,26 @@ private fun ApprovalsScreen(accent: Color, onClose: () -> Unit) {
                             modifier = Modifier.padding(top = 14.dp, bottom = 6.dp),
                         )
                         group.forEach { shop ->
-                            ShopReviewCard(shop, busy = busyId == shop.id, onDecide = { decision ->
-                                if (decision == ShopDecision.Approve) decide(shop, decision, null) else asking = shop to decision
-                            })
+                            ShopReviewCard(shop, busy = busyId == shop.id, onView = { previewing = shop }, onDecide = { choose(shop, it) })
                         }
                     }
                     Spacer(Modifier.height(24.dp))
                 }
             }
+        }
+    }
+
+    previewing?.let { shop ->
+        Dialog(onDismissRequest = { previewing = null }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+            ShopPreviewScreen(
+                shop = shop,
+                busy = busyId == shop.id,
+                onClose = { previewing = null },
+                onDecide = { decision ->
+                    previewing = null
+                    choose(shop, decision)
+                },
+            )
         }
     }
 
@@ -173,7 +197,7 @@ private fun ApprovalsScreen(accent: Color, onClose: () -> Unit) {
 }
 
 @Composable
-private fun ShopReviewCard(shop: PendingShop, busy: Boolean, onDecide: (ShopDecision) -> Unit) {
+private fun ShopReviewCard(shop: PendingShop, busy: Boolean, onView: () -> Unit, onDecide: (ShopDecision) -> Unit) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = Color.White,
@@ -195,23 +219,12 @@ private fun ShopReviewCard(shop: PendingShop, busy: Boolean, onDecide: (ShopDeci
                 Spacer(Modifier.height(6.dp))
                 Text(stringResource(R.string.approvals_your_note, shop.reviewNote), color = SellerAmber, style = MaterialTheme.typography.bodySmall)
             }
-            // Only shops waiting for the admin get the three buttons.
-            if (shop.reviewStatus == "pending") {
-                Spacer(Modifier.height(10.dp))
-                if (busy) {
-                    CircularProgressIndicator(color = PlantGreen, modifier = Modifier.height(28.dp))
-                } else {
-                    Button(onClick = { onDecide(ShopDecision.Approve) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
-                        Text(stringResource(R.string.approvals_approve), fontWeight = FontWeight.Bold)
-                    }
-                    OutlinedButton(onClick = { onDecide(ShopDecision.Changes) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
-                        Text(stringResource(R.string.approvals_changes), color = SellerAmber)
-                    }
-                    OutlinedButton(onClick = { onDecide(ShopDecision.Reject) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
-                        Text(stringResource(R.string.approvals_reject), color = AdminRed)
-                    }
-                }
+            Spacer(Modifier.height(10.dp))
+            Button(onClick = onView, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
+                Text(stringResource(R.string.approvals_view, shop.productCount), fontWeight = FontWeight.Bold)
             }
+            // Only shops waiting for the admin get the three buttons.
+            if (shop.reviewStatus == "pending") DecisionButtons(busy, onDecide)
         }
     }
 }
@@ -238,4 +251,121 @@ private fun NoteDialog(title: String, hint: String, onCancel: () -> Unit, onSend
         },
         dismissButton = { TextButton(onClick = onCancel) { Text(stringResource(R.string.action_cancel)) } },
     )
+}
+
+@Composable
+private fun DecisionButtons(busy: Boolean, onDecide: (ShopDecision) -> Unit) {
+    if (busy) {
+        CircularProgressIndicator(color = PlantGreen, modifier = Modifier.height(28.dp))
+        return
+    }
+    Button(onClick = { onDecide(ShopDecision.Approve) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
+        Text(stringResource(R.string.approvals_approve), fontWeight = FontWeight.Bold)
+    }
+    OutlinedButton(onClick = { onDecide(ShopDecision.Changes) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
+        Text(stringResource(R.string.approvals_changes), color = SellerAmber)
+    }
+    OutlinedButton(onClick = { onDecide(ShopDecision.Reject) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
+        Text(stringResource(R.string.approvals_reject), color = AdminRed)
+    }
+}
+
+/** Everything a customer would see about the shop, so the admin can decide: details, delivery and every product with its photo. */
+@Composable
+private fun ShopPreviewScreen(shop: PendingShop, busy: Boolean, onClose: () -> Unit, onDecide: (ShopDecision) -> Unit) {
+    var products by remember(shop.id) { mutableStateOf<List<Listing>?>(null) }
+    var failed by remember(shop.id) { mutableStateOf(false) }
+    LaunchedEffect(shop.id) {
+        try {
+            products = AdminRepository.listings(shop.id)
+        } catch (_: Exception) {
+            failed = true
+        }
+    }
+    val lang = rememberLang()
+
+    Surface(color = ScreenBackground, modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.systemBarsPadding().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
+            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(shop.name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = PlantGreenDark, modifier = Modifier.weight(1f))
+                TextButton(onClick = onClose) { Text(stringResource(R.string.approvals_close)) }
+            }
+            Text(cityLabel(shop.city), color = TextMuted)
+            Spacer(Modifier.height(8.dp))
+            Text(stringResource(R.string.approvals_owner, shop.ownerName.ifBlank { "-" }, shop.ownerEmail))
+            if (shop.phone.isNotBlank()) Text(shop.phone)
+            if (shop.shopTypes.isNotEmpty()) Text(shop.shopTypes.map { sectionName(it) }.joinToString(", "), color = TextMuted)
+            if (shop.bio.isNotBlank()) {
+                Spacer(Modifier.height(6.dp))
+                Text(shop.bio)
+            }
+            Spacer(Modifier.height(10.dp))
+            Text(stringResource(R.string.shop_delivery), fontWeight = FontWeight.Bold, color = PlantGreenDark)
+            Text(
+                if (shop.deliveryScope == "nationwide") stringResource(R.string.delivers_nationwide)
+                else shop.deliversTo.orEmpty().map { cityLabel(it) }.joinToString(", ").ifBlank { cityLabel(shop.city) },
+            )
+            Text(stringResource(R.string.shop_fee_title) + ": " + priceText(shop.deliveryFeeIqd))
+            shop.deliveryFees.forEach { (city, fee) -> Text(cityLabel(city) + ": " + priceText(fee), color = TextMuted) }
+            if (!shop.reviewNote.isNullOrBlank()) {
+                Spacer(Modifier.height(8.dp))
+                Text(stringResource(R.string.approvals_your_note, shop.reviewNote), color = SellerAmber)
+            }
+
+            Spacer(Modifier.height(14.dp))
+            Text(stringResource(R.string.approvals_products, products?.size ?: shop.productCount), fontWeight = FontWeight.Bold, color = PlantGreenDark)
+            val list = products
+            when {
+                list == null && !failed -> CircularProgressIndicator(color = PlantGreen, modifier = Modifier.padding(16.dp))
+                list == null -> Text(stringResource(R.string.approvals_failed), color = AdminRed)
+                list.isEmpty() -> Text(stringResource(R.string.approvals_no_products), color = TextMuted)
+                else -> list.forEach { ProductPreview(it, lang) }
+            }
+
+            if (shop.reviewStatus == "pending") {
+                Spacer(Modifier.height(16.dp))
+                DecisionButtons(busy, onDecide)
+            }
+            Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun ProductPreview(listing: Listing, lang: String) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White,
+        border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+    ) {
+        Column {
+            PlantPicture(listing, Modifier.fillMaxWidth().height(220.dp), 64.sp)
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(listing.name.localized(lang), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = PlantGreenDark)
+                Text(
+                    listOfNotNull(sectionName(listing.section), listing.category?.let { categoryName(it) }, listing.collection?.takeIf { it.isNotBlank() }).joinToString("  ·  "),
+                    color = TextMuted,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Spacer(Modifier.height(4.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(priceText(listing.priceIqd), fontWeight = FontWeight.Bold)
+                    listing.oldPriceIqd?.takeIf { it > listing.priceIqd }?.let {
+                        Text(priceText(it), color = TextMuted, textDecoration = TextDecoration.LineThrough)
+                    }
+                }
+                listing.pieces?.let { Text(stringResource(R.string.approvals_pieces, it), color = TextMuted, style = MaterialTheme.typography.bodySmall) }
+                if (!listing.inStock) Text(stringResource(R.string.approvals_out_of_stock), color = AdminRed, style = MaterialTheme.typography.bodySmall)
+                val description = listing.description.localized(lang)
+                if (description.isNotBlank()) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(description, style = MaterialTheme.typography.bodyMedium)
+                }
+                listing.options.forEach { option ->
+                    Text(option.name + ": " + option.values.joinToString(", "), color = TextMuted, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+    }
 }
