@@ -1,7 +1,8 @@
 package com.plantapp.ui.seller
 
 import android.content.Context
-import android.media.RingtoneManager
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.compose.foundation.BorderStroke
@@ -56,10 +57,20 @@ fun NewOrderBanner(orders: List<Order>, onOpen: () -> Unit, onDismiss: () -> Uni
     }
 }
 
-/** The shop's phone makes a sound and vibrates when a new order arrives while the app is open. */
+/**
+ * The shop's phone makes a sound and vibrates when a new order arrives while the app is open. The chime is our own file played at
+ * the media volume: the phone's "default notification sound" is missing or silent on some devices and emulators.
+ */
 fun playNewOrderAlert(context: Context) {
     try {
-        RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))?.play()
+        val player = MediaPlayer()
+        player.setAudioAttributes(
+            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build(),
+        )
+        context.resources.openRawResourceFd(R.raw.new_order).use { player.setDataSource(it.fileDescriptor, it.startOffset, it.length) }
+        player.setOnCompletionListener { it.release() }
+        player.prepare()
+        player.start()
     } catch (_: Exception) { }
     try {
         context.getSystemService(Vibrator::class.java)?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 400, 200, 400), -1))
