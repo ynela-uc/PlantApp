@@ -335,6 +335,7 @@ struct DeleteAccountSection: View {
 /// A shop shows stars only after this many ratings; before that it is "New".
 let ratingMinCount = 3
 
+@MainActor
 func ratingLabel(_ lang: LanguageStore, rating: Double, count: Int) -> String {
     count >= ratingMinCount ? "★ \(String(format: "%.1f", rating)) (\(count))" : lang.t("rating_new")
 }
